@@ -3,11 +3,14 @@ const app = express();
 const port = 3000;
 
 //companion files
-const writer = require('./writer');
-const draw = require('./draw');
+const Vector = require('./vector');
 
-writer.gmlcodeFilesInit();
-draw.draw(); // carry out the draw functions of the app
+const v1 = new Vector(3,4);
+
+var testVec = v1.getVector();
+
+console.log(`testVec: (${testVec.getX()}, ${testVec.getY()})`);
+
 
 app.get('/', (req, res) => {
     res.send('Program running...');

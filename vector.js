@@ -2,7 +2,7 @@ class Vector {
     constructor(vx, vy){
         this.vx = vx;
         this.vy = vy;
-        this.theta = Math.degrees(Math.atan2(vy,vx));
+        this.theta = (Math.atan2(vy,vx)*180) / Math.PI; //in degrees
     }
 
     getX(){
@@ -13,6 +13,9 @@ class Vector {
     }
     getTheta(){
         return this.theta;
+    }
+    getVector(){
+        return this;
     }
 }
 
