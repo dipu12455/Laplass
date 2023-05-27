@@ -23,7 +23,7 @@ function addCode(event, gmlcode) { //adds line of code to the step-event code fi
     const existingCode = fs.readFileSync(targetFile, 'utf8');
     const newCode = existingCode + '\n' + gmlcode;
     fs.writeFileSync(targetFile, newCode);
-    console.log('Code appended!');
+    console.log(`Code appended: ${gmlcode}`);
 } catch (err) {
   console.error('error appending data to file: ' ,err);
 }

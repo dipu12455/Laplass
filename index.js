@@ -4,11 +4,10 @@ const port = 3000;
 
 //companion files
 const writer = require('./writer');
+const draw = require('./draw');
 
 writer.gmlcodeFilesInit();
-writer.addCode('step', 'y += 0.4;');
-writer.addCode('create', '// another line bruv');
-writer.addCode('draw', '//...');
+draw.draw(); // carry out the draw functions of the app
 
 app.get('/', (req, res) => {
     res.send('Program running...');
