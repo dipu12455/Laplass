@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const app = new PIXI.Application({ width: 640, height: 360, background: '#1099bb' });
+      document.body.appendChild(app.view);
+
+    // Create the sprite and add it to the stage
+      //the below function tries to access a resource, entering './sample.png' as if accessing a local file will not work. This file is sent by the server to the client, and this file only sees in the context of the client. THere is no local sample.png file to access. You can also see this error happening in the browser console. So, you need to have this file query the server for the resource, for that open up a route, have that route deliver the image file. And in that, you can actually specify a local path because that image is in the same directory as the server. Access that route from this script, and you have your image which was sent by the server. Remember, a route is a url that the server recognizes.
+      let sprite = PIXI.Sprite.from('/img');
+      app.stage.addChild(sprite);
+
+      // Add a ticker callback to move the sprite back and forth
+      let elapsed = 0.0;
+      app.ticker.add((delta) => {
+        elapsed += delta;
+        sprite.x = 100.0 + Math.cos(elapsed/50.0) * 100.0;
+      });
+      </script>
+
+  </body>
+</html>
