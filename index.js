@@ -5,8 +5,10 @@ const port = 3000;
 //companion files
 const writer = require('./writer');
 
-writer.generateCode();
-writer.appendStep('y += 0.4;');
+writer.gmlcodeFilesInit();
+writer.addCode('step', 'y += 0.4;');
+writer.addCode('create', '// another line bruv');
+writer.addCode('draw', '//...');
 
 app.get('/', (req, res) => {
     res.send('Program running...');

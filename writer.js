@@ -1,38 +1,35 @@
 const fs = require('fs');
 
-const gml_create = 'x = 30; y = 40; z = 0;';
-const gml_step = 'x += 0.3; if (keyboard_check(ord(\'R\'))) game_restart();';
-const gml_draw = 'draw_text(x,y,\'Hello World! \' + string(z));';
-
+//default file names for the three code files
 const createFilename = './createEventGMLcode.lpc';
 const stepFilename = './stepEventGMLcode.lpc';
 const drawFilename = './drawEventGMLcode.lpc';
 
-function generateCode() { //this also works as creating fresh file before every run
+function gmlcodeFilesInit() { //run before anything else to create fresh code files
     try {
-        //write gml file for create event
-        fs.writeFileSync(createFilename, gml_create);
-        //write gml file for step eventw
-        fs.writeFileSync(stepFilename, gml_step);
-        //write gml file for draw event
-        fs.writeFileSync(drawFilename, gml_draw);
+        fs.writeFileSync(createFilename, '// Code to be executed in create event');
+        fs.writeFileSync(stepFilename, '//code to be executed in step event');
+        fs.writeFileSync(drawFilename, '//code to be executed in draw event');
     } catch (err){
         console.error(err);
     }
 }
 
-function appendStep(gmlcode) {
+function addCode(event, gmlcode) { //adds line of code to the step-event code file
+  if (event === 'create') targetFile = createFilename;
+  if (event === 'step') targetFile = stepFilename;
+  if (event === 'draw') targetFile = drawFilename;
   try {
-    const existingCode = fs.readFileSync(stepFilename, 'utf8');
-    const newCode = existingCode + gmlcode;
-    fs.writeFileSync(stepFilename, newCode);
+    const existingCode = fs.readFileSync(targetFile, 'utf8');
+    const newCode = existingCode + '\n' + gmlcode;
+    fs.writeFileSync(targetFile, newCode);
     console.log('Code appended!');
 } catch (err) {
-  console.error('erro appending data to file: ' ,err);
+  console.error('error appending data to file: ' ,err);
 }
 }
 
 module.exports = {
-    generateCode: generateCode,
-    appendStep: appendStep
+    gmlcodeFilesInit: gmlcodeFilesInit,
+    addCode: addCode
 };
