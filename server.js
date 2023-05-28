@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+app.use(express.static('public'));
+
 //companion files
 const Vector = require('./vector');
 
@@ -13,11 +15,6 @@ console.log(`testVec: (${testVec.getX()}, ${testVec.getY()})`);
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
-});
-
-//this is how you supply resources to index.html that contains the pixijs script. the script works in the client system context, which is why the script needs to query the server, then the server will supply the resource via this route.
-app.get('/img' , (req, res) => {
-  res.sendFile(__dirname + '/images/sample.png');
 });
 
 app.listen(port, () => {
