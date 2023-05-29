@@ -1,4 +1,7 @@
+import * as PIXI from 'pixi.js';
+
 const app = new PIXI.Application({ width: 640, height: 480, background: '#ffffff' });
+
 document.body.appendChild(app.view);
 
 let sprite = PIXI.Sprite.from('./images/apple.png');

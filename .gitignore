@@ -3,4 +3,6 @@ package-lock.json
 package.json
 *.swp
 *.vim
+*.txt
+bundle.js
 
