@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import {add} from './subindex.js';
 
 const app = new PIXI.Application({ width: 640, height: 480, background: '#ffffff' });
 
@@ -8,6 +9,9 @@ let sprite = PIXI.Sprite.from('./images/apple.png');
 sprite.anchor.set(0.5);
 sprite.x = 320;
 sprite.y = 240;
+
+var val = add(4,5);
+console.log(`4 + 5 is ${val}`);
 
 app.stage.addChild(sprite);
 
