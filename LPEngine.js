@@ -6,8 +6,10 @@ import * as PIXI from 'pixi.js';
 
 // these variables need to be referenced from all functions
 var app;
-var drawOperations;
+var drawObject;
+var drawOperations; //variable to hold the user coded draw function
 var worldOriginX, worldOriginY, worldDelta;
+var animate = 10; //animating this variable for testing
 
 export function init(_document, _width, _height){
   worldOriginX = _width/2;
@@ -16,8 +18,8 @@ export function init(_document, _width, _height){
   app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
   _document.body.appendChild(app.view);
 
-  drawOperations = new PIXI.Graphics(); //is a graphics object used to collect draw operations from throughout LP. Then, is added as child to app
-  app.stage.addChild(drawOperations); //add it as child now, and see if when the object is updated, the change is reflected, or do i need to add as child again?
+  drawObject = new PIXI.Graphics();
+  app.stage.addChild(drawObject);
 }
 
 export function getWorldDelta(){
@@ -28,31 +30,35 @@ export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
 }
 
+
+export function update(){
+  //update
+}
+export function setDrawOperations(_drawOperations){
+  drawOperations = _drawOperations;
+}
+
+
+function draw(){
+  drawObject.clear(); //clear drawing of last calls
+  draw_line(0,0,1*animate,1.5*animate);
+  drawOperations(); //user defined draw functions called in order, only call draw functions of LP.
+}
+
 export function runTicker(){
   // Add a ticker callback to move the sprite back and forth
   let elapsed = 0.0;
   app.ticker.add((delta) => {
     //sprite.rotation -= 0.01 * delta;
+    animate -= 0.01 * delta;
+    draw();
   });
 }
 
-export function update(){
-  //update
-}
-
-export function draw(_drawFunctions){
-  drawOperations.clear(); //clear drawing of last calls
-  _drawFunctions(); //user defined draw functions called in order, only call draw functions of LP.
-  
-  //the above code tested to work, now call clear() again and do another draw operation, to see if it can make another frame while not having to re-add the drawOperations object as a child
-  drawOperations.clear();
-  draw_line(5,5,8,2);
-}
-
 export function draw_line(x1,y1,x2,y2,color){
-  drawOperations.lineStyle(1, color, 1);
-  drawOperations.moveTo(worldOriginX+(x1*worldDelta), worldOriginY-(y1*worldDelta));
-  drawOperations.lineTo(worldOriginX+(x2*worldDelta),worldOriginY-(y2*worldDelta));
+  drawObject.lineStyle(1, color, 1);
+  drawObject.moveTo(worldOriginX+(x1*worldDelta), worldOriginY-(y1*worldDelta));
+  drawObject.lineTo(worldOriginX+(x2*worldDelta),worldOriginY-(y2*worldDelta));
 }
 
 export function draw_screen_grid(_width, _height, _primColor, _secColor){
