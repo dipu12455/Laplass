@@ -7,14 +7,26 @@ import * as PIXI from 'pixi.js';
 // these variables need to be referenced from all functions
 var app;
 var graphics;
+var worldOriginX, worldOriginY, worldDelta;
 var sprite; 
 
-export function init(_document){
-  app = new PIXI.Application({ width: 640, height: 480, background: '#ffffff' });
+export function init(_document, _width, _height){
+  worldOriginX = _width/2;
+  worldOriginY = _height/2;
+  worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
+  app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
   _document.body.appendChild(app.view);
 
   //create a global graphics object to compile drawing functions into
   graphics = new PIXI.Graphics();
+}
+
+export function getWorldDelta(){
+  return worldDelta;
+}
+
+export function setWorldDelta(_worldDelta){
+  worldDelta = _worldDelta;
 }
 
 export function spriteInit(){
@@ -33,14 +45,36 @@ export function runTicker(){
 }
 
 export function renderAll(){
-  app.stage.addChild(sprite);
   app.stage.addChild(graphics);
+  app.stage.addChild(sprite);
 }
 
-export function lp_draw_line(x1,y1,x2,y2,color){
+export function draw_line(x1,y1,x2,y2,color){
   graphics.lineStyle(1, color, 1);
-  graphics.moveTo(x1, y1);
-  graphics.lineTo(x2,y2);
+  graphics.moveTo(worldOriginX+(x1*worldDelta), worldOriginY-(y1*worldDelta));
+  graphics.lineTo(worldOriginX+(x2*worldDelta),worldOriginY-(y2*worldDelta));
+}
+
+export function draw_screen_grid(_width, _height, _primColor, _secColor){
+  //draw grid lines
+  //line y-axis lines
+  var n = _height/2;
+  while(true){
+    draw_line(-_width/2,n,_width/2,n,_secColor);
+    n -= 1;
+    if (n < -_height/2) break;
+  }
+  //line y-axis lines
+  n = -_width/2;
+  while(true){
+    draw_line(n,_height/2,n,-_height/2,_secColor);
+    n += 1;
+    if (n > _width/2) break;
+  }
+
+  //draw the origin
+  draw_line(-_width/2,0,_width/2,0,_primColor);
+  draw_line(0,_height/2,0,-_height/2,_primColor);
 }
 
 
