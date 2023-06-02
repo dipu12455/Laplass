@@ -8,7 +8,6 @@ import * as PIXI from 'pixi.js';
 var app;
 var graphics;
 var worldOriginX, worldOriginY, worldDelta;
-var sprite; 
 
 export function init(_document, _width, _height){
   worldOriginX = _width/2;
@@ -29,24 +28,16 @@ export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
 }
 
-export function spriteInit(){
-  sprite = PIXI.Sprite.from('./images/apple.png');
-  sprite.anchor.set(0.5);
-  sprite.x = 320;
-  sprite.y = 240;
-}
-
 export function runTicker(){
   // Add a ticker callback to move the sprite back and forth
   let elapsed = 0.0;
   app.ticker.add((delta) => {
-    sprite.rotation -= 0.01 * delta;
+    //sprite.rotation -= 0.01 * delta;
   });
 }
 
 export function renderAll(){
   app.stage.addChild(graphics);
-  app.stage.addChild(sprite);
 }
 
 export function draw_line(x1,y1,x2,y2,color){
