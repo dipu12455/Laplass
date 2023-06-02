@@ -17,6 +17,7 @@ export function init(_document, _width, _height){
   _document.body.appendChild(app.view);
 
   drawOperations = new PIXI.Graphics(); //is a graphics object used to collect draw operations from throughout LP. Then, is added as child to app
+  app.stage.addChild(drawOperations); //add it as child now, and see if when the object is updated, the change is reflected, or do i need to add as child again?
 }
 
 export function getWorldDelta(){
@@ -42,7 +43,10 @@ export function update(){
 export function draw(_drawFunctions){
   drawOperations.clear(); //clear drawing of last calls
   _drawFunctions(); //user defined draw functions called in order, only call draw functions of LP.
-  app.stage.addChild(drawOperations); //drawOperations are compiled, now ready to add it as child
+  
+  //the above code tested to work, now call clear() again and do another draw operation, to see if it can make another frame while not having to re-add the drawOperations object as a child
+  drawOperations.clear();
+  draw_line(5,5,8,2);
 }
 
 export function draw_line(x1,y1,x2,y2,color){
