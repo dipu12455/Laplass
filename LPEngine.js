@@ -9,8 +9,8 @@ var app;
 var drawObject;
 var drawOperations; //variable to hold the user coded draw function
 var worldOriginX, worldOriginY, worldDelta;
-var animate = 5; //animating this variable for testing
 var screenGrid=false;
+var updateOperations;
 
 export function init(_document, _width, _height){
   worldOriginX = _width/2;
@@ -21,8 +21,6 @@ export function init(_document, _width, _height){
 
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);
-
-  runTicker(); //start the update/render loop
 }
 
 export function getWorldDelta(){
@@ -33,8 +31,8 @@ export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
 }
 
-export function update(){
-  //update
+export function getTicker(){
+  return app.ticker;
 }
 export function defineDrawOperations(_drawOperations){
   drawOperations = _drawOperations;
@@ -43,19 +41,10 @@ export function defineDrawOperations(_drawOperations){
 export function showScreenGrid(){screenGrid=true;}
 export function hideScreenGrid(){screenGrid=false;}
 
-function draw(){
+export function draw(){
   drawObject.clear(); //clear drawing of last calls
   if(screenGrid==true){draw_screen_grid(50,50,0x000000,0xcccccc);}
-  draw_line(0,0,1*animate,1.5*animate);
   drawOperations(); //user defined draw functions called in order, only call draw functions of LP.
-}
-
-function runTicker(){
-  app.ticker.add((delta) => {
-    //sprite.rotation -= 0.01 * delta;
-    animate -= 0.01 * delta;
-    draw();
-  });
 }
 
 export function draw_line(x1,y1,x2,y2,color){
