@@ -6,3 +6,4 @@ package.json
 *.txt
 bundle.js
 
+.DS_Store
