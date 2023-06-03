@@ -3,6 +3,7 @@
 // index.js isn't supposed to show pixijs implementations
 
 import * as PIXI from 'pixi.js';
+import * as LPVector from './LPVector';
 
 // these variables need to be referenced from all functions
 var app;
@@ -58,6 +59,11 @@ export function draw_anchor(x,y,color){
   drawObject.beginFill(color,1);
   drawObject.drawCircle(worldOriginX+(x*worldDelta),worldOriginY-(y*worldDelta),2);
   drawObject.endFill();
+}
+
+export function draw_vector_origin(_v, _lineColor, _anchorColor){
+    draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
+    draw_anchor(_v.getX(),_v.getY(),_anchorColor);
 }
 
 

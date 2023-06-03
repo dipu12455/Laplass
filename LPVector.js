@@ -7,9 +7,13 @@ export class LPVector{
     this.vx = _vx;
     this.vy = _vy;
   }
-  setVector(_vx,_vy){
+  setVector1(_vx,_vy){
     this.vx=_vx;
     this.vy=_vy;
+  }
+  setVector2(_v){
+    this.vx = _v.getX();
+    this.vy = _v.getY();
   }
   getX(){
     return this.vx;

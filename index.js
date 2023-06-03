@@ -6,17 +6,30 @@ LP.init(document,640,480);
 LP.showScreenGrid(); //display the screen grid
 
 var animate = 5; //animating this variable
+var elapsed = 0;
+var angle = 0;
 
+var vector1 = new LPVector.LPVector(2,2);
+var vector2 = new LPVector.LPVector(5,5);
 //need to hide implementation of this ticker for this animation, because it's the job of LPEngine and not the client program
 LP.getTicker().add((delta) => {
+  elapsed += delta;
   //animation code goes here
-  animate -= 0.01 * delta;
+  animate = Math.cos(elapsed/50.0); //just make it oscillate, divide by 50 is for slowing down animation
+  angle += 0.3 * delta;
+  
+  var vector1dash = new LPVector.LPVector(0,0); //make a temp vector
+  vector1dash.setVector1(vector1.getX()*animate*2.2,vector1.getY()*animate*2.2);
+
+  var vector2dash = new LPVector.LPVector(0,0); //make a temp vector
+  vector2dash.setVector2(LPVector.rotateVector(vector2,angle));
 
   LP.defineDrawOperations(() => {
-    LP.draw_line(0,0,5,6,0x000000);
-    LP.draw_line(0,0,1*animate,1.5*animate,0x00ff00);
-    LP.draw_anchor(1*animate,1.5*animate,0xff0000);
+    LP.draw_vector_origin(vector1dash,0x00ffff,0x0000ff);
+    LP.draw_vector_origin(vector2dash,0x00ff00,0xff0000);
   }); // draw operations provided as parameter, only use LP draw functions
 
   LP.draw();
 });
+
+//vector2 is green line red acnchor
