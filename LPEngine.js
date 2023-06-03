@@ -53,6 +53,14 @@ export function draw_line(x1,y1,x2,y2,color){
   drawObject.lineTo(worldOriginX+(x2*worldDelta),worldOriginY-(y2*worldDelta));
 }
 
+export function draw_anchor(x,y,color){
+  drawObject.lineStyle(0);
+  drawObject.beginFill(color,1);
+  drawObject.drawCircle(worldOriginX+(x*worldDelta),worldOriginY-(y*worldDelta),2);
+  drawObject.endFill();
+}
+
+
 function draw_screen_grid(_width, _height, _primColor, _secColor){
   //draw grid lines
   //line y-axis lines
