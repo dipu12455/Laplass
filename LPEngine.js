@@ -30,7 +30,6 @@ export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
 }
 
-
 export function update(){
   //update
 }
