@@ -1,4 +1,4 @@
-import * as LP from './LPEngine.js';
+import * as LP from './LPEngine/LPEngine.js';
 
 //these functions need to be run in this exact order
 LP.init(document,640,480);
