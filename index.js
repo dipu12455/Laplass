@@ -10,6 +10,16 @@ var angle = 0;
 
 var vector1 = new LP.LPVector(2,2);
 var vector2 = new LP.LPVector(5,5);
+
+//defining a primitive class with vertices, but just using vectors as vertices because they are so similar
+
+class Primitive{
+  constructor(_xorigin,_yorigin){
+    this.xorigin = _xorigin;
+    this.yorigin = _yorigin;
+  }
+}
+
 //need to hide implementation of this ticker for this animation, because it's the job of LPEngine and not the client program
 LP.getTicker().add((delta) => {
   elapsed += delta;
