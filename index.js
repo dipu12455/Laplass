@@ -11,15 +11,16 @@ var angle = 0;
 var vector1 = new LP.LPVector(2,2);
 var vector2 = new LP.LPVector(5,5);
 
-//defining a primitive class with vertices, but just using vectors as vertices because they are so similar
+//define a primitive
+var prim01 = new LP.Primitive(0,0);
+prim01.add(new LP.LPVector(2,2)); //LPVectors are the so similar to vertices, so just using them
+prim01.add(new LP.LPVector(-2,1));
+prim01.add(new LP.LPVector(-2,-2));
 
-class Primitive{
-  constructor(_xorigin,_yorigin){
-    this.xorigin = _xorigin;
-    this.yorigin = _yorigin;
-  }
+var i = 0;
+for (i = 0; i < prim01.getSize();i += 1){
+  console.log(`prim01.vertices ${prim01.get(i).getX()} ${prim01.get(i).getY()}`);
 }
-
 //need to hide implementation of this ticker for this animation, because it's the job of LPEngine and not the client program
 LP.getTicker().add((delta) => {
   elapsed += delta;
@@ -36,6 +37,7 @@ LP.getTicker().add((delta) => {
   LP.defineDrawOperations(() => {
     LP.draw_vector_origin(vector1dash,0x00ffff,0x0000ff);
     LP.draw_vector_origin(vector2dash,0x00ff00,0xff0000);
+    LP.draw_primitive(prim01);
   }); // draw operations provided as parameter, only use LP draw functions
 
   LP.draw();

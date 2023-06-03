@@ -20,3 +20,13 @@ class LPList{
     return this.array.length;
   }
 }
+
+export class Primitive extends LPList{
+  constructor(_xorigin,_yorigin){
+    super();
+    this.xorigin = _xorigin;
+    this.yorigin = _yorigin;
+  }
+  //this child class needs to be given LPVectors as its list of items, make them a vertex triangle list
+}
+

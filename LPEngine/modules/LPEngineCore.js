@@ -57,8 +57,28 @@ export function draw_anchor(x,y,color){
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor){
-    draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
-    draw_anchor(_v.getX(),_v.getY(),_anchorColor);
+  draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
+  draw_anchor(_v.getX(),_v.getY(),_anchorColor);
+}
+
+export function draw_primitive(_primitive){
+  var i = 0;
+  for (i = 0; i < _primitive.getSize(); i += 3){
+
+    //get the vertices
+    var v1 = _primitive.get(i);
+    var v2 = _primitive.get(i+1);
+    var v3 = _primitive.get(i+2);
+
+    //vertices are still at origin, rotate them here
+
+
+    //draw the rotated vertices at the xx and yy
+    var primColor = 0x0000ff;
+    draw_line(v1.getX(),v1.getY(),v2.getX(),v2.getY(),primColor);
+    draw_line(v2.getX(),v2.getY(),v3.getX(),v3.getY(),primColor);
+    draw_line(v3.getX(),v3.getY(),v1.getX(),v1.getY(),primColor);
+  }
 }
 
 
