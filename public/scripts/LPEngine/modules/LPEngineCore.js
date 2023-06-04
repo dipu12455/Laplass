@@ -59,6 +59,21 @@ export function draw_anchor(x,y,color){
   drawObject.endFill();
 }
 
+//draws a line between the head of two vectors (using vectors as point input)
+export function draw_lineV(_v1,_v2,color){
+  drawObject.lineStyle(1, color, 1);
+  drawObject.moveTo(worldOriginX+(_v1.getX()*worldDelta), worldOriginY-(_v1.getY()*worldDelta));
+  drawObject.lineTo(worldOriginX+(_v2.getX()*worldDelta),worldOriginY-(_v2.getY()*worldDelta));
+}
+
+//takes a vector to take point input
+export function draw_anchorV(_v,color){
+  drawObject.lineStyle(0);
+  drawObject.beginFill(color,1);
+  drawObject.drawCircle(worldOriginX+(_v.getX()*worldDelta),worldOriginY-(_v.getY()*worldDelta),2);
+  drawObject.endFill();
+}
+
 export function draw_vector_origin(_v, _lineColor, _anchorColor){
   draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
   draw_anchor(_v.getX(),_v.getY(),_anchorColor);

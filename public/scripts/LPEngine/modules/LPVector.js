@@ -1,4 +1,4 @@
-function sqr(_num){return _num * _num;}
+export function sqr(_num){return _num * _num;}
 function radtodeg(_radians){return _radians * (180/Math.PI);}
 function degtorad(_degrees){return _degrees * (Math.PI/180);}
 
@@ -24,11 +24,22 @@ export class LPVector{
   getTheta(){
     return radtodeg(Math.atan2(this.getY(),this.getX()));
   }
+  getMag(){
+    return Math.sqrt(sqr(this.getX())+sqr(this.getY()))
+  }
 }
 
 export function rotateVector(_v,_theta){
-  var vmag = Math.sqrt(sqr(_v.getX())+sqr(_v.getY()));
+  var vmag = _v.getMag();
   var xdash = vmag * Math.cos(degtorad(_theta));
   var ydash = vmag * Math.sin(degtorad(_theta));
   return new LPVector(xdash,ydash);
+}
+
+export function dotProduct(_v1,_v2){
+  return (_v1.getX() * _v2.getX()) + (_v1.getY() * _v2.getY());
+}
+
+export function scalarXvector(_scalar, _vector){
+  return new LPVector(_scalar*_vector.getX(),_scalar*_vector.getY());
 }
