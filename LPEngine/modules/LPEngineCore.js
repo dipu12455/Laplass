@@ -63,24 +63,39 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor){
   draw_anchor(_v.getX(),_v.getY(),_anchorColor);
 }
 
-export function draw_primitive(_primitive,_x,_y,_rot,_color){
+export function draw_primitive(_primitive,_x,_y,_rot,_lineColor,_fillColor, _wireframe){
   var i = 0;
-  for (i = 0; i < _primitive.getSize(); i += 3){
+  var j = 0;
+  var path = [];
+  for (i = 0; i < _primitive.getSize(); i += 1){
 
     //get the vertices
-    var v1 = _primitive.get(i);
-    var v2 = _primitive.get(i+1);
-    var v3 = _primitive.get(i+2);
+    var vertex = _primitive.get(i);
 
     //vertices are still at origin, rotate them here
-    var v1_rot = rotateVector(v1,v1.getTheta()+_rot);
-    var v2_rot = rotateVector(v2,v2.getTheta()+_rot);
-    var v3_rot = rotateVector(v3,v3.getTheta()+_rot);
+    var vertex_rot = rotateVector(vertex,vertex.getTheta()+_rot);
 
-    //translate the rotated vertices to x and y
-    draw_line(v1_rot.getX()+_x,v1_rot.getY()+_y,v2_rot.getX()+_x,v2_rot.getY()+_y,_color);
-    draw_line(v2_rot.getX()+_x,v2_rot.getY()+_y,v3_rot.getX()+_x,v3_rot.getY()+_y,_color);
-    draw_line(v3_rot.getX()+_x,v3_rot.getY()+_y,v1_rot.getX()+_x,v1_rot.getY()+_y,_color);
+    //translate the vertex, and set it to world coordinate
+    var vertex_trans = new LPVector(0,0);
+    vertex_trans.setVector1(vertex_rot.getX()+_x,vertex_rot.getY()+_y);
+    var xx = vertex_trans.getX();
+    var yy = vertex_trans.getY();
+    xx = worldOriginX+(xx*worldDelta);
+    yy = worldOriginY-(yy*worldDelta);
+    vertex_trans.setVector1(xx,yy);
+
+    path[j]=vertex_trans.getX();
+    path[j+1] = vertex_trans.getY();
+    j = j + 2;
+  }
+  if (_wireframe == true) {
+    drawObject.lineStyle(1,_lineColor,1);
+    drawObject.drawPolygon(path);
+  }else{
+    drawObject.lineStyle(0);
+    drawObject.beginFill(_fillColor,1);
+    drawObject.drawPolygon(path);
+    drawObject.endFill();
   }
 }
 

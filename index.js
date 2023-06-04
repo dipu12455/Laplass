@@ -19,17 +19,11 @@ prim01.add(new LP.LPVector(-2,-2));
 
 //pentagon
 var pentagon = new LP.Primitive(0,0);
+pentagon.add(new LP.LPVector(-5,1));
 pentagon.add(new LP.LPVector(0,6));
 pentagon.add(new LP.LPVector(5,1));
-pentagon.add(new LP.LPVector(-5,1));
-
-pentagon.add(new LP.LPVector(-5,1));
-pentagon.add(new LP.LPVector(5,1));
-pentagon.add(new LP.LPVector(-3,-5));
-
-pentagon.add(new LP.LPVector(-3,-5));
 pentagon.add(new LP.LPVector(3,-5));
-pentagon.add(new LP.LPVector(5,1));
+pentagon.add(new LP.LPVector(-3,-5));
 
 var i = 0;
 for (i = 0; i < prim01.getSize();i += 1){
@@ -49,10 +43,10 @@ LP.getTicker().add((delta) => {
   vector2dash.setVector2(LP.rotateVector(vector2,angle));
 
   LP.defineDrawOperations(() => {
+    LP.draw_primitive(pentagon,0,0,-angle,0x00ff00,0xc9f0e8,true);
     LP.draw_vector_origin(vector1dash,0x00ffff,0x0000ff);
     LP.draw_vector_origin(vector2dash,0x00ff00,0xff0000);
-    LP.draw_primitive(prim01,animate*2,animate*-0.6,angle+30,0x0000ff);
-    LP.draw_primitive(pentagon,0,0,-angle,0x00ff00);
+    LP.draw_primitive(prim01,animate*2,animate*-0.6,angle+30,0x0000ff,0x0,true);
   }); // draw operations provided as parameter, only use LP draw functions
 
   LP.draw();
