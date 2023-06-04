@@ -22,7 +22,7 @@ export class LPVector{
     return this.vy;
   }
   getTheta(){
-    return radtodeg(Math.atan2(getY(),getX()));
+    return radtodeg(Math.atan2(this.getY(),this.getX()));
   }
 }
 
