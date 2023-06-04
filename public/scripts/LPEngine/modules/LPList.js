@@ -1,4 +1,4 @@
-class LPList{
+export class LPList{
   constructor(){
     this.indexCounter = 0;
     this.array = [];

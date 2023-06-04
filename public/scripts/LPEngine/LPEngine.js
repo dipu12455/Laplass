@@ -6,6 +6,7 @@ export {dotProduct} from './modules/LPVector.js';
 export {scalarXvector} from './modules/LPVector.js';
 
 //LPList
+export {LPList} from './modules/LPList.js';
 export {Primitive} from './modules/LPList.js';
 
 //LPEngineCore
