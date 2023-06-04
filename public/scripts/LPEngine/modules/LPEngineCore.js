@@ -1,4 +1,5 @@
-import * as PIXI from 'pixi.js';
+//import * as PIXI from './pixi.js';
+
 import {LPVector} from './LPVector.js';
 import {rotateVector} from './LPVector.js';
 
