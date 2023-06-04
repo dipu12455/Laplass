@@ -4,6 +4,8 @@ export {sqr} from './modules/LPVector.js';
 export {rotateVector} from './modules/LPVector.js';
 export {dotProduct} from './modules/LPVector.js';
 export {scalarXvector} from './modules/LPVector.js';
+export {v2Minusv1} from './modules/LPVector.js';
+export {findLeftPerpendicular} from './modules/LPVector.js';
 
 //LPList
 export {LPList} from './modules/LPList.js';

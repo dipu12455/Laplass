@@ -43,3 +43,11 @@ export function dotProduct(_v1,_v2){
 export function scalarXvector(_scalar, _vector){
   return new LPVector(_scalar*_vector.getX(),_scalar*_vector.getY());
 }
+
+export function v2Minusv1(_v1,_v2){
+  return new LPVector(_v2.getX()-_v1.getX(),_v2.getY()-_v1.getY());
+}
+
+export function findLeftPerpendicular(_v){
+  return new LPVector(-_v.getY(),_v.getX());
+}
