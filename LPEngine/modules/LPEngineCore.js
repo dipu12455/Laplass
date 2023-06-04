@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+import {LPVector} from './LPVector.js';
+import {rotateVector} from './LPVector.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -57,10 +59,30 @@ export function draw_anchor(x,y,color){
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor){
-    draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
-    draw_anchor(_v.getX(),_v.getY(),_anchorColor);
+  draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
+  draw_anchor(_v.getX(),_v.getY(),_anchorColor);
 }
 
+export function draw_primitive(_primitive,_x,_y,_rot,_color){
+  var i = 0;
+  for (i = 0; i < _primitive.getSize(); i += 3){
+
+    //get the vertices
+    var v1 = _primitive.get(i);
+    var v2 = _primitive.get(i+1);
+    var v3 = _primitive.get(i+2);
+
+    //vertices are still at origin, rotate them here
+    var v1_rot = rotateVector(v1,v1.getTheta()+_rot);
+    var v2_rot = rotateVector(v2,v2.getTheta()+_rot);
+    var v3_rot = rotateVector(v3,v3.getTheta()+_rot);
+
+    //translate the rotated vertices to x and y
+    draw_line(v1_rot.getX()+_x,v1_rot.getY()+_y,v2_rot.getX()+_x,v2_rot.getY()+_y,_color);
+    draw_line(v2_rot.getX()+_x,v2_rot.getY()+_y,v3_rot.getX()+_x,v3_rot.getY()+_y,_color);
+    draw_line(v3_rot.getX()+_x,v3_rot.getY()+_y,v1_rot.getX()+_x,v1_rot.getY()+_y,_color);
+  }
+}
 
 function draw_screen_grid(_width, _height, _primColor, _secColor){
   //draw grid lines
