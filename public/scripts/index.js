@@ -4,7 +4,7 @@ import * as Scene_sat2 from './scene_sat2.js';
 
 //these functions need to be run in this exact order
 LP.init(document,640,480);
-LP.showScreenGrid(); //display the screen grid
+//LP.showScreenGrid(); //display the screen grid
 
 //need to hide implementation of this ticker for this animation, because it's the job of LPEngine and not the client program
 LP.getTicker().add((delta) => {

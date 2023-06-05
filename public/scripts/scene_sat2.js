@@ -43,6 +43,7 @@ export function update(_delta){
   elapsed += _delta;
 }
 
+var printed=false;
 export function draw(){
   LP.draw_vector_origin(axis,0x000000,0x0000ff);
 
@@ -52,17 +53,35 @@ export function draw(){
     LP.draw_anchorV(p,0xff0000);
   }
 
-  //draw normals of the pentagon
-  i = 1; //start from the second vertex
-  for (i = 1; i < pentagon.getSize(); i += 1){
-    var p1 = pentagon.get(i-1);
-    var p2 = pentagon.get(i);
-
-    var normal = LP.findLeftPerpendicular(LP.v2Minusv1(p1,p2));
-    LP.draw_vector_origin(normal,0x445500,0x00ff00);
+  var pentagonNormals = getNormalsOfPrimitive(pentagon);
+  i = 0;
+  for (i = 0; i < pentagonNormals.getSize(); i += 1){
+    LP.draw_vector_origin(pentagonNormals.get(i),0x445500,0x00ff00);
   }
+  printed=true;
 
   LP.draw_primitive(pentagon,0,0,0,0x00ff00,0xc9f0e8,true);
   //LP.draw_primitive(prim01,0,0,0,0x0000ff,0x0,true);
+}
+
+//define primitive in vertex list
+function getNormalsOfPrimitive(_primitive){
+  var i = 0;
+  var normalList = new LP.LPList();
+  for (i = 0; i < _primitive.getSize(); i += 1){
+    var p1; var p2;
+    if (i == 0){
+      p1 = pentagon.get(_primitive.getSize()-1);
+      p2 = pentagon.get(i);
+    }
+    else{
+      p1 = pentagon.get(i-1);
+      p2 = pentagon.get(i);
+    }
+
+    var normal = LP.findLeftPerpendicular(LP.v2Minusv1(p1,p2));
+    normalList.add(normal);
+  }
+  return normalList;
 }
 
