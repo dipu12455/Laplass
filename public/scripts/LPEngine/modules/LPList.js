@@ -19,6 +19,9 @@ export class LPList{
   getSize(){
     return this.array.length;
   }
+  getArray(){
+    return this.array;
+  }
 }
 
 export class Primitive extends LPList{

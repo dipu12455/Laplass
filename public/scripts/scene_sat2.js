@@ -43,7 +43,6 @@ export function update(_delta){
   elapsed += _delta;
 }
 
-var printed=false;
 export function draw(){
   LP.draw_vector_origin(axis,0x000000,0x0000ff);
 
@@ -53,18 +52,13 @@ export function draw(){
     LP.draw_anchorV(p,0xff0000);
   }
 
-  var pentagonNormals = getNormalsOfPrimitive(pentagon);
-  i = 0;
-  for (i = 0; i < pentagonNormals.getSize(); i += 1){
-    LP.draw_vector_origin(pentagonNormals.get(i),0x445500,0x00ff00);
-  }
-  printed=true;
+  drawNormals(pentagon, 0x445500,0x00ff00);
 
   LP.draw_primitive(pentagon,0,0,0,0x00ff00,0xc9f0e8,true);
   //LP.draw_primitive(prim01,0,0,0,0x0000ff,0x0,true);
 }
 
-//define primitive in vertex list
+//primitive needs to be defined in vertex list
 function getNormalsOfPrimitive(_primitive){
   var i = 0;
   var normalList = new LP.LPList();
@@ -83,5 +77,13 @@ function getNormalsOfPrimitive(_primitive){
     normalList.add(normal);
   }
   return normalList;
+}
+
+function drawNormals(_primitive, _primColor, _secColor){
+  var normals = getNormalsOfPrimitive(_primitive);
+  var i = 0;
+  for (i = 0; i < normals.getSize(); i += 1){
+    LP.draw_vector_origin(normals.get(i),_primColor,_secColor);
+  }
 }
 
