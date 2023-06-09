@@ -42,7 +42,7 @@ export function draw(){
    }
   
   //now draw projected points of the pentagon on the axis
-  const pointList2 = projectPrimitiveOntoAxis(pentagon,axis); //get a list of the projected points
+  const pointList2 = S3.projectPrimitiveOntoAxis(pentagon,axis); //get a list of the projected points
   var i = 0;
   for (i = 0; i < pointList2.getSize(); i += 1){
     var p = pointList2.get(i);
