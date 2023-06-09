@@ -77,9 +77,11 @@ export function draw(){
     var p = pointList2.get(i);
     if (i == min){
       LP.draw_anchorV(p,0xff0000); //if min, draw red
+      continue;
      }
      if (i == max){
       LP.draw_anchorV(p,0x0000ff); //if max, draw green
+      continue;
      }
      LP.draw_anchorV(p,0x000000); //else draw black
   } //draw each projected point (vectors) onto the axis
