@@ -49,38 +49,40 @@ var printed=false;
 export function draw(){
   LP.draw_lineV(new LP.LPVector(0,0), axis,0x000000,0x0000ff); //dont wanna see anchor just line
 
-  //draw projected points on the axis
-  const pointList = projectPrimitiveOntoAxis(pentagon,axis);
-  var i = 0;
-  for (i = 0; i < pointList.getSize(); i += 1){
-    var p = pointList.get(i);
-    LP.draw_anchorV(p,0xff0000);
-  }
-
-  //draw only the coefficients of those points but plot them on the x-axis to see their values in a graph
-  const pointList2 = testFunc1(pentagon,axis);
-  var scale = 10; //these coefficients are very small, scale them to make them visible at worldDelta of 20
+  //get a list of coefficients for each point.
+  const pointList1 = testFunc1(pentagon,axis);
+  //get index of the min and max points, to color them differently in both the axisVector plot and the x-axis plot
+  var min = findMin(pointList1);
+  var max = findMax(pointList1);
+  
+   //plot just the coefficients of projected point onto the x-axis
+   var scale = 10; //these coefficients are very small, scale them to make them visible at worldDelta of 20
+   var i = 0;
+   for (i = 0; i < pointList1.getSize(); i += 1){
+     var p = pointList1.get(i);
+     if (i == min){
+      LP.draw_anchor(p*scale,0,0xff0000); //if min, draw red
+      continue;     }
+     if (i == max){
+      LP.draw_anchor(p*scale,0,0x0000ff); //if max, draw green
+      continue;
+     }
+     LP.draw_anchor(p*scale,0,0x000000); //else draw black
+   }
+  
+  //now draw projected points of the pentagon on the axis
+  const pointList2 = projectPrimitiveOntoAxis(pentagon,axis); //get a list of the projected points
   var i = 0;
   for (i = 0; i < pointList2.getSize(); i += 1){
     var p = pointList2.get(i);
-    LP.draw_anchor(p*scale,0,0x0000ff);
-  }
-
-  //debug
-  if (printed == false){
-    printed=true;
-    var list = new LP.LPList();
-    list.add(-10);
-    list.add(4);
-    list.add(7.3);
-    list.add(7.47);
-    list.add(-10.5);
-
-    //print the list
-    console.log(`The list: ${list.getArray()}`);
-    //print the min and max
-    console.log(`the min ${findMin(list)} the max ${findMax(list)}`);
-  }
+    if (i == min){
+      LP.draw_anchorV(p,0xff0000); //if min, draw red
+     }
+     if (i == max){
+      LP.draw_anchorV(p,0x0000ff); //if max, draw green
+     }
+     LP.draw_anchorV(p,0x000000); //else draw black
+  } //draw each projected point (vectors) onto the axis
 
   //drawNormals(pentagon, 0x445500,0x00ff00);
 
