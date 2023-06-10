@@ -1,3 +1,5 @@
+import { LPVector } from "./LPVector.js";
+
 export class LPList{
   constructor(){
     this.indexCounter = 0;
@@ -19,17 +21,31 @@ export class LPList{
   getSize(){
     return this.array.length;
   }
-  getArray(){
+  getPrint(){
     return this.array;
   }
 }
 
 export class Primitive extends LPList{
-  constructor(_xorigin,_yorigin){
+  constructor(_origin){
     super();
-    this.xorigin = _xorigin;
-    this.yorigin = _yorigin;
+    this.xorigin = _origin.getX();
+    this.yorigin = _origin.getY();
   }
-  //this child class needs to be given LPVectors as its list of items, make them a vertex triangle list
+  getOrigin(){
+    return new LPVector(this.xorigin,this.yorigin);
+  }
+  setOrigin(_origin){
+    this.xorigin = _origin.getX();
+    this.yorigin = _origin.getY();
+  }
+  getPrint(){
+    var i = 0;
+    var output = ``;
+    for (i = 0; i < this.getSize();i += 1){
+      output = output.concat(this.get(i).getPrint());
+    }
+    return output;
+  }
 }
 

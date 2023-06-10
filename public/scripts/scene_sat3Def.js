@@ -1,13 +1,13 @@
 import * as LP from './LPEngine/LPEngine.js';
 
 //define a primitive
-export var prim01 = new LP.Primitive(0,0);
+export var prim01 = new LP.Primitive(new LP.LPVector(0,0));
 prim01.add(new LP.LPVector(2,2)); //LPVectors are the so similar to vertices, so just using them
 prim01.add(new LP.LPVector(-2,1));
 prim01.add(new LP.LPVector(-2,-2));
 
 //pentagon
-export var pentagon = new LP.Primitive(0,0);
+export var pentagon = new LP.Primitive(new LP.LPVector(0,0));
 pentagon.add(new LP.LPVector(-5,1));
 pentagon.add(new LP.LPVector(0,6));
 pentagon.add(new LP.LPVector(5,1));
@@ -29,12 +29,13 @@ export function projectPrimitiveOntoAxis(_primitive, _axisVector){
 }
 
 //takes a primitive and only returns a list of the coefficient of each point with the axis
-export function getCoefficientsOfProjection(_primitive,_axisVector){
+export function getCoefficientsOfProjection(_primitive, _axisVector){
   var i = 0;
   var pointList = new LP.LPList();
   for(i = 0; i < _primitive.getSize(); i += 1){
     var point = _primitive.get(i);
-
+    
+    //get the projection
     const proj = coeffOfProjuOnv(point,_axisVector);
 
     pointList.add(proj);
@@ -90,12 +91,12 @@ function getNormalsOfPrimitive(_primitive){
   for (i = 0; i < _primitive.getSize(); i += 1){
     var p1; var p2;
     if (i == 0){
-      p1 = pentagon.get(_primitive.getSize()-1);
-      p2 = pentagon.get(i);
+      p1 = _primitive.get(_primitive.getSize()-1);
+      p2 = _primitive.get(i);
     }
     else{
-      p1 = pentagon.get(i-1);
-      p2 = pentagon.get(i);
+      p1 = _primitive.get(i-1);
+      p2 = _primitive.get(i);
     }
 
     var normal = LP.findLeftPerpendicular(LP.v2Minusv1(p1,p2));
@@ -105,11 +106,11 @@ function getNormalsOfPrimitive(_primitive){
 }
 
 //put inside the draw function of a scene
-function drawNormals(_primitive, _primColor, _secColor){
+export function drawNormals(_primitive,_p,_primColor, _secColor){
   var normals = getNormalsOfPrimitive(_primitive);
   var i = 0;
   for (i = 0; i < normals.getSize(); i += 1){
-    LP.draw_vector_origin(normals.get(i),_primColor,_secColor);
+    LP.draw_lineV(_p,LP.v1Plusv2(_p,normals.get(i)),_primColor,_secColor);
   }
 }
 

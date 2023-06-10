@@ -27,6 +27,9 @@ export class LPVector{
   getMag(){
     return Math.sqrt(sqr(this.getX())+sqr(this.getY()))
   }
+  getPrint(){
+    return ` (${this.getX()},${this.getY()}) `;
+  }
 }
 
 export function rotateVector(_v,_theta){
@@ -34,6 +37,12 @@ export function rotateVector(_v,_theta){
   var xdash = vmag * Math.cos(degtorad(_theta));
   var ydash = vmag * Math.sin(degtorad(_theta));
   return new LPVector(xdash,ydash);
+}
+
+export function transformVector(_v, _x, _y, _theta){
+  var v = rotateVector(_v, _theta); //first rotate
+  v.setVector2(new LPVector(v.getX() + _x, v.getY() + _y)); //then translate
+  return v;
 }
 
 export function dotProduct(_v1,_v2){
@@ -46,6 +55,10 @@ export function scalarXvector(_scalar, _vector){
 
 export function v2Minusv1(_v1,_v2){
   return new LPVector(_v2.getX()-_v1.getX(),_v2.getY()-_v1.getY());
+}
+
+export function v1Plusv2(_v1,_v2){
+  return new LPVector(_v1.getX()+_v2.getX(),_v1.getY()+_v2.getY());
 }
 
 export function findLeftPerpendicular(_v){

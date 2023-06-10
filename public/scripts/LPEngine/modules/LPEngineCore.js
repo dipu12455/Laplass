@@ -1,7 +1,7 @@
 //import * as PIXI from './pixi.js';
 
-import {LPVector} from './LPVector.js';
-import {rotateVector} from './LPVector.js';
+import { Primitive } from './LPList.js';
+import {LPVector, transformVector} from './LPVector.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -28,6 +28,12 @@ export function getWorldDelta(){
 
 export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
+}
+
+function moveToWorldCoord(_p){
+  var xx = worldOriginX+(_p.getX()*worldDelta);
+  var yy = worldOriginY-(_p.getY()*worldDelta);
+  return new LPVector(xx,yy);
 }
 
 export function getTicker(){
@@ -61,47 +67,54 @@ export function draw_anchor(x,y,color){
 
 //draws a line between the head of two vectors (using vectors as point input)
 export function draw_lineV(_v1,_v2,color){
+  var v1 = moveToWorldCoord(_v1);
+  var v2 = moveToWorldCoord(_v2);
   drawObject.lineStyle(1, color, 1);
-  drawObject.moveTo(worldOriginX+(_v1.getX()*worldDelta), worldOriginY-(_v1.getY()*worldDelta));
-  drawObject.lineTo(worldOriginX+(_v2.getX()*worldDelta),worldOriginY-(_v2.getY()*worldDelta));
+  drawObject.moveTo(v1.getX(), v1.getY());
+  drawObject.lineTo(v2.getX(),v2.getY());
 }
 
 //takes a vector to take point input
 export function draw_anchorV(_v,color){
+  var v = moveToWorldCoord(_v);
   drawObject.lineStyle(0);
   drawObject.beginFill(color,1);
-  drawObject.drawCircle(worldOriginX+(_v.getX()*worldDelta),worldOriginY-(_v.getY()*worldDelta),2);
+  drawObject.drawCircle(v.getX(),v.getY(),2);
   drawObject.endFill();
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor){
-  draw_line(0,0,_v.getX(),_v.getY(),_lineColor);
-  draw_anchor(_v.getX(),_v.getY(),_anchorColor);
+  var origin = new LPVector(0,0);
+  draw_lineV(origin, _v,_lineColor);
+  draw_anchorV(_v,_anchorColor);
 }
 
-export function draw_primitive(_primitive,_x,_y,_rot,_lineColor,_fillColor, _wireframe){
+export function transform_primitive(_primitive, _x, _y, _rot){
+  var i = 0;
+  var output = new Primitive(new LPVector(0,0)); //this function sets origin to (0,0) for now
+  for (i = 0; i < _primitive.getSize(); i += 1){
+    //get the vertex
+    var vertex = _primitive.get(i);
+
+    //translate the vertex to prim's rot and coord, using new var to leave prim's vertex untouched.
+    var vertex2 = transformVector(vertex,_x,_y,vertex.getTheta()+_rot);
+
+    //add this transformed vertex to new primitive
+    output.add(vertex2);
+  }
+  return output;
+}
+
+export function draw_primitive(_primitive,_lineColor,_fillColor, _wireframe){
   var i = 0;
   var j = 0;
   var path = [];
+
   for (i = 0; i < _primitive.getSize(); i += 1){
-
-    //get the vertices
     var vertex = _primitive.get(i);
-
-    //vertices are still at origin, rotate them here
-    var vertex_rot = rotateVector(vertex,vertex.getTheta()+_rot);
-
-    //translate the vertex, and set it to world coordinate
-    var vertex_trans = new LPVector(0,0);
-    vertex_trans.setVector1(vertex_rot.getX()+_x,vertex_rot.getY()+_y);
-    var xx = vertex_trans.getX();
-    var yy = vertex_trans.getY();
-    xx = worldOriginX+(xx*worldDelta);
-    yy = worldOriginY-(yy*worldDelta);
-    vertex_trans.setVector1(xx,yy);
-
-    path[j]=vertex_trans.getX();
-    path[j+1] = vertex_trans.getY();
+    var vertex2 = moveToWorldCoord(vertex);
+    path[j]=vertex2.getX();
+    path[j+1] = vertex2.getY();
     j = j + 2;
   }
   if (_wireframe == true) {
