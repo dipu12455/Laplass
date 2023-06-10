@@ -1,7 +1,7 @@
 //import * as PIXI from './pixi.js';
 
-import { Primitive } from './LPList.js';
-import {LPVector, transformVector} from './LPVector.js';
+import { getNormalsOfPrimitive } from './LPPrimitives.js';
+import {LPVector, transformVector, v1Plusv2} from './LPVector.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -89,22 +89,6 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor){
   draw_anchorV(_v,_anchorColor);
 }
 
-export function transform_primitive(_primitive, _x, _y, _rot){
-  var i = 0;
-  var output = new Primitive(new LPVector(0,0)); //this function sets origin to (0,0) for now
-  for (i = 0; i < _primitive.getSize(); i += 1){
-    //get the vertex
-    var vertex = _primitive.get(i);
-
-    //translate the vertex to prim's rot and coord, using new var to leave prim's vertex untouched.
-    var vertex2 = transformVector(vertex,_x,_y,vertex.getTheta()+_rot);
-
-    //add this transformed vertex to new primitive
-    output.add(vertex2);
-  }
-  return output;
-}
-
 export function draw_primitive(_primitive,_lineColor,_fillColor, _wireframe){
   var i = 0;
   var j = 0;
@@ -125,6 +109,15 @@ export function draw_primitive(_primitive,_lineColor,_fillColor, _wireframe){
     drawObject.beginFill(_fillColor,1);
     drawObject.drawPolygon(path);
     drawObject.endFill();
+  }
+} // this is inside engineCore and not Primitives because it used PIXI functions. I don't want more than one file to import PIXI
+
+ //put inside the draw function of a scene
+ export function drawNormals(_primitive,_p,_primColor, _secColor){
+  var normals = getNormalsOfPrimitive(_primitive);
+  var i = 0;
+  for (i = 0; i < normals.getSize(); i += 1){
+      draw_lineV(_p,v1Plusv2(_p,normals.get(i)),_primColor,_secColor);
   }
 }
 
