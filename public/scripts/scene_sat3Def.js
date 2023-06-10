@@ -1,5 +1,6 @@
 import * as LP from './LPEngine/LPEngine.js';
 import { obj_Pentagon } from './obj_Pentagon.js';
+import { obj_Triangle } from './obj_triangle.js';
 
 var temp;
 
@@ -22,3 +23,7 @@ export var pentagon = LP.PRIMITIVES.add(temp);
 //create an instance and set its primitive index
 export var ins1 = LP.INSTANCES.add(new obj_Pentagon());
 LP.setPrimitiveIndex(ins1,pentagon);
+
+//make an instance of a different object, and this object has completely different behavior
+export var triangle = LP.INSTANCES.add(new obj_Triangle());
+LP.setPrimitiveIndex(triangle, prim01);

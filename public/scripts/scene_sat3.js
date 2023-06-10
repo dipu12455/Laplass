@@ -8,6 +8,7 @@ var angle = 0;
 
 //get the entity from def file
 var ins1 = S3.ins1;
+var triangle = S3.triangle;
 
 var coeffList, projPointList, min, max;
 
@@ -16,15 +17,17 @@ const axis = new LP.LPVector(8, 2);
 var printed = false;
 
 export function update(_delta) {
-  elapsed += _delta;
-  animate = Math.cos(elapsed / 50.0);
-  animate2 = Math.sin(elapsed / 50.0);
-  angle += 0.3 * _delta;
-
-  //update the attributes of the entity
-  LP.setX(ins1,animate*5);
-  LP.setY(ins1,0);
-  LP.setRot(ins1,angle);
+  var i = 0;
+  /*for (i = 0; LP.INSTANCES.getSize(); i += 1){
+    console.log(`${LP.INSTANCE.get(ins1)}`);
+    LP.INSTANCES.get(i).update(_delta); //call the update function of each instance
+  }*/
+  LP.INSTANCES.get(ins1).update(_delta);
+  LP.INSTANCES.get(triangle).update(_delta);
+  if (printed ==false){
+    printed=true;
+    console.log(`${LP.INSTANCES.get(1)}`);
+  }
 }
 
 export function draw() {
@@ -48,6 +51,16 @@ export function draw() {
   LP.drawNormals(trpent, new LP.LPVector(LP.getX(ins1), LP.getY(ins1)), 0x445500,0x00ff00);
   LP.draw_primitive(trpent,0x00ff00,0xc9f0e8,true);
   //LP.draw_primitive(LP.transform_primitive(prim01,0,0,-animate*4),0x0000ff,0x0,true);
+  draw_instance(triangle);
+}
+
+function draw_instance(_instanceIndex){
+  var trans = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(_instanceIndex)),
+  LP.getX(_instanceIndex),
+  LP.getY(_instanceIndex),
+  LP.getRot(_instanceIndex));
+
+  LP.draw_primitive(trans, 0x00ff00, 0xc9f0e8, true);
 }
 
 //function to plot a list of points on xaxis

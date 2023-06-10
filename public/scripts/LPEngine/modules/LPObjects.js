@@ -13,7 +13,17 @@ export class LPObject{
         this.rotprev = 0;
         this.hspeed = 0;
         this.vspeed = 0;
+        this.vars = new LPList();
     }
+    /*makeVar(_value){
+        return this.vars.add(_value);
+    }
+    getVal(_variableIndex){
+        return this.vars.get(_variableIndex);
+    }
+    setVal(_variableIndex, _value){
+        this.vars.get(_variableIndex) = _value;
+    }*/
     /*getPrimitiveIndex(){
         return this.primitiveIndex;
     }
