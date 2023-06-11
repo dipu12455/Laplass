@@ -1,7 +1,5 @@
 import * as LP from './LPEngine/LPEngine.js';
 
-var temp;
-
 //define a primitive
 var pmTriangle = LP.addPrimitive(new LP.Primitive());
 LP.loadPrimitive(pmTriangle, '/pmTriangle');
@@ -53,7 +51,7 @@ var triangleUpdatefunction = (_instanceIndex, _delta) => {
 const acPentagon = LP.addAction(new LP.Action(pentagonInitFunction,pentagonUpdatefunction));
 const acTriangle = LP.addAction(new LP.Action(triangleInitFunction, triangleUpdatefunction));
 
-//create an instance and set its primitive index
+//create an instance
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
 
 let i = 0;

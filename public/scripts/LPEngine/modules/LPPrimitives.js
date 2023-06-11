@@ -49,7 +49,6 @@ export function loadPrimitive(_index, _primitivePath) {
     .then(response => response.text())
     .then(data => {
       //do something with text data
-      console.log(`Received from server: ${data} `);
       addPrimitiveVerticesFromString(_index, data); //the data variable doesn't exist outside this block, even when value is passed through
     })
     .catch(error => {
@@ -61,7 +60,6 @@ export function loadPrimitive(_index, _primitivePath) {
 function addPrimitiveVerticesFromString(_index, _verticesString) {
   //parse the string and add the vertices to primitive
   let vertices = _verticesString.split(',');
-  console.log(`addPriVert...(): vertices: ${vertices}`);
   let i = 0;
   for (i = 0; i < vertices.length; i += 2) {
     addPrimitiveVertex(_index, parseFloat(vertices[i]), parseFloat(vertices[i + 1]));
