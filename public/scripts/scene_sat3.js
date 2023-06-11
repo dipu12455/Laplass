@@ -55,8 +55,10 @@ export function draw() {
   LP.drawNormals(trpent, new LP.LPVector(LP.getX(ins1), LP.getY(ins1)), 0x445500, 0x00ff00);
   LP.draw_primitive(trpent, 0x00ff00, 0xc9f0e8, true);
   //LP.draw_primitive(LP.transform_primitive(prim01,0,0,-animate*4),0x0000ff,0x0,true);
-  draw_instance(triangle);
-  draw_instance(triangle2);
+  let i = 0;
+  for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
+    draw_instance(i); //call the update action of each instance
+  }
 }
 
 function draw_instance(_instanceIndex) {

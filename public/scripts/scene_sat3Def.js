@@ -27,14 +27,21 @@ export var ins1 = LP.INSTANCES.add(new LP.LPInstance());
 LP.setPrimitiveIndex(ins1, pentagon);
 LP.setActionIndex(ins1, acIns1);
 
-export var triangle = LP.INSTANCES.add(new LP.LPInstance());
+/* export var triangle = LP.INSTANCES.add(new LP.LPInstance());
 LP.setPrimitiveIndex(triangle, prim01);
 LP.setActionIndex(triangle, acTriangle);
 
 //see if this instance acts in its own accord. it also uses the acTriangle action, but they are initialized with different values in the create routine.
 export var triangle2 = LP.INSTANCES.add(new LP.LPInstance());
 LP.setPrimitiveIndex(triangle2, prim01);
-LP.setActionIndex(triangle2, acTriangle);
+LP.setActionIndex(triangle2, acTriangle); */
+
+let i = 0;
+for (i = 0; i < 3; i += 1){
+    let ind = LP.INSTANCES.add(new LP.LPInstance());
+    LP.setPrimitiveIndex(ind, prim01);
+    LP.setActionIndex(ind,acTriangle);
+}
 
 export function createRoutinesOfInstance(_instanceIndex) { //this runs a routine once for an instance when they are first created
     var actionIndex = LP.getActionIndex(_instanceIndex);
@@ -44,7 +51,7 @@ export function createRoutinesOfInstance(_instanceIndex) { //this runs a routine
             break;
         case acTriangle:
             LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0; //this is varslot '0' of a different instance
-            LP.makeVar(_instanceIndex, Math.random() * 2.5); //(1)rand = something
+            LP.makeVar(_instanceIndex, Math.random() * 5); //(1)rand = something
             break;
     }
 }
@@ -89,6 +96,6 @@ function acTriangle_function(_instanceIndex, _delta){
     var rand = LP.getVal(_instanceIndex, 1);//... = (1)rand
 
     LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) - rand * _delta);
-    LP.setX(_instanceIndex, animate * 5);
-    LP.setY(_instanceIndex, animate2 * 5);
+    LP.setX(_instanceIndex, animate * rand);
+    LP.setY(_instanceIndex, animate2 * rand);
 }
