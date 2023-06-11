@@ -22,22 +22,19 @@ export function update(_delta) {
   if (initExecuted == false) {
     initExecuted = true;
     //run the createRoutine for instances, a set of routines to set preset state of each instance
-    let i = 0;
-    for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
-      S3.createRoutinesOfInstance(i);
-    }
+    LP.initInstances(S3.instanceInitRoutine);
   }
 
   let i = 0;
   for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
-    S3.updateInstance(i, _delta); //call the update action of each instance
+    S3.instanceUpdateRoutine(i, _delta); //call the update action of each instance
   }
 }
 
 export function draw() {
   LP.draw_lineV(new LP.LPVector(0, 0), axis, 0x000000, 0x0000ff); //dont wanna see anchor just line
 
-  var trpent = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(ins1)), LP.getX(ins1), LP.getY(ins1), LP.getRot(ins1));
+  var trpent = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex(ins1)), LP.getX(ins1), LP.getY(ins1), LP.getRot(ins1));
   //get a list of coefficients for each point.
   coeffList = LP.getCoefficientsOfProjection(trpent, axis); //it outputs list of scalars
   //get index of the min and max points, to color them differently in both the axisVector plot and the x-axis plot
@@ -62,7 +59,7 @@ export function draw() {
 }
 
 function draw_instance(_instanceIndex) {
-  var trans = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(_instanceIndex)),
+  var trans = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex(_instanceIndex)),
     LP.getX(_instanceIndex),
     LP.getY(_instanceIndex),
     LP.getRot(_instanceIndex));

@@ -3,50 +3,35 @@ import * as LP from './LPEngine/LPEngine.js';
 var temp;
 
 //define a primitive
-temp = new LP.Primitive(new LP.LPVector(0, 0));
-temp.add(new LP.LPVector(2, 2)); //LPVectors are the so similar to vertices, so just using them
-temp.add(new LP.LPVector(-2, 1));
-temp.add(new LP.LPVector(-2, -2));
-export var prim01 = LP.PRIMITIVES.add(temp);
+var pmTriangle = LP.addPrimitive(new LP.Primitive());
+LP.addPrimitiveVertex(pmTriangle, 2, 2); //LPVectors are the so similar to vertices, so just using them
+LP.addPrimitiveVertex(pmTriangle, -2, 1);
+LP.addPrimitiveVertex(pmTriangle, -2, -2);
 
 //pentagon
-temp = new LP.Primitive(new LP.LPVector(0, 0));
-temp.add(new LP.LPVector(-5, 1));
-temp.add(new LP.LPVector(0, 6));
-temp.add(new LP.LPVector(5, 1));
-temp.add(new LP.LPVector(3, -5));
-temp.add(new LP.LPVector(-3, -5));
-export var pentagon = LP.PRIMITIVES.add(temp);
+var pmPentagon = LP.addPrimitive(new LP.Primitive());
+LP.addPrimitiveVertex(pmPentagon, -5, 1);
+LP.addPrimitiveVertex(pmPentagon, 0, 6);
+LP.addPrimitiveVertex(pmPentagon, 5, 1);
+LP.addPrimitiveVertex(pmPentagon, 3, -5);
+LP.addPrimitiveVertex(pmPentagon, -3, -5);
 
 //define action index
-const acIns1 = 0;
+const acPentagon = 0;
 const acTriangle = 1;
 
 //create an instance and set its primitive index
-export var ins1 = LP.INSTANCES.add(new LP.LPInstance());
-LP.setPrimitiveIndex(ins1, pentagon);
-LP.setActionIndex(ins1, acIns1);
-
-/* export var triangle = LP.INSTANCES.add(new LP.LPInstance());
-LP.setPrimitiveIndex(triangle, prim01);
-LP.setActionIndex(triangle, acTriangle);
-
-//see if this instance acts in its own accord. it also uses the acTriangle action, but they are initialized with different values in the create routine.
-export var triangle2 = LP.INSTANCES.add(new LP.LPInstance());
-LP.setPrimitiveIndex(triangle2, prim01);
-LP.setActionIndex(triangle2, acTriangle); */
+export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
 
 let i = 0;
 for (i = 0; i < 3; i += 1){
-    let ind = LP.INSTANCES.add(new LP.LPInstance());
-    LP.setPrimitiveIndex(ind, prim01);
-    LP.setActionIndex(ind,acTriangle);
+    let ind = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acTriangle);
 }
 
-export function createRoutinesOfInstance(_instanceIndex) { //this runs a routine once for an instance when they are first created
+export var instanceInitRoutine = (_instanceIndex) => { //this runs a routine once for an instance when they are first created
     var actionIndex = LP.getActionIndex(_instanceIndex);
     switch (actionIndex) {
-        case acIns1:
+        case acPentagon:
             LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0;
             break;
         case acTriangle:
@@ -56,11 +41,11 @@ export function createRoutinesOfInstance(_instanceIndex) { //this runs a routine
     }
 }
 
-export function updateInstance(_instanceIndex, _delta) { //this functions runs for an instance each time the frame is updated
+export function instanceUpdateRoutine(_instanceIndex, _delta) { //this functions runs for an instance each time the frame is updated
     var actionIndex = LP.getActionIndex(_instanceIndex);
     switch (actionIndex) {
-        case acIns1:
-            acIns1_function(_instanceIndex, _delta);
+        case acPentagon:
+            acPentagon_function(_instanceIndex, _delta);
             break;
         case acTriangle:
             acTriangle_function(_instanceIndex, _delta);
@@ -70,7 +55,7 @@ export function updateInstance(_instanceIndex, _delta) { //this functions runs f
     }
 }
 
-function acIns1_function(_instanceIndex, _delta) {
+function acPentagon_function(_instanceIndex, _delta) {
     //the following is how we are using persistent variables on an each instance basis
     //the '0' is the index of that persistent variable for this particular instance
     //for now, the programmer remembers what index they are using for an instance's persitent variable,

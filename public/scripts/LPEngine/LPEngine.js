@@ -15,6 +15,8 @@ export { LPList } from './modules/LPList.js';
 //LPInstances
 export { LPInstance } from './modules/LPInstances.js';
 export { INSTANCES } from './modules/LPInstances.js';
+export { addInstance } from './modules/LPInstances.js';
+export { initInstances } from './modules/LPInstances.js';
 export { getPrimitiveIndex } from './modules/LPInstances.js';
 export { setPrimitiveIndex } from './modules/LPInstances.js';
 export { getActionIndex } from './modules/LPInstances.js';
@@ -36,7 +38,9 @@ export { setVal } from './modules/LPInstances.js'
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
-export { PRIMITIVES } from './modules/LPPrimitives.js'
+export { addPrimitive } from './modules/LPPrimitives.js'
+export { getPrimitive } from './modules/LPPrimitives.js'
+export { addPrimitiveVertex } from './modules/LPPrimitives.js'
 export { transform_primitive } from './modules/LPPrimitives.js';
 
 //LPEngineCore

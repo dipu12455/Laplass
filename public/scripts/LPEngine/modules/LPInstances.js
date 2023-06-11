@@ -97,6 +97,24 @@ export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
 //if you make changes to x or y or even the spriteindex, you change one instance of that object, not all of them.
 //object files are part of game code, not LP code.
 
+//some functions to manipulate the INSTANCES list, to make it more readable.
+
+//create an instance (new LP.LPInstance), then provide that object as argument
+export function addInstance(_instance, _primitiveIndex, _spriteIndex, _actionIndex){
+    let ind = INSTANCES.add(_instance);
+    setPrimitiveIndex(ind,_primitiveIndex);
+    setSpriteIndex(ind, _spriteIndex);
+    setActionIndex(ind, _actionIndex);
+    return ind;
+}
+
+export function initInstances(_instanceInitRoutine){
+    let i = 0;
+    for (i = 0; i < INSTANCES.getSize(); i += 1) {
+      _instanceInitRoutine(i);
+    }
+}
+
 //the instances are registered with game engine and they live in this file in the INSTANCES list. the following functions are used to access
 //and change attrs of instances
 
