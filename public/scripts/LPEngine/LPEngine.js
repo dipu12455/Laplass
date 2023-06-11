@@ -66,3 +66,8 @@ export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';
 export { getCoefficientsOfProjection } from './modules/LPCollision.js';
 export { findMin } from './modules/LPCollision.js';
 export { findMax } from './modules/LPCollision.js';
+
+//LPActions
+export { Action } from './modules/LPActions.js';
+export { addAction } from './modules/LPActions.js';
+export { getAction } from './modules/LPActions.js';
