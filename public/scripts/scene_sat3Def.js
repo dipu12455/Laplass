@@ -39,7 +39,7 @@ var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function
 
     LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 0.3 * _delta);
     LP.setX(_instanceIndex, animate * 5);
-    LP.setY(_instanceIndex, animate2 * 5);
+    LP.setY(_instanceIndex, 0);
 }
 
 var triangleUpdatefunction = (_instanceIndex, _delta) => {
