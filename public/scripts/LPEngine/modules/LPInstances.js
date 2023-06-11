@@ -1,7 +1,7 @@
 import { LPList } from "./LPList.js";
 
-export class LPInstance{
-    constructor(){
+export class LPInstance {
+    constructor() {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
         this.actionIndex = -1;
@@ -60,33 +60,33 @@ export class LPInstance{
     }*/
 }
 
-class LPInstanceList extends LPList{
-    constructor(){
+class LPInstanceList extends LPList {
+    constructor() {
         super();
         this.NullList = []; //stores boolean true or false values
     }
-    isNull(_index){
+    isNull(_index) {
         return this.NullList[_index];
     }
-    setNull(_index, _value){
+    setNull(_index, _value) {
         this.NullList[_index] = _value;
     }
-    add(_item){
+    add(_item) {
         // add the item
 
         //first see if there is a null spot
         var i = 0;
-        for (i = 0; i < this.getSize(); i += 1){
-            if (this.isNull(i)){
-                this.setNull(i,false);
-                this.put(_item,i);
+        for (i = 0; i < this.getSize(); i += 1) {
+            if (this.isNull(i)) {
+                this.setNull(i, false);
+                this.put(_item, i);
                 return i; //return the index
             }
         }
         this.array[this.indexCounter] = _item;
         this.indexCounter += 1;
-        return this.indexCounter-1;
-      }
+        return this.indexCounter - 1;
+    }
 }
 
 
@@ -100,78 +100,85 @@ export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
 //some functions to manipulate the INSTANCES list, to make it more readable.
 
 //create an instance (new LP.LPInstance), then provide that object as argument
-export function addInstance(_instance, _primitiveIndex, _spriteIndex, _actionIndex){
+export function addInstance(_instance, _primitiveIndex, _spriteIndex, _actionIndex) {
     let ind = INSTANCES.add(_instance);
-    setPrimitiveIndex(ind,_primitiveIndex);
+    setPrimitiveIndex(ind, _primitiveIndex);
     setSpriteIndex(ind, _spriteIndex);
     setActionIndex(ind, _actionIndex);
     return ind;
 }
 
-export function initInstances(_instanceInitRoutine){
+export function initInstances(_instanceInitRoutine) {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-      _instanceInitRoutine(i);
+        _instanceInitRoutine(i);
+    }
+}
+
+export function updateInstances(_instanceUpdateRoutine, _delta) {
+    let i = 0;
+    for (i = 0; i < INSTANCES.getSize(); i += 1) {
+        _instanceUpdateRoutine(i, _delta); //call the update action of each instance
     }
 }
 
 //the instances are registered with game engine and they live in this file in the INSTANCES list. the following functions are used to access
 //and change attrs of instances
 
-export function getPrimitiveIndex(_index){
+export function getPrimitiveIndex(_index) {
     return INSTANCES.get(_index).primitiveIndex;
 }
-export function setPrimitiveIndex(_index, _primitiveIndex){
+export function setPrimitiveIndex(_index, _primitiveIndex) {
     INSTANCES.get(_index).primitiveIndex = _primitiveIndex;
 }
-export function getSpriteIndex(_index){
+export function getSpriteIndex(_index) {
     return INSTANCES.get(_index).spriteIndex;
 }
-export function setSpriteIndex(_index, _spriteIndex){
+export function setSpriteIndex(_index, _spriteIndex) {
     INSTANCES.get(_index).spriteIndex = _spriteIndex;
 }
-export function getActionIndex(_index){
+export function getActionIndex(_index) {
     return INSTANCES.get(_index).actionIndex;
 }
-export function setActionIndex(_index, _actionIndex){
+export function setActionIndex(_index, _actionIndex) {
     INSTANCES.get(_index).actionIndex = _actionIndex;
 }
-export function setX(_index, _x){
+export function setX(_index, _x) {
     INSTANCES.get(_index).xprev = INSTANCES.get(_index).x;
     INSTANCES.get(_index).x = _x;
 }
-export function setY(_index, _y){
+export function setY(_index, _y) {
     INSTANCES.get(_index).yprev = INSTANCES.get(_index).y;
     INSTANCES.get(_index).y = _y;
 }
-export function setRot(_index, _rot){
+export function setRot(_index, _rot) {
     INSTANCES.get(_index).rotprev = INSTANCES.get(_index).rot;
     INSTANCES.get(_index).rot = _rot;
 }
-export function getX(_index){
+export function getX(_index) {
     return INSTANCES.get(_index).x;
 }
-export function getY(_index){
+export function getY(_index) {
     return INSTANCES.get(_index).y;
 }
-export function getRot(_index){
+export function getRot(_index) {
     return INSTANCES.get(_index).rot;
 }
-export function getPrevX(_index){
+export function getPrevX(_index) {
     return INSTANCES.get(_index).prevX;
 }
-export function getPrevY(_index){
+export function getPrevY(_index) {
     return INSTANCES.get(_index).prevY;
 }
-export function getPrevRot(_index){
+export function getPrevRot(_index) {
     return INSTANCES.get(_index).prevRot;
 }
-export function makeVar(_index, _value){
+export function makeVar(_index, _value) {
     return INSTANCES.get(_index).vars.add(_value);
 }
-export function getVal(_index, _variableIndex){
+export function getVal(_index, _variableIndex) {
     return INSTANCES.get(_index).vars.get(_variableIndex);
 }
-export function setVal(_index, _variableIndex, _value){
+export function setVal(_index, _variableIndex, _value) {
     INSTANCES.get(_index).vars.put(_value, _variableIndex);
 }

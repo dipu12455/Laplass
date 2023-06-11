@@ -41,7 +41,7 @@ export var instanceInitRoutine = (_instanceIndex) => { //this runs a routine onc
     }
 }
 
-export function instanceUpdateRoutine(_instanceIndex, _delta) { //this functions runs for an instance each time the frame is updated
+export var instanceUpdateRoutine = (_instanceIndex, _delta) => { //this functions runs for an instance each time the frame is updated
     var actionIndex = LP.getActionIndex(_instanceIndex);
     switch (actionIndex) {
         case acPentagon:
@@ -68,8 +68,8 @@ function acPentagon_function(_instanceIndex, _delta) {
     var animate2 = Math.sin(elapsed / 50.0);
 
     LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 0.3 * _delta);
-    LP.setX(_instanceIndex, animate * 5);
-    LP.setY(_instanceIndex, 0);
+    LP.setX(_instanceIndex, 0);
+    LP.setY(_instanceIndex, animate * 5);
 }
 
 function acTriangle_function(_instanceIndex, _delta){

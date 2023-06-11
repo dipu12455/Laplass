@@ -17,6 +17,7 @@ export { LPInstance } from './modules/LPInstances.js';
 export { INSTANCES } from './modules/LPInstances.js';
 export { addInstance } from './modules/LPInstances.js';
 export { initInstances } from './modules/LPInstances.js';
+export { updateInstances } from './modules/LPInstances.js';
 export { getPrimitiveIndex } from './modules/LPInstances.js';
 export { setPrimitiveIndex } from './modules/LPInstances.js';
 export { getActionIndex } from './modules/LPInstances.js';
