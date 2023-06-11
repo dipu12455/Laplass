@@ -25,7 +25,7 @@ var triangleInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, Math.random() * 5); //(1)rand = something
 }
 
-var pentagonUpdatefunction = (_instanceIndex, _delta) => {
+var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function of each action needs to contain the exact same parameters.
     //the following is how we are using persistent variables on an each instance basis
     //the '0' is the index of that persistent variable for this particular instance
     //for now, the programmer remembers what index they are using for an instance's persitent variable,
@@ -58,37 +58,6 @@ var triangleUpdatefunction = (_instanceIndex, _delta) => {
 //define action indices
 const acPentagon = LP.addAction(new LP.Action(pentagonInitFunction,pentagonUpdatefunction));
 const acTriangle = LP.addAction(new LP.Action(triangleInitFunction, triangleUpdatefunction));
-
-export var instanceInitRoutine = (_instanceIndex) => { //this runs a routine once for an instance when they are first created
-    var actionIndex = LP.getActionIndex(_instanceIndex);
-    var initFunction = LP.getAction(actionIndex).getInitFunction();
-    initFunction(_instanceIndex);
-    /* switch (actionIndex) {
-        case acPentagon:
-            LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0;
-            break;
-        case acTriangle:
-            LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0; //this is varslot '0' of a different instance
-            LP.makeVar(_instanceIndex, Math.random() * 5); //(1)rand = something
-            break;
-    } */
-}
-
-export var instanceUpdateRoutine = (_instanceIndex, _delta) => { //this functions runs for an instance each time the frame is updated
-    var actionIndex = LP.getActionIndex(_instanceIndex);
-    var updateFunction = LP.getAction(actionIndex).getUpdateFunction();
-    updateFunction(_instanceIndex, _delta);
-    /* switch (actionIndex) {
-        case acPentagon:
-            acPentagon_function(_instanceIndex, _delta);
-            break;
-        case acTriangle:
-            acTriangle_function(_instanceIndex, _delta);
-            break;
-        default:
-        //do nothin
-    } */
-}
 
 //create an instance and set its primitive index
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);

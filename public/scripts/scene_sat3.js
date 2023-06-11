@@ -22,9 +22,9 @@ export function update(_delta) {
   if (initExecuted == false) {
     initExecuted = true;
     //run the createRoutine for instances, a set of routines to set preset state of each instance
-    LP.initInstances(S3.instanceInitRoutine);
+    LP.initInstances();
   }
-  LP.updateInstances(S3.instanceUpdateRoutine, _delta);
+  LP.updateInstances(_delta);
 }
 
 export function draw() {

@@ -1,4 +1,5 @@
 import { LPList } from "./LPList.js";
+import { getAction } from "./LPActions.js";
 
 export class LPInstance {
     constructor() {
@@ -108,17 +109,21 @@ export function addInstance(_instance, _primitiveIndex, _spriteIndex, _actionInd
     return ind;
 }
 
-export function initInstances(_instanceInitRoutine) {
+export function initInstances() {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        _instanceInitRoutine(i);
+        var actionIndex = getActionIndex(i);
+        var initFunction = getAction(actionIndex).getInitFunction();
+        initFunction(i);
     }
 }
 
-export function updateInstances(_instanceUpdateRoutine, _delta) {
+export function updateInstances(_delta) {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        _instanceUpdateRoutine(i, _delta); //call the update action of each instance
+        var actionIndex = getActionIndex(i);
+        var updateFunction = getAction(actionIndex).getUpdateFunction();
+        updateFunction(i,_delta);
     }
 }
 
