@@ -5,7 +5,7 @@ import { findLeftPerpendicular } from './LPVector.js';
 import { transformVector } from "./LPVector.js";
 
 export class Primitive extends LPList {
-  constructor() {
+  constructor() { //in this case the _primitivePath is the route to the server for the primitive text file
     super();
     this.xorigin = 0;
     this.yorigin = 0;
@@ -25,6 +25,7 @@ export class Primitive extends LPList {
     }
     return output;
   }
+
 }
 
 var PRIMITIVES = new LPList(); //list of all primitives in LPE
@@ -33,12 +34,38 @@ export function addPrimitive(_primitive) {
   return PRIMITIVES.add(_primitive);
 }
 
-export function getPrimitive(_index){
+export function getPrimitive(_index) {
   return PRIMITIVES.get(_index);
 }
 
 export function addPrimitiveVertex(_index, _vx, _vy) {
   PRIMITIVES.get(_index).add(new LPVector(_vx, _vy));
+}
+
+export function loadPrimitive(_index, _primitivePath) {
+  var verticesString = '';
+  //get the primitive file from the route that is provided as argument
+  fetch(_primitivePath)
+    .then(response => response.text())
+    .then(data => {
+      //do something with text data
+      console.log(`Received from server: ${data} `);
+      addPrimitiveVerticesFromString(_index, data); //the data variable doesn't exist outside this block, even when value is passed through
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    })
+
+}
+
+function addPrimitiveVerticesFromString(_index, _verticesString) {
+  //parse the string and add the vertices to primitive
+  let vertices = _verticesString.split(',');
+  console.log(`addPriVert...(): vertices: ${vertices}`);
+  let i = 0;
+  for (i = 0; i < vertices.length; i += 2) {
+    addPrimitiveVertex(_index, parseFloat(vertices[i]), parseFloat(vertices[i + 1]));
+  }
 }
 
 //primitive needs to be defined in vertex list

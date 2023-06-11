@@ -39,9 +39,10 @@ export { setVal } from './modules/LPInstances.js'
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
-export { addPrimitive } from './modules/LPPrimitives.js'
-export { getPrimitive } from './modules/LPPrimitives.js'
-export { addPrimitiveVertex } from './modules/LPPrimitives.js'
+export { addPrimitive } from './modules/LPPrimitives.js';
+export { getPrimitive } from './modules/LPPrimitives.js';
+export { loadPrimitive } from './modules/LPPrimitives.js';
+export { addPrimitiveVertex } from './modules/LPPrimitives.js';
 export { transform_primitive } from './modules/LPPrimitives.js';
 
 //LPEngineCore

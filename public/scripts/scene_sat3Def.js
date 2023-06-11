@@ -4,17 +4,11 @@ var temp;
 
 //define a primitive
 var pmTriangle = LP.addPrimitive(new LP.Primitive());
-LP.addPrimitiveVertex(pmTriangle, 2, 2); //LPVectors are the so similar to vertices, so just using them
-LP.addPrimitiveVertex(pmTriangle, -2, 1);
-LP.addPrimitiveVertex(pmTriangle, -2, -2);
+LP.loadPrimitive(pmTriangle, '/pmTriangle');
 
 //pentagon
 var pmPentagon = LP.addPrimitive(new LP.Primitive());
-LP.addPrimitiveVertex(pmPentagon, -5, 1);
-LP.addPrimitiveVertex(pmPentagon, 0, 6);
-LP.addPrimitiveVertex(pmPentagon, 5, 1);
-LP.addPrimitiveVertex(pmPentagon, 3, -5);
-LP.addPrimitiveVertex(pmPentagon, -3, -5);
+LP.loadPrimitive(pmPentagon, '/pmPentagon');
 
 var pentagonInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0;
