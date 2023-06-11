@@ -9,31 +9,35 @@ var angle = 0;
 //get the entity from def file
 var ins1 = S3.ins1;
 var triangle = S3.triangle;
+var triangle2 = S3.triangle2;
 
 var coeffList, projPointList, min, max;
 
 //define the axis we are testing on
 const axis = new LP.LPVector(8, 2);
 var printed = false;
+var initExecuted = false;
 
 export function update(_delta) {
-  var i = 0;
-  /*for (i = 0; LP.INSTANCES.getSize(); i += 1){
-    console.log(`${LP.INSTANCE.get(ins1)}`);
-    LP.INSTANCES.get(i).update(_delta); //call the update function of each instance
-  }*/
-  LP.INSTANCES.get(ins1).update(_delta);
-  LP.INSTANCES.get(triangle).update(_delta);
-  if (printed ==false){
-    printed=true;
-    console.log(`${LP.INSTANCES.get(1)}`);
+  if (initExecuted == false) {
+    initExecuted = true;
+    //run the createRoutine for instances, a set of routines to set preset state of each instance
+    let i = 0;
+    for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
+      S3.createRoutinesOfInstance(i);
+    }
+  }
+
+  let i = 0;
+  for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
+    S3.updateInstance(i, _delta); //call the update action of each instance
   }
 }
 
 export function draw() {
   LP.draw_lineV(new LP.LPVector(0, 0), axis, 0x000000, 0x0000ff); //dont wanna see anchor just line
 
-  var trpent = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(ins1)),LP.getX(ins1),LP.getY(ins1),LP.getRot(ins1));
+  var trpent = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(ins1)), LP.getX(ins1), LP.getY(ins1), LP.getRot(ins1));
   //get a list of coefficients for each point.
   coeffList = LP.getCoefficientsOfProjection(trpent, axis); //it outputs list of scalars
   //get index of the min and max points, to color them differently in both the axisVector plot and the x-axis plot
@@ -47,24 +51,25 @@ export function draw() {
 
   //plot projected vectors on the axisVector itself
   draw_plotVectorList(projPointList, min, max);
-  
-  LP.drawNormals(trpent, new LP.LPVector(LP.getX(ins1), LP.getY(ins1)), 0x445500,0x00ff00);
-  LP.draw_primitive(trpent,0x00ff00,0xc9f0e8,true);
+
+  LP.drawNormals(trpent, new LP.LPVector(LP.getX(ins1), LP.getY(ins1)), 0x445500, 0x00ff00);
+  LP.draw_primitive(trpent, 0x00ff00, 0xc9f0e8, true);
   //LP.draw_primitive(LP.transform_primitive(prim01,0,0,-animate*4),0x0000ff,0x0,true);
   draw_instance(triangle);
+  draw_instance(triangle2);
 }
 
-function draw_instance(_instanceIndex){
+function draw_instance(_instanceIndex) {
   var trans = LP.transform_primitive(LP.PRIMITIVES.get(LP.getPrimitiveIndex(_instanceIndex)),
-  LP.getX(_instanceIndex),
-  LP.getY(_instanceIndex),
-  LP.getRot(_instanceIndex));
+    LP.getX(_instanceIndex),
+    LP.getY(_instanceIndex),
+    LP.getRot(_instanceIndex));
 
   LP.draw_primitive(trans, 0x00ff00, 0xc9f0e8, true);
 }
 
 //function to plot a list of points on xaxis
-function draw_plotPointsXaxis(_pointsList, _scale, _min, _max){
+function draw_plotPointsXaxis(_pointsList, _scale, _min, _max) {
   var i = 0;
   for (i = 0; i < _pointsList.getSize(); i += 1) {
     var p = _pointsList.get(i);
@@ -80,7 +85,7 @@ function draw_plotPointsXaxis(_pointsList, _scale, _min, _max){
   }
 }
 
-function draw_plotVectorList(_vectorList, _min, _max){
+function draw_plotVectorList(_vectorList, _min, _max) {
   var i = 0;
   for (i = 0; i < _vectorList.getSize(); i += 1) {
     var p = _vectorList.get(i);

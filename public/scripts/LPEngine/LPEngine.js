@@ -12,22 +12,27 @@ export { transformVector } from './modules/LPVector.js';
 //LPList
 export { LPList } from './modules/LPList.js';
 
-//LPEntity
-export { LPObject } from './modules/LPObjects.js';
-export { INSTANCES } from './modules/LPObjects.js';
-export { getPrimitiveIndex } from './modules/LPObjects.js';
-export { setPrimitiveIndex } from './modules/LPObjects.js';
-export { getSpriteIndex } from './modules/LPObjects.js';
-export { setSpriteIndex } from './modules/LPObjects.js';
-export { setX } from './modules/LPObjects.js';
-export { setY } from './modules/LPObjects.js';
-export { setRot } from './modules/LPObjects.js';
-export { getX } from './modules/LPObjects.js';
-export { getY } from './modules/LPObjects.js';
-export { getRot } from './modules/LPObjects.js';
-export { getPrevX } from './modules/LPObjects.js';
-export { getPrevY } from './modules/LPObjects.js';
-export { getPrevRot } from './modules/LPObjects.js';
+//LPInstances
+export { LPInstance } from './modules/LPInstances.js';
+export { INSTANCES } from './modules/LPInstances.js';
+export { getPrimitiveIndex } from './modules/LPInstances.js';
+export { setPrimitiveIndex } from './modules/LPInstances.js';
+export { getActionIndex } from './modules/LPInstances.js';
+export { setActionIndex } from './modules/LPInstances.js';
+export { getSpriteIndex } from './modules/LPInstances.js';
+export { setSpriteIndex } from './modules/LPInstances.js';
+export { setX } from './modules/LPInstances.js';
+export { setY } from './modules/LPInstances.js';
+export { setRot } from './modules/LPInstances.js';
+export { getX } from './modules/LPInstances.js';
+export { getY } from './modules/LPInstances.js';
+export { getRot } from './modules/LPInstances.js';
+export { getPrevX } from './modules/LPInstances.js';
+export { getPrevY } from './modules/LPInstances.js';
+export { getPrevRot } from './modules/LPInstances.js';
+export { makeVar } from './modules/LPInstances.js'
+export { getVal } from './modules/LPInstances.js'
+export { setVal } from './modules/LPInstances.js'
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';

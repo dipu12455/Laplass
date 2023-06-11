@@ -1,11 +1,8 @@
 import * as LP from './LPEngine/LPEngine.js';
 
-export class obj_Pentagon extends LP.LPObject {
-    constructor(){
-        super();
-        this.elapsed = 0;
-    }
-    update(_delta) {
+elapsed = 0;
+
+export function update(_delta, _instanceIndex) {
         this.elapsed += _delta;
         var animate = Math.cos(this.elapsed / 50.0);
         var animate2 = Math.sin(this.elapsed / 50.0);
@@ -14,4 +11,3 @@ export class obj_Pentagon extends LP.LPObject {
         this.x = animate * 5;
         this.y = 0;
     }
-}
