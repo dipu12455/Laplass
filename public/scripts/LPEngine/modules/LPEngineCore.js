@@ -11,12 +11,12 @@ var worldOriginX, worldOriginY, worldDelta;
 var screenGrid=false;
 var updateOperations;
 
-export function init(_document, _width, _height){
+export function init(_window, _width, _height){
   worldOriginX = _width/2;
   worldOriginY = _height/2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
   app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
-  _document.body.appendChild(app.view);
+  _window.document.body.appendChild(app.view);
 
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);

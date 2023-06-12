@@ -3,19 +3,8 @@ import * as LP from './LPEngine/LPEngine.js';
 import * as Scene_sat3 from './scene_sat3.js';
 
 //these functions need to be run in this exact order
-LP.init(document,640,480);
+LP.init(window,640,480);
 LP.showScreenGrid(); //display the screen grid
-
-//file test
-fetch('/test.txt')
-.then(response => response.text())
-.then(data => {
-  //do something with text data
-  console.log(data);
-})
-.catch(error => {
-  console.error('Error:', error);
-})
 
 //need to hide implementation of this ticker for this animation, because it's the job of LPEngine and not the client program
 LP.getTicker().add((delta) => {
