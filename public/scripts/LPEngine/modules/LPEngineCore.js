@@ -16,7 +16,7 @@ export function init(_window, _width, _height){
   worldOriginY = _height/2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
   app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
-  _window.document.body.appendChild(app.view);
+  _window.document.body.appendChild(app.view); //usually you would only work with document object, but LP needs the window object for event actions, so we are just taking in the whole window object.
 
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);
