@@ -13,11 +13,11 @@ app.get('/test.txt', (req, res) => {
 });
 
 app.get('/pmTriangle', (req, res) => {
-  res.sendFile(__dirname + '/pmTriangle.txt');
+  res.sendFile(__dirname + '/pmTriangle.pm');
 });
 
 app.get('/pmPentagon', (req, res) => {
-  res.sendFile(__dirname + '/pmPentagon.txt');
+  res.sendFile(__dirname + '/pmPentagon.pm');
 });
 
 app.listen(port, () => {
