@@ -1,6 +1,6 @@
 //import * as PIXI from './pixi.js';
 
-import { getNormalsOfPrimitive } from './LPPrimitives.js';
+import { getLineColor, getNormalsOfPrimitive } from './LPPrimitives.js';
 import {LPVector, transformVector, v1Plusv2} from './LPVector.js';
 
 // these variables need to be referenced from all functions
@@ -89,7 +89,11 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor){
   draw_anchorV(_v,_anchorColor);
 }
 
-export function draw_primitive(_primitive,_lineColor,_fillColor, _wireframe){
+export function draw_primitive(_primitive){
+  var lineColor = _primitive.lineColor; //not using getLineColor() because inside LPE, we don't work with indices, just the object directly
+  var fillColor = _primitive.fillColor;
+  var wireframe = _primitive.wireframe;
+  
   var i = 0;
   var j = 0;
   var path = [];
@@ -101,12 +105,12 @@ export function draw_primitive(_primitive,_lineColor,_fillColor, _wireframe){
     path[j+1] = vertex2.getY();
     j = j + 2;
   }
-  if (_wireframe == true) {
-    drawObject.lineStyle(1,_lineColor,1);
+  if (wireframe == true) {
+    drawObject.lineStyle(1,lineColor,1);
     drawObject.drawPolygon(path);
   }else{
     drawObject.lineStyle(0);
-    drawObject.beginFill(_fillColor,1);
+    drawObject.beginFill(fillColor,1);
     drawObject.drawPolygon(path);
     drawObject.endFill();
   }

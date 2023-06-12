@@ -60,7 +60,7 @@ function draw_instance(_instanceIndex) {
     LP.getY(_instanceIndex),
     LP.getRot(_instanceIndex));
 
-  LP.draw_primitive(trans, 0x00ff00, 0xc9f0e8, true);
+  LP.draw_primitive(trans);//, 0x00ff00, 0xc9f0e8, true);
 }
 
 //function to plot a list of points on xaxis
