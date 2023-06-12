@@ -2,6 +2,7 @@
 
 import { getLineColor, getNormalsOfPrimitive } from './LPPrimitives.js';
 import {LPVector, transformVector, v1Plusv2} from './LPVector.js';
+import { LPEventsInit } from './LPEvents.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -17,6 +18,8 @@ export function init(_window, _width, _height){
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
   app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
   _window.document.body.appendChild(app.view); //usually you would only work with document object, but LP needs the window object for event actions, so we are just taking in the whole window object.
+
+  LPEventsInit(_window);
 
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);
