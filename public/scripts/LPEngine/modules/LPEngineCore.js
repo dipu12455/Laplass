@@ -10,7 +10,6 @@ var drawObject;
 var drawOperations; //variable to hold the user coded draw function
 var worldOriginX, worldOriginY, worldDelta;
 var screenGrid=false;
-var updateOperations;
 
 export function init(_window, _width, _height){
   worldOriginX = _width/2;
@@ -23,6 +22,10 @@ export function init(_window, _width, _height){
 
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);
+}
+
+export function getWorldOrigin(){
+  return new LPVector(worldOriginX, worldOriginY);
 }
 
 export function getWorldDelta(){

@@ -1,5 +1,6 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
+import { LPVector } from "./LPVector.js";
 
 export class LPInstance {
     constructor() {
@@ -123,7 +124,7 @@ export function updateInstances(_delta) {
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         var actionIndex = getActionIndex(i);
         var updateFunction = getAction(actionIndex).getUpdateFunction();
-        updateFunction(i,_delta);
+        updateFunction(i, _delta);
     }
 }
 
@@ -156,6 +157,13 @@ export function setY(_index, _y) {
     INSTANCES.get(_index).yprev = INSTANCES.get(_index).y;
     INSTANCES.get(_index).y = _y;
 }
+export function setPosition(_index, _p) { //takes in a point (vector) as argument
+    INSTANCES.get(_index).xprev = INSTANCES.get(_index).x;
+    INSTANCES.get(_index).yprev = INSTANCES.get(_index).y;
+
+    INSTANCES.get(_index).x = _p.getX();
+    INSTANCES.get(_index).y = _p.getY();
+}
 export function setRot(_index, _rot) {
     INSTANCES.get(_index).rotprev = INSTANCES.get(_index).rot;
     INSTANCES.get(_index).rot = _rot;
@@ -165,6 +173,10 @@ export function getX(_index) {
 }
 export function getY(_index) {
     return INSTANCES.get(_index).y;
+}
+export function getPosition(_index) {
+    return new LPVector(INSTANCES.get(_index).x,
+        INSTANCES.get(_index).y);
 }
 export function getRot(_index) {
     return INSTANCES.get(_index).rot;

@@ -26,9 +26,11 @@ export { getSpriteIndex } from './modules/LPInstances.js';
 export { setSpriteIndex } from './modules/LPInstances.js';
 export { setX } from './modules/LPInstances.js';
 export { setY } from './modules/LPInstances.js';
+export { setPosition } from './modules/LPInstances.js';
 export { setRot } from './modules/LPInstances.js';
 export { getX } from './modules/LPInstances.js';
 export { getY } from './modules/LPInstances.js';
+export { getPosition } from './modules/LPInstances.js';
 export { getRot } from './modules/LPInstances.js';
 export { getPrevX } from './modules/LPInstances.js';
 export { getPrevY } from './modules/LPInstances.js';
@@ -72,3 +74,6 @@ export { findMax } from './modules/LPCollision.js';
 export { Action } from './modules/LPActions.js';
 export { addAction } from './modules/LPActions.js';
 export { getAction } from './modules/LPActions.js';
+
+//LPEvents
+export { getMousePosition } from './modules/LPEvents.js';

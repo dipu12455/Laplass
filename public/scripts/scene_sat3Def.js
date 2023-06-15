@@ -17,6 +17,10 @@ var triangleInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, Math.random() * 5); //(1)rand = something
 }
 
+var mouseTriInitFunction = (_instanceIndex) => {
+
+}
+
 var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function of each action needs to contain the exact same parameters.
     //the following is how we are using persistent variables on an each instance basis
     //the '0' is the index of that persistent variable for this particular instance
@@ -47,9 +51,15 @@ var triangleUpdatefunction = (_instanceIndex, _delta) => {
     LP.setY(_instanceIndex, animate2 * rand);
 }
 
+var mouseTriUpdateFunction = (_instanceIndex, _delta) => {
+    LP.setPosition(_instanceIndex, LP.getMousePosition());
+    console.log(`${LP.getX(_instanceIndex)} ${LP.getY(_instanceIndex)}`);
+}
+
 //define action indices
 const acPentagon = LP.addAction(new LP.Action(pentagonInitFunction,pentagonUpdatefunction));
 const acTriangle = LP.addAction(new LP.Action(triangleInitFunction, triangleUpdatefunction));
+const acMouseTri = LP.addAction(new LP.Action(mouseTriInitFunction, mouseTriUpdateFunction));
 
 //create an instance
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
@@ -58,3 +68,5 @@ let i = 0;
 for (i = 0; i < 3; i += 1){
     let ind = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acTriangle);
 }
+
+export var mouseTri = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acMouseTri);
