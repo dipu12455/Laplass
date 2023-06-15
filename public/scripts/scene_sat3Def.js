@@ -8,6 +8,10 @@ LP.loadPrimitive(pmTriangle, '/pmTriangle');
 var pmPentagon = LP.addPrimitive(new LP.Primitive());
 LP.loadPrimitive(pmPentagon, '/pmPentagon');
 
+//load arrow
+var pmArrow = LP.addPrimitive(new LP.Primitive());
+LP.loadPrimitive(pmArrow, '/pmArrow');
+
 var pentagonInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0;
 }
@@ -69,4 +73,4 @@ for (i = 0; i < 3; i += 1){
     let ind = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acTriangle);
 }
 
-export var mouseTri = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acMouseTri);
+export var mouseTri = LP.addInstance(new LP.LPInstance(), pmArrow, -1, acMouseTri);

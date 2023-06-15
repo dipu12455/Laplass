@@ -20,6 +20,10 @@ app.get('/pmPentagon', (req, res) => {
   res.sendFile(__dirname + '/pmPentagon.pm');
 });
 
+app.get('/pmArrow', (req, res) => {
+  res.sendFile(__dirname + '/pmArrow.pm');
+});
+
 app.listen(port, () => {
   console.log(`Server running at port ${port}`);
 });
