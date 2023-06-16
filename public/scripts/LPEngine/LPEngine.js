@@ -1,3 +1,5 @@
+import { evMouseClickRegion } from './modules/LPEvents.js';
+
 //LPVector
 export { LPVector } from './modules/LPVector.js';
 export { sqr } from './modules/LPVector.js';
@@ -46,6 +48,18 @@ export { getPrimitive } from './modules/LPPrimitives.js';
 export { loadPrimitive } from './modules/LPPrimitives.js';
 export { addPrimitiveVertex } from './modules/LPPrimitives.js';
 export { transform_primitive } from './modules/LPPrimitives.js';
+export { BoundingBox } from './modules/LPPrimitives.js';
+export { setBoundingBox } from './modules/LPPrimitives.js';
+export { getBoundingBox } from './modules/LPPrimitives.js';
+export { setOrigin } from './modules/LPPrimitives.js';
+export { setLineColor } from './modules/LPPrimitives.js';
+export { setFillColor } from './modules/LPPrimitives.js';
+export { setWireframe } from './modules/LPPrimitives.js';
+export { getOrigin } from './modules/LPPrimitives.js';
+export { getLineColor } from './modules/LPPrimitives.js';
+export { getFillColor } from './modules/LPPrimitives.js';
+export { getWireframe } from './modules/LPPrimitives.js';
+
 
 //LPEngineCore
 export { init } from './modules/LPEngineCore.js';
@@ -64,6 +78,7 @@ export { draw_lineV } from './modules/LPEngineCore.js';
 export { draw_anchorV } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
 
+
 //LPCollision
 export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';
 export { getCoefficientsOfProjection } from './modules/LPCollision.js';
@@ -77,3 +92,5 @@ export { getAction } from './modules/LPActions.js';
 
 //LPEvents
 export { getMousePosition } from './modules/LPEvents.js';
+export { evMouseClick } from './modules/LPEvents.js';
+export { evMouseClickRegion } from './modules/LPEvents.js';

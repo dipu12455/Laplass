@@ -57,7 +57,13 @@ var triangleUpdatefunction = (_instanceIndex, _delta) => {
 
 var mouseTriUpdateFunction = (_instanceIndex, _delta) => {
     LP.setPosition(_instanceIndex, LP.getMousePosition());
-    console.log(`${LP.getX(_instanceIndex)} ${LP.getY(_instanceIndex)}`);
+
+    //define a test bounding box
+    var boundingBox = new LP.BoundingBox(new LP.LPVector(-3,3), new LP.LPVector(3,-3));
+    if (LP.evMouseClickRegion(boundingBox)){
+        console.log(`Clicked in the region bruv`);
+    }
+    //console.log(`${LP.getX(_instanceIndex)} ${LP.getY(_instanceIndex)}`);
 }
 
 //define action indices

@@ -36,7 +36,7 @@ export function setWorldDelta(_worldDelta){
   worldDelta = _worldDelta;
 }
 
-function moveToWorldCoord(_p){
+function moveToScreenCoord(_p){ //change from LP's coordinate system to screen coords, coordinates are converted to pixel positions on screen
   var xx = worldOriginX+(_p.getX()*worldDelta);
   var yy = worldOriginY-(_p.getY()*worldDelta);
   return new LPVector(xx,yy);
@@ -73,8 +73,8 @@ export function draw_anchor(x,y,color){
 
 //draws a line between the head of two vectors (using vectors as point input)
 export function draw_lineV(_v1,_v2,color){
-  var v1 = moveToWorldCoord(_v1);
-  var v2 = moveToWorldCoord(_v2);
+  var v1 = moveToScreenCoord(_v1);
+  var v2 = moveToScreenCoord(_v2);
   drawObject.lineStyle(1, color, 1);
   drawObject.moveTo(v1.getX(), v1.getY());
   drawObject.lineTo(v2.getX(),v2.getY());
@@ -82,7 +82,7 @@ export function draw_lineV(_v1,_v2,color){
 
 //takes a vector to take point input
 export function draw_anchorV(_v,color){
-  var v = moveToWorldCoord(_v);
+  var v = moveToScreenCoord(_v);
   drawObject.lineStyle(0);
   drawObject.beginFill(color,1);
   drawObject.drawCircle(v.getX(),v.getY(),2);
@@ -106,7 +106,7 @@ export function draw_primitive(_primitive){
 
   for (i = 0; i < _primitive.getSize(); i += 1){
     var vertex = _primitive.get(i);
-    var vertex2 = moveToWorldCoord(vertex);
+    var vertex2 = moveToScreenCoord(vertex);
     path[j]=vertex2.getX();
     path[j+1] = vertex2.getY();
     j = j + 2;
