@@ -4,22 +4,7 @@ import { v2Minusv1 } from './LPVector.js';
 import { findLeftPerpendicular } from './LPVector.js';
 import { transformVector } from "./LPVector.js";
 
-export class BoundingBox {
-  constructor(_p1, _p2) {
-    this.p1 = new LPVector(_p1.getX(), _p1.getY());
-    this.p2 = new LPVector(_p2.getX(), _p2.getY());
-  }
-  set(_p1, _p2) {
-    this.p1.setVector2(_p1);
-    this.p2.setVector2(_p2);
-  }
-  getP1() {
-    return this.p1;
-  }
-  getP2() {
-    return this.p2;
-  }
-}
+
 
 export class Primitive extends LPList {
   constructor() { //in this case the _primitivePath is the route to the server for the primitive text file
@@ -29,7 +14,6 @@ export class Primitive extends LPList {
     this.lineColor = 0x000000;
     this.fillColor = 0x000000;
     this.wireframe = true;
-    this.boundingBox = new BoundingBox(new LPVector(0, 0), new LPVector(0, 0));
   }
   getPrint() {
     var i = 0;
@@ -45,7 +29,6 @@ export class Primitive extends LPList {
     this.lineColor = _lineColor;
     this.fillColor = _fillColor;
     this.wireframe = _wireframe;
-    this.boundingBox.set(_boundingBox.getP1(), _boundingBox.getP2());
   }
 }
 
@@ -123,8 +106,7 @@ export function transform_primitive(_primitive, _x, _y, _rot) {
     _primitive.yorigin,
     _primitive.lineColor,
     _primitive.fillColor,
-    _primitive.wireframe,
-    _primitive.boundingBox);
+    _primitive.wireframe);
 
   for (i = 0; i < _primitive.getSize(); i += 1) {
     //get the vertex
@@ -154,9 +136,7 @@ export function setFillColor(_index, _fillColor) {
 export function setWireframe(_index, _wireframe) {
   PRIMITIVES.get(_index).wireframe = _wireframe;
 }
-export function setBoundingBox(_index, _p1, _p2) {
-  PRIMITIVES.get(_index).boundingBox.set(_p1, _p2);
-}
+
 
 //getters
 export function getOrigin(_index) {
@@ -171,9 +151,7 @@ export function getFillColor(_index, _fillColor) {
 export function getWireframe(_index, _wireframe) {
   return PRIMITIVES.get(_index).wireframe;
 }
-export function getBoundingBox(_index){ //returns the BoundingBox object of the primitive _index
-  return PRIMITIVES.get(_index).boundingBox;
-}
+
 
 function stringToBool(_string) {
   if (_string == '1') return true;

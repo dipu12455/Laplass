@@ -8,6 +8,11 @@ var evMouseClickState = false;
 var evMouseDownState = false;
 var evMouseUpState = false;
 
+var eventArray = [];
+eventArray[0] = false; //evMouseClick
+eventArray[1] = false; //evMouseDown
+eventArray[2] = false; //evMouseUp
+
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
     _window.addEventListener('mousemove', function (event) {
@@ -20,7 +25,7 @@ export function LPEventsInit(_window) {
     // Add the event listener for the click event
     _window.addEventListener('click', function (event) {
         //console.log('First click event listener');
-        evMouseClickState = true;
+        fireEvent(0);
     });
 
     //mousedown event
@@ -28,7 +33,7 @@ export function LPEventsInit(_window) {
         //check if the left mouse button (primary button) was pressed
         if (event.button == 0) {
             console.log('Left button down');
-            evMouseDownState = true;
+            fireEvent(1);
         }
     });
 
@@ -36,7 +41,7 @@ export function LPEventsInit(_window) {
         //check if the left mouse button was released
         if (event.button == 0) {
             console.log('Left mouse button released');
-            evMouseUpState = true;
+            fireEvent(2);
         }
     }); //this event fires when a button is released after being pressed. it won't fire just by detection the button is released. the button needs to be pressed first, then released later for this event to fire. so the evMouseUpState var for example, will still need to be turned off after event is read, just like for evMouseClickState and evMouseClick()
 }
@@ -52,6 +57,17 @@ export function getMousePosition() {
     return screenCoordtoWorldCoord(new LPVector(mouseX, mouseY));
 }
 
+function fireEvent(_event){
+    eventArray[_event] = true;
+}
+// reads an eventstate to see if its true or false
+export function isEventFired(_event){
+    return eventArray[_event];
+}
+
+export function turnOffEvent(_event){
+    eventArray[_event] = false;
+}
 export function evMouseClick() {
     var temp = evMouseClickState;
     evMouseClickState = false; //switch off the event
@@ -80,9 +96,16 @@ export function evMouseClickRegion(_boundingBox) {
 }
 
 export function evMouseDownRegion(_boundingBox) {
-    if (evMouseDown()) {
+    if (isEventFired(1)) {
         var pos = getMousePosition();
-        return checkPointInRegion(pos,_boundingBox);
+        var condition = checkPointInRegion(pos,_boundingBox);
+        if (condition){
+            turnOffEvent(1);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
 

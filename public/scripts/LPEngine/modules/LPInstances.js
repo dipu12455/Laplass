@@ -2,11 +2,33 @@ import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
 import { LPVector } from "./LPVector.js";
 
+export class BoundingBox {
+    constructor(_p1, _p2) {
+        this.p1 = new LPVector(_p1.getX(), _p1.getY());
+        this.p2 = new LPVector(_p2.getX(), _p2.getY());
+    }
+    set(_p1, _p2) {
+        this.p1.setVector2(_p1);
+        this.p2.setVector2(_p2);
+    }
+    setCoord(_x1, _y1, _x2, _y2) {
+        this.p1.setVector1(_x1, _y1);
+        this.p2.setVector1(_x2, _y2);
+    }
+    getP1() {
+        return this.p1;
+    }
+    getP2() {
+        return this.p2;
+    }
+}
+
 export class LPInstance {
     constructor() {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
         this.actionIndex = -1;
+        this.boundingBox = new BoundingBox(new LPVector(0, 0), new LPVector(0, 0));
         // the following are all in LPE coordinate system
         this.x = 0;
         this.y = 0;
@@ -18,48 +40,6 @@ export class LPInstance {
         this.vspeed = 0;
         this.vars = new LPList(); //list that stores custom variables
     }
-    /*makeVar(_value){
-        return this.vars.add(_value);
-    }
-    getVal(_variableIndex){
-        return this.vars.get(_variableIndex);
-    }
-    setVal(_variableIndex, _value){
-        this.vars.get(_variableIndex) = _value;
-    }*/
-    /*getPrimitiveIndex(){
-        return this.primitiveIndex;
-    }
-    setPrimitiveIndex(_index, _primitiveIndex){
-        this.primitiveIndex = _primitiveIndex;
-    }
-    getSpriteIndex(_index){
-        return this.spriteIndex;
-    }
-    setSpriteIndex(_index, _spriteIndex){
-        this.spriteIndex = _spriteIndex;
-    }
-    setX(_index, _x){
-        this.xprev = this.x;
-        this.x = _x;
-    }
-    setY(_index, _y){
-        this.yprev = this.y;
-        this.y = _y;
-    }
-    setRot(_index, _rot){
-        this.rotprev = this.rot;
-        this.rot = _rot;
-    }
-    getX(_index){ //this is a getter
-        return this.x;
-    }
-    getY(_index){ //this is a getter
-        return this.y;
-    }
-    getRot(_index){ //this is a getter
-        return this.rot;
-    }*/
 }
 
 class LPInstanceList extends LPList {
@@ -202,4 +182,16 @@ export function getVal(_index, _variableIndex) {
 }
 export function setVal(_index, _variableIndex, _value) {
     INSTANCES.get(_index).vars.put(_value, _variableIndex);
+}
+
+export function setBoundingBox(_index, _p1, _p2) {
+    INSTANCES.get(_index).boundingBox.set(_p1, _p2);
+}
+
+export function setBoundingBoxCoord(_index, _x1, _y1, _x2, _y2) {
+    INSTANCES.get(_index).boundingBox.setCoord(_x1,_y1,_x2,_y2);
+}
+
+export function getBoundingBox(_index) { //returns the BoundingBox object of the primitive _index
+    return INSTANCES.get(_index).boundingBox;
 }

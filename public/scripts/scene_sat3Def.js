@@ -75,22 +75,24 @@ var dragObjectInit = (_instanceIndex) => {
 }
 
 var dragObjectUpdate = (_instanceIndex, _delta) => {
-    var xx = LP.getX(_instanceIndex);
-    var yy = LP.getY(_instanceIndex);
-    var bboxp1 = new LP.LPVector(xx-1, yy+1);
-    var bboxp2 = new LP.LPVector(xx+1, yy-1); //making sure bounding box moves with this instance
+    let xx = LP.getX(_instanceIndex);
+    let yy = LP.getY(_instanceIndex);
+    //making sure bounding box moves with this instance
     //we are having boundingbox be drawn around the origin of this instance
     //its primitives origin will also be at the center
-    var boundingBox = new LP.BoundingBox(bboxp1,bboxp2);
+    LP.setBoundingBoxCoord(_instanceIndex,xx-1,yy+1,xx+1,yy-1);
 
-    if(LP.evMouseDownRegion(boundingBox)){
+    if(LP.evMouseDownRegion(LP.getBoundingBox(_instanceIndex))){
         LP.setVal(_instanceIndex,0,1); //(0)dragging = true
     }
     if(LP.getVal(_instanceIndex,0) == 1){ // if ((0)dragging = true)
         LP.setPosition(_instanceIndex,LP.getMousePosition());
     }
-    if (LP.evMouseUp()){
-        LP.setVal(_instanceIndex,0,0); //(0)dragging = false
+    if (LP.isEventFired(2)){
+        if (LP.getVal(_instanceIndex,0) == 1){
+            LP.setVal(_instanceIndex,0,0); //(0)dragging = false
+            LP.turnOffEvent(2);
+        }
     }
 }
 
@@ -103,14 +105,15 @@ const acDragObject = LP.addAction(new LP.Action(dragObjectInit, dragObjectUpdate
 //create an instance
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
 
-let i = 0;
+/* let i = 0;
 for (i = 0; i < 3; i += 1){
     let ind = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acTriangle);
-}
+} */
 
 export var mouseTri = LP.addInstance(new LP.LPInstance(), pmArrow, -1, acMouseTri);
 
 export var dragSquare = LP.addInstance(new LP.LPInstance(), pmSquare, -1, acDragObject);
+LP.setPosition(dragSquare,new LP.LPVector(-5,10));
 
 export var dragSquare2 = LP.addInstance(new LP.LPInstance(), pmSquare, -1, acDragObject);
 LP.setPosition(dragSquare2,new LP.LPVector(-5,5));

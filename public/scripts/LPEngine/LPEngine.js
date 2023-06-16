@@ -40,6 +40,10 @@ export { getPrevRot } from './modules/LPInstances.js';
 export { makeVar } from './modules/LPInstances.js'
 export { getVal } from './modules/LPInstances.js'
 export { setVal } from './modules/LPInstances.js'
+export { BoundingBox } from './modules/LPInstances.js';
+export { setBoundingBox } from './modules/LPInstances.js';
+export { setBoundingBoxCoord } from './modules/LPInstances.js';
+export { getBoundingBox } from './modules/LPInstances.js';
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
@@ -48,9 +52,6 @@ export { getPrimitive } from './modules/LPPrimitives.js';
 export { loadPrimitive } from './modules/LPPrimitives.js';
 export { addPrimitiveVertex } from './modules/LPPrimitives.js';
 export { transform_primitive } from './modules/LPPrimitives.js';
-export { BoundingBox } from './modules/LPPrimitives.js';
-export { setBoundingBox } from './modules/LPPrimitives.js';
-export { getBoundingBox } from './modules/LPPrimitives.js';
 export { setOrigin } from './modules/LPPrimitives.js';
 export { setLineColor } from './modules/LPPrimitives.js';
 export { setFillColor } from './modules/LPPrimitives.js';
@@ -96,3 +97,5 @@ export { evMouseClick } from './modules/LPEvents.js';
 export { evMouseClickRegion } from './modules/LPEvents.js';
 export { evMouseDownRegion } from './modules/LPEvents.js';
 export { evMouseUp } from './modules/LPEvents.js';
+export { isEventFired } from './modules/LPEvents.js';
+export { turnOffEvent } from './modules/LPEvents.js';
