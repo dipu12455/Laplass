@@ -94,3 +94,5 @@ export { getAction } from './modules/LPActions.js';
 export { getMousePosition } from './modules/LPEvents.js';
 export { evMouseClick } from './modules/LPEvents.js';
 export { evMouseClickRegion } from './modules/LPEvents.js';
+export { evMouseDownRegion } from './modules/LPEvents.js';
+export { evMouseUp } from './modules/LPEvents.js';

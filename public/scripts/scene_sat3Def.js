@@ -12,6 +12,10 @@ LP.loadPrimitive(pmPentagon, '/pmPentagon');
 var pmArrow = LP.addPrimitive(new LP.Primitive());
 LP.loadPrimitive(pmArrow, '/pmArrow');
 
+//load square
+var pmSquare = LP.addPrimitive(new LP.Primitive());
+LP.loadPrimitive(pmSquare, '/pmSquare');
+
 var pentagonInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, 0); //(0)elapsed = 0;
 }
@@ -21,8 +25,8 @@ var triangleInitFunction = (_instanceIndex) => {
     LP.makeVar(_instanceIndex, Math.random() * 5); //(1)rand = something
 }
 
-var mouseTriInitFunction = (_instanceIndex) => {
-
+var dummyInitFunction = (_instanceIndex) => {
+    //just placeholder
 }
 
 var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function of each action needs to contain the exact same parameters.
@@ -66,10 +70,35 @@ var mouseTriUpdateFunction = (_instanceIndex, _delta) => {
     //console.log(`${LP.getX(_instanceIndex)} ${LP.getY(_instanceIndex)}`);
 }
 
+var dragObjectInit = (_instanceIndex) => {
+    LP.makeVar(_instanceIndex, 0); //(0)dragging=false
+}
+
+var dragObjectUpdate = (_instanceIndex, _delta) => {
+    var xx = LP.getX(_instanceIndex);
+    var yy = LP.getY(_instanceIndex);
+    var bboxp1 = new LP.LPVector(xx-1, yy+1);
+    var bboxp2 = new LP.LPVector(xx+1, yy-1); //making sure bounding box moves with this instance
+    //we are having boundingbox be drawn around the origin of this instance
+    //its primitives origin will also be at the center
+    var boundingBox = new LP.BoundingBox(bboxp1,bboxp2);
+
+    if(LP.evMouseDownRegion(boundingBox)){
+        LP.setVal(_instanceIndex,0,1); //(0)dragging = true
+    }
+    if(LP.getVal(_instanceIndex,0) == 1){ // if ((0)dragging = true)
+        LP.setPosition(_instanceIndex,LP.getMousePosition());
+    }
+    if (LP.evMouseUp()){
+        LP.setVal(_instanceIndex,0,0); //(0)dragging = false
+    }
+}
+
 //define action indices
 const acPentagon = LP.addAction(new LP.Action(pentagonInitFunction,pentagonUpdatefunction));
 const acTriangle = LP.addAction(new LP.Action(triangleInitFunction, triangleUpdatefunction));
-const acMouseTri = LP.addAction(new LP.Action(mouseTriInitFunction, mouseTriUpdateFunction));
+const acMouseTri = LP.addAction(new LP.Action(dummyInitFunction, mouseTriUpdateFunction));
+const acDragObject = LP.addAction(new LP.Action(dragObjectInit, dragObjectUpdate));
 
 //create an instance
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
@@ -80,3 +109,12 @@ for (i = 0; i < 3; i += 1){
 }
 
 export var mouseTri = LP.addInstance(new LP.LPInstance(), pmArrow, -1, acMouseTri);
+
+export var dragSquare = LP.addInstance(new LP.LPInstance(), pmSquare, -1, acDragObject);
+
+export var dragSquare2 = LP.addInstance(new LP.LPInstance(), pmSquare, -1, acDragObject);
+LP.setPosition(dragSquare2,new LP.LPVector(-5,5));
+
+export var dragSquare3 = LP.addInstance(new LP.LPInstance(), pmSquare, -1, acDragObject);
+LP.setPosition(dragSquare3,new LP.LPVector(5,0));
+

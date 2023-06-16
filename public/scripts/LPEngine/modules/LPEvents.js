@@ -5,6 +5,8 @@ var mouseX = 0, mouseY = 0;
 
 var evMouseClickState = false;
 //creating a var and a func each for all events, because all events need to independently toggle true and false, which allows for multiple events to fire and unfire at the same time
+var evMouseDownState = false;
+var evMouseUpState = false;
 
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
@@ -17,9 +19,26 @@ export function LPEventsInit(_window) {
 
     // Add the event listener for the click event
     _window.addEventListener('click', function (event) {
-        console.log('First click event listener');
+        //console.log('First click event listener');
         evMouseClickState = true;
     });
+
+    //mousedown event
+    _window.addEventListener('mousedown', function (event) {
+        //check if the left mouse button (primary button) was pressed
+        if (event.button == 0) {
+            console.log('Left button down');
+            evMouseDownState = true;
+        }
+    });
+
+    _window.addEventListener('mouseup', function (event) {
+        //check if the left mouse button was released
+        if (event.button == 0) {
+            console.log('Left mouse button released');
+            evMouseUpState = true;
+        }
+    }); //this event fires when a button is released after being pressed. it won't fire just by detection the button is released. the button needs to be pressed first, then released later for this event to fire. so the evMouseUpState var for example, will still need to be turned off after event is read, just like for evMouseClickState and evMouseClick()
 }
 
 function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
@@ -39,13 +58,37 @@ export function evMouseClick() {
     return temp;
 }
 
+export function evMouseDown() {
+    var temp = evMouseDownState;
+    evMouseDownState = false;
+    return temp;
+}
+
+export function evMouseUp() {
+    var temp = evMouseUpState;
+    evMouseUpState = false;
+    return temp;
+}
+
 //checks if a mouse click event occured within the provided bounding box
 //takes a BoundingBox object as input
 export function evMouseClickRegion(_boundingBox) {
     if (evMouseClick()) {
         var pos = getMousePosition(); //can't use mouseX/mouseY vars directly because boundingbox is in terms of LP coord
-        var withinRegionX = (pos.getX() > _boundingBox.getP1().getX()) && (pos.getX() < _boundingBox.getP2().getX());
-        var withinRegionY = (pos.getY() < _boundingBox.getP1().getY()) && (pos.getY() > _boundingBox.getP2().getY());
-        return (withinRegionX && withinRegionY);
+        return checkPointInRegion(pos,_boundingBox);
     }
+}
+
+export function evMouseDownRegion(_boundingBox) {
+    if (evMouseDown()) {
+        var pos = getMousePosition();
+        return checkPointInRegion(pos,_boundingBox);
+    }
+}
+
+//returns true if the given point lies within the given bounding box
+function checkPointInRegion(_p, _boundingBox) {
+    var withinRegionX = (_p.getX() > _boundingBox.getP1().getX()) && (_p.getX() < _boundingBox.getP2().getX());
+    var withinRegionY = (_p.getY() < _boundingBox.getP1().getY()) && (_p.getY() > _boundingBox.getP2().getY());
+    return (withinRegionX && withinRegionY);
 }

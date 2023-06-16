@@ -114,8 +114,10 @@ export function initInstances() {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         var actionIndex = getActionIndex(i);
-        var initFunction = getAction(actionIndex).getInitFunction();
-        initFunction(i);
+        if (actionIndex != -1) { //if index is -1, then there is no action for this instance
+            var initFunction = getAction(actionIndex).getInitFunction();
+            initFunction(i);
+        }
     }
 }
 
@@ -123,8 +125,10 @@ export function updateInstances(_delta) {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         var actionIndex = getActionIndex(i);
-        var updateFunction = getAction(actionIndex).getUpdateFunction();
-        updateFunction(i, _delta);
+        if (actionIndex != -1) { //if index is -1, then there is no action for this instance
+            var updateFunction = getAction(actionIndex).getUpdateFunction();
+            updateFunction(i, _delta);
+        }
     }
 }
 
