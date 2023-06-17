@@ -79,7 +79,6 @@ export { draw_lineV } from './modules/LPEngineCore.js';
 export { draw_anchorV } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
 
-
 //LPCollision
 export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';
 export { getCoefficientsOfProjection } from './modules/LPCollision.js';
