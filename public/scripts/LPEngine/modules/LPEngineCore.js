@@ -10,6 +10,7 @@ var drawObject;
 var drawOperations; //variable to hold the user coded draw function
 var worldOriginX, worldOriginY, worldDelta;
 var screenGrid=false;
+export var timeRun = true;
 
 export function init(_window, _width, _height){
   worldOriginX = _width/2;
@@ -44,6 +45,15 @@ function moveToScreenCoord(_p){ //change from LP's coordinate system to screen c
 
 export function getTicker(){
   return app.ticker;
+}
+
+export function timePause(){
+  timeRun = false;
+  console.log(`time: ${timeRun}`);
+}
+export function timeResume(){
+  timeRun = true;
+  console.log(`time: ${timeRun}`);
 }
 export function defineDrawOperations(_drawOperations){
   drawOperations = _drawOperations;

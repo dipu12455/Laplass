@@ -15,6 +15,18 @@ export function update(_delta) {
     LP.initInstances();
   }
   LP.updateInstances(_delta);
+
+  //put the pause event here for now
+  if (LP.isEventFired(LP.evKeyG)){
+    LP.timeResume();
+    LP.turnOffEvent(LP.evKeyG);
+  }
+  if(LP.isEventFired(LP.evKeyS)){
+    LP.timePause();
+    LP.turnOffEvent(LP.evKeyS);
+  }
+  //turn off all active events for a fresh start
+  LP.turnOffEvents(); //this location is temporary, try to hide this from the client app of LPE
 }
 
 export function draw() {
@@ -32,7 +44,7 @@ export function draw() {
 
   //check collision between these two primitives, and if so output to console.
   if (LP.checkCollision(prim1, prim2)) {
-    console.log(`HELLLL EFFINNNN YYEAAAHHHH!!!!!`);
+    //console.log(`HELLLL EFFINNNN YYEAAAHHHH!!!!!`);
   }
   let i = 0;
   for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {

@@ -1,4 +1,4 @@
-import { evMouseClickRegion } from './modules/LPEvents.js';
+
 
 //LPVector
 export { LPVector } from './modules/LPVector.js';
@@ -63,7 +63,10 @@ export { getWireframe } from './modules/LPPrimitives.js';
 
 
 //LPEngineCore
+export { timeRun } from './modules/LPEngineCore.js';
 export { init } from './modules/LPEngineCore.js';
+export { timeResume } from './modules/LPEngineCore.js';
+export { timePause } from './modules/LPEngineCore.js';
 export { getWorldDelta } from './modules/LPEngineCore.js';
 export { setWorldDelta } from './modules/LPEngineCore.js';
 export { getTicker } from './modules/LPEngineCore.js';
@@ -95,10 +98,13 @@ export { addAction } from './modules/LPActions.js';
 export { getAction } from './modules/LPActions.js';
 
 //LPEvents
-export { getMousePosition } from './modules/LPEvents.js';
 export { evMouseClick } from './modules/LPEvents.js';
-export { evMouseClickRegion } from './modules/LPEvents.js';
-export { evMouseDownRegion } from './modules/LPEvents.js';
+export { evMouseDown } from './modules/LPEvents.js';
 export { evMouseUp } from './modules/LPEvents.js';
+export { evKeyG } from './modules/LPEvents.js';
+export { evKeyS } from './modules/LPEvents.js';
+export { getMousePosition } from './modules/LPEvents.js';
+export { evMouseDownRegion } from './modules/LPEvents.js';
 export { isEventFired } from './modules/LPEvents.js';
 export { turnOffEvent } from './modules/LPEvents.js';
+export { turnOffEvents } from './modules/LPEvents.js';

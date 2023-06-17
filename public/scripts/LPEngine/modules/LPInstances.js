@@ -1,6 +1,8 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
 import { LPVector } from "./LPVector.js";
+import { turnOffEvents } from "./LPEvents.js";
+import { timeRun } from "./LPEngineCore.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
@@ -103,11 +105,13 @@ export function initInstances() {
 
 export function updateInstances(_delta) {
     let i = 0;
-    for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        var actionIndex = getActionIndex(i);
-        if (actionIndex != -1) { //if index is -1, then there is no action for this instance
-            var updateFunction = getAction(actionIndex).getUpdateFunction();
-            updateFunction(i, _delta);
+    if (timeRun) { //allows the ability to pause all action, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
+        for (i = 0; i < INSTANCES.getSize(); i += 1) {
+            var actionIndex = getActionIndex(i);
+            if (actionIndex != -1) { //if index is -1, then there is no action for this instance
+                var updateFunction = getAction(actionIndex).getUpdateFunction();
+                updateFunction(i, _delta);
+            }
         }
     }
 }
@@ -189,7 +193,7 @@ export function setBoundingBox(_index, _p1, _p2) {
 }
 
 export function setBoundingBoxCoord(_index, _x1, _y1, _x2, _y2) {
-    INSTANCES.get(_index).boundingBox.setCoord(_x1,_y1,_x2,_y2);
+    INSTANCES.get(_index).boundingBox.setCoord(_x1, _y1, _x2, _y2);
 }
 
 export function getBoundingBox(_index) { //returns the BoundingBox object of the primitive _index
