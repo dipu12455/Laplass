@@ -94,7 +94,7 @@ export function getNormalsOfPrimitive(_primitive) {
     var normal = findLeftPerpendicular(v2Minusv1(p1, p2));
     normalList.add(normal);
   }
-  return normalList;
+  return normalList; //this is a list of LPVector objects
 }
 
 export function transform_primitive(_primitive, _x, _y, _rot) {

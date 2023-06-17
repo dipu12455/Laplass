@@ -15,6 +15,14 @@ export class LPList{
   put(_item,_index){
     this.array[_index] = _item;
   }
+  append(_list){//function to append an entire list onto this list
+    let i = this.getSize();
+    let j = 0;
+    for (j = 0; j < _list.getSize(); j += 1){
+      this.put(_list.get(j),i);
+      i += 1;
+    }
+  }
   get(_index){
     return this.array[_index];
   }

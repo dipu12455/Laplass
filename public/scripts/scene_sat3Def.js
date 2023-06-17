@@ -29,9 +29,27 @@ var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function
     LP.setY(_instanceIndex, 0);
 }
 
+var triangleInit = (_instanceIndex) => {
+    LP.makeVar(_instanceIndex, 100); //(0)elapsed = 0;
+}
+
+var triangleUpdate = (_instanceIndex, _delta) => {
+    var temp = LP.getVal(_instanceIndex, 0);
+    LP.setVal(_instanceIndex, 0,  temp + _delta); //this.(0)elapsed += delta;
+    var elapsed = LP.getVal(_instanceIndex, 0);
+    var animate = Math.cos(elapsed / 50.0);
+    var animate2 = Math.sin(elapsed / 50.0);
+
+    LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 0.3 * _delta);
+    LP.setX(_instanceIndex, animate * 5);
+    LP.setY(_instanceIndex, 0);
+}
+
 //define action indices
 const acPentagon = LP.addAction(new LP.Action(pentagonInitFunction,pentagonUpdatefunction));
+const acTriangle = LP.addAction(new LP.Action(triangleInit, triangleUpdate));
 
 //create an instance
 export var ins1 = LP.addInstance(new LP.LPInstance(), pmPentagon, -1, acPentagon);
+export var ins2 = LP.addInstance(new LP.LPInstance(), pmTriangle, -1, acTriangle);
 

@@ -80,6 +80,7 @@ export { draw_anchorV } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
 
 //LPCollision
+export { checkCollision } from './modules/LPCollision.js';
 export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';
 export { getCoefficientsOfProjection } from './modules/LPCollision.js';
 export { findMin } from './modules/LPCollision.js';
