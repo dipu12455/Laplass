@@ -62,11 +62,11 @@ export { getFillColor } from './modules/LPPrimitives.js';
 export { getWireframe } from './modules/LPPrimitives.js';
 
 
-//LPEngineCore
-export { timeRun } from './modules/LPEngineCore.js';
+//LPEngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app
 export { init } from './modules/LPEngineCore.js';
 export { timeResume } from './modules/LPEngineCore.js';
 export { timePause } from './modules/LPEngineCore.js';
+export { printConsole } from './modules/LPEngineCore.js';
 export { getWorldDelta } from './modules/LPEngineCore.js';
 export { setWorldDelta } from './modules/LPEngineCore.js';
 export { getTicker } from './modules/LPEngineCore.js';
@@ -103,6 +103,7 @@ export { evMouseDown } from './modules/LPEvents.js';
 export { evMouseUp } from './modules/LPEvents.js';
 export { evKeyG } from './modules/LPEvents.js';
 export { evKeyS } from './modules/LPEvents.js';
+export { evKeyP } from './modules/LPEvents.js';
 export { getMousePosition } from './modules/LPEvents.js';
 export { evMouseDownRegion } from './modules/LPEvents.js';
 export { isEventFired } from './modules/LPEvents.js';

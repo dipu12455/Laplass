@@ -9,6 +9,7 @@ export const evMouseDown = 1;
 export const evMouseUp = 2;
 export const evKeyG = 3;
 export const evKeyS = 4;
+export const evKeyP = 5;
 
 var eventArray = [];
 eventArray[evMouseClick] = false; //evMouseClick
@@ -16,6 +17,7 @@ eventArray[evMouseDown] = false; //evMouseDown
 eventArray[evMouseUp] = false; //evMouseUp
 eventArray[evKeyG] = false; //KeyG non-sensitive to capital
 eventArray[evKeyS] = false; //KeyS non-sensitive to capital
+eventArray[evKeyP] = false; //KeyP non-sensitive to capital
 
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
@@ -58,6 +60,10 @@ export function LPEventsInit(_window) {
         if (keyCode == 'KeyS'){
             console.log('Pressed S');
             fireEvent(evKeyS);
+        }
+        if (keyCode == 'KeyP'){
+            console.log('Pressed P');
+            fireEvent(evKeyP);
         }
     })
 }

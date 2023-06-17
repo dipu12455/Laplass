@@ -25,7 +25,7 @@ var pentagonUpdatefunction = (_instanceIndex, _delta) => { //the update function
     var animate2 = Math.sin(elapsed / 50.0);
     var animateSlower = Math.cos(elapsed / 100.0);
 
-    LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 1.4 * _delta);
+    //LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 1.4 * _delta);
     LP.setX(_instanceIndex, animateSlower * 5);
     LP.setY(_instanceIndex, 0);
 }
@@ -42,7 +42,7 @@ var triangleUpdate = (_instanceIndex, _delta) => {
     var animate2 = Math.sin(elapsed / 50.0);
     var animateSlower = Math.cos(elapsed / 100.0);
 
-    LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 1.0 * _delta);
+    //LP.setRot(_instanceIndex, LP.getRot(_instanceIndex) + 1.0 * _delta);
     LP.setX(_instanceIndex, animateSlower * 10);
     LP.setY(_instanceIndex, 0);
 }

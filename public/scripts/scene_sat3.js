@@ -25,6 +25,10 @@ export function update(_delta) {
     LP.timePause();
     LP.turnOffEvent(LP.evKeyS);
   }
+  if(LP.isEventFired(LP.evKeyP)){
+    LP.printConsole();
+    LP.turnOffEvent(LP.evKeyP);
+  }
   //turn off all active events for a fresh start
   LP.turnOffEvents(); //this location is temporary, try to hide this from the client app of LPE
 }
@@ -42,9 +46,9 @@ export function draw() {
     LP.getY(ins2),
     LP.getRot(ins2));
 
-  //check collision between these two primitives, and if so output to console.
+  //check collision between these two primitives, and if so draw a red dot
   if (LP.checkCollision(prim1, prim2)) {
-    //console.log(`HELLLL EFFINNNN YYEAAAHHHH!!!!!`);
+    LP.draw_anchorV(new LP.LPVector(-5,5), 0xff0000);
   }
   let i = 0;
   for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {

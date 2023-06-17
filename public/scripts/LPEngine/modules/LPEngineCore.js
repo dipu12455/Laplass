@@ -10,7 +10,8 @@ var drawObject;
 var drawOperations; //variable to hold the user coded draw function
 var worldOriginX, worldOriginY, worldDelta;
 var screenGrid=false;
-export var timeRun = true;
+var timeRun = true;
+var printConsoleState = false;
 
 export function init(_window, _width, _height){
   worldOriginX = _width/2;
@@ -54,6 +55,19 @@ export function timePause(){
 export function timeResume(){
   timeRun = true;
   console.log(`time: ${timeRun}`);
+}
+export function isTimeRunning(){
+  return timeRun;
+}
+
+export function printConsole(){
+  printConsoleState = true;
+}
+export function turnOffPrintConsole(){
+  printConsoleState = false;
+}
+export function isPrintConsole(){
+  return printConsoleState;
 }
 export function defineDrawOperations(_drawOperations){
   drawOperations = _drawOperations;

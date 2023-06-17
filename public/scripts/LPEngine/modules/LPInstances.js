@@ -1,8 +1,7 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
 import { LPVector } from "./LPVector.js";
-import { turnOffEvents } from "./LPEvents.js";
-import { timeRun } from "./LPEngineCore.js";
+import { isTimeRunning } from "./LPEngineCore.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
@@ -105,7 +104,7 @@ export function initInstances() {
 
 export function updateInstances(_delta) {
     let i = 0;
-    if (timeRun) { //allows the ability to pause all action, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
+    if (isTimeRunning()) { //allows the ability to pause all action, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
         for (i = 0; i < INSTANCES.getSize(); i += 1) {
             var actionIndex = getActionIndex(i);
             if (actionIndex != -1) { //if index is -1, then there is no action for this instance
