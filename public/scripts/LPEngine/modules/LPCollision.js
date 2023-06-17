@@ -1,12 +1,9 @@
 import { LPList } from "./LPList.js";
-import { LPVector } from './LPVector.js';
 import { sqr } from './LPVector.js';
-import { rotateVector } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { v2Minusv1 } from './LPVector.js';
-import { findLeftPerpendicular } from './LPVector.js';
-import { v1Plusv2 } from './LPVector.js';
+import { draw_anchor, draw_anchorV } from './LPEngineCore.js';
+
 
 
 //returns a list of vectors that are projected on the given axisVector
@@ -78,3 +75,38 @@ export function projectPrimitiveOntoAxis(_primitive, _axisVector){
     const coefficient = dotProd/sqr(_v.getMag());
     return coefficient; //this is a scalar
   }
+
+  //put the draw functions in the draw function of the scene file
+  
+  //function to plot a list of points on xaxis
+export function draw_plotPointsXaxis(_pointsList, _scale, _min, _max) {
+  var i = 0;
+  for (i = 0; i < _pointsList.getSize(); i += 1) {
+    var p = _pointsList.get(i);
+    if (i == _min) {
+      draw_anchor(p * _scale, 0, 0xff0000); //if min, draw red
+      continue;
+    }
+    if (i == _max) {
+      draw_anchor(p * _scale, 0, 0x0000ff); //if max, draw green
+      continue;
+    }
+    draw_anchor(p * _scale, 0, 0x000000); //else draw black
+  }
+}
+
+export function draw_plotVectorList(_vectorList, _min, _max) {
+  var i = 0;
+  for (i = 0; i < _vectorList.getSize(); i += 1) {
+    var p = _vectorList.get(i);
+    if (i == _min) {
+      draw_anchorV(p, 0xff0000); //if min, draw red
+      continue;
+    }
+    if (i == _max) {
+      draw_anchorV(p, 0x0000ff); //if max, draw green
+      continue;
+    }
+    draw_anchorV(p, 0x000000); //else draw black
+  } //draw each projected point (vectors) onto the axis
+}

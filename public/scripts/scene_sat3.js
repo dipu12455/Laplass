@@ -40,10 +40,10 @@ export function draw() {
   projPointList = LP.projectPrimitiveOntoAxis(trpent, axis); //this outputs list of vectors
 
   //plot just the coefficients of projected point onto the x-axis
-  draw_plotPointsXaxis(coeffList, 10, min, max); //scale of 10 because coeffs of proj are small
+  LP.draw_plotPointsXaxis(coeffList, 10, min, max); //scale of 10 because coeffs of proj are small
 
   //plot projected vectors on the axisVector itself
-  draw_plotVectorList(projPointList, min, max);
+  LP.draw_plotVectorList(projPointList, min, max);
 
   LP.drawNormals(trpent, new LP.LPVector(LP.getX(ins1), LP.getY(ins1)), 0x445500, 0x00ff00);
   LP.draw_primitive(trpent, 0x00ff00, 0xc9f0e8, true);
@@ -61,37 +61,4 @@ function draw_instance(_instanceIndex) {
     LP.getRot(_instanceIndex));
 
   LP.draw_primitive(trans);//, 0x00ff00, 0xc9f0e8, true);
-}
-
-//function to plot a list of points on xaxis
-function draw_plotPointsXaxis(_pointsList, _scale, _min, _max) {
-  var i = 0;
-  for (i = 0; i < _pointsList.getSize(); i += 1) {
-    var p = _pointsList.get(i);
-    if (i == _min) {
-      LP.draw_anchor(p * _scale, 0, 0xff0000); //if min, draw red
-      continue;
-    }
-    if (i == _max) {
-      LP.draw_anchor(p * _scale, 0, 0x0000ff); //if max, draw green
-      continue;
-    }
-    LP.draw_anchor(p * _scale, 0, 0x000000); //else draw black
-  }
-}
-
-function draw_plotVectorList(_vectorList, _min, _max) {
-  var i = 0;
-  for (i = 0; i < _vectorList.getSize(); i += 1) {
-    var p = _vectorList.get(i);
-    if (i == _min) {
-      LP.draw_anchorV(p, 0xff0000); //if min, draw red
-      continue;
-    }
-    if (i == _max) {
-      LP.draw_anchorV(p, 0x0000ff); //if max, draw green
-      continue;
-    }
-    LP.draw_anchorV(p, 0x000000); //else draw black
-  } //draw each projected point (vectors) onto the axis
 }
