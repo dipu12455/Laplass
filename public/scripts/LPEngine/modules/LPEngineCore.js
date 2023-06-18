@@ -3,6 +3,7 @@
 import { getLineColor, getNormalsOfPrimitive } from './LPPrimitives.js';
 import { LPVector, transformVector, v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
+import { initInstances, updateInstances } from './LPInstances.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -13,13 +14,12 @@ var screenGrid = false;
 var timeRun = true;
 var printConsoleState = false;
 
-var LPUpdate; // a var that stores the function for the update operations
 var LPDraw; //variable to hold the user coded draw function
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
 
-export function runEngine(_window, _width, _height, _LPUpdate, _LPDraw) {
+export function runEngine(_window, _width, _height, _LPDraw) {
   worldOriginX = _width / 2;
   worldOriginY = _height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
@@ -31,13 +31,16 @@ export function runEngine(_window, _width, _height, _LPUpdate, _LPDraw) {
   drawObject = new PIXI.Graphics();
   app.stage.addChild(drawObject);
 
+  //loop through the instances to execute their init functions
+  initInstances();
+  
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
-    _LPUpdate(delta);
+    updateInstances(delta);
 
     drawObject.clear(); //clear drawing of last calls
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
-    _LPDraw();;
+    _LPDraw(); //run the draw operations defined by the client app
   });
 
 }

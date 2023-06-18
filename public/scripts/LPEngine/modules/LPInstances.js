@@ -2,6 +2,7 @@ import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
 import { LPVector } from "./LPVector.js";
 import { isTimeRunning } from "./LPEngineCore.js";
+import { turnOffEvents } from "./LPEvents.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
@@ -130,6 +131,7 @@ export function updateInstances(_delta) {
             }
             unSelectAll();
         }
+        turnOffEvents();
     }
 }
 

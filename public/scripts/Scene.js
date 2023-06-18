@@ -5,34 +5,6 @@ import * as Scene from './SceneDef.js';
 var ins1 = Scene.ins1;
 var ins2 = Scene.ins2;
 
-var printed = false;
-var initExecuted = false;
-
-export var update = (_delta) => {
-  if (initExecuted == false) {
-    initExecuted = true;
-    //run the createRoutine for instances, a set of routines to set preset state of each instance
-    LP.initInstances();
-  }
-  LP.updateInstances(_delta);
-
-  //put the pause event here for now
-  if (LP.isEventFired(LP.evKeyG)) {
-    LP.timeResume();
-    LP.turnOffEvent(LP.evKeyG);
-  }
-  if (LP.isEventFired(LP.evKeyS)) {
-    LP.timePause();
-    LP.turnOffEvent(LP.evKeyS);
-  }
-  if (LP.isEventFired(LP.evKeyP)) {
-    LP.printConsole();
-    LP.turnOffEvent(LP.evKeyP);
-  }
-  //turn off all active events for a fresh start
-  LP.turnOffEvents(); //this location is temporary, try to hide this from the client app of LPE
-}
-
 export var draw = () => {
   //obtain the first primitive transformed into the orientation of its instance
   LP.selectInstance(ins1);
