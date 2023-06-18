@@ -84,6 +84,7 @@ export { drawNormals } from './modules/LPEngineCore.js';
 
 //LPCollision
 export { checkCollision } from './modules/LPCollision.js';
+export { checkCollisionInstances } from './modules/LPCollision.js';
 export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';
 export { getCoefficientsOfProjection } from './modules/LPCollision.js';
 export { findMin } from './modules/LPCollision.js';

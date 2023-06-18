@@ -3,7 +3,8 @@ import { sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, draw_anchorV, isPrintConsole, timePause, turnOffPrintConsole } from './LPEngineCore.js';
-import { getNormalsOfPrimitive } from "./LPPrimitives.js";
+import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
+import { getPrimitiveIndex, getRot, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
 /* a function that takes in two primitives and checks if they have collision. These can be just two ordinary primitives, or primitives that represent collision points of
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
@@ -53,6 +54,23 @@ export function checkCollision(_primitive1, _primitive2) {
     if (overlap == false) return false; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
   }
   return overlap; //if overlap didn't return false for the above loop of all the normals, then there is collision.
+}
+
+export function checkCollisionInstances(_instanceIndex1, _instanceIndex2){
+  //obtain the first primitive transformed into the orientation of its instance
+  selectInstance(_instanceIndex1);
+  var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
+    getX(),getY(),getRot());
+    unSelectAll();
+
+  //obtain the second primitive tranformed into the orientation of its instance
+  selectInstance(_instanceIndex2);
+  var prim2 = transform_primitive(getPrimitive(getPrimitiveIndex()),
+  getX(),getY(),getRot()); 
+  unSelectAll();
+
+  //check collision between these two primitives, and if so draw a red dot
+  return checkCollision(prim1, prim2);
 }
 
 //takes a primitive and only returns a list of the coefficient of each point with the axis
