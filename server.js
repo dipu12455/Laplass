@@ -2,17 +2,30 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-//declare webpacks
-const webpack = require('webpack');
-const webpackMiddleware = require('webpack-dev-middleware');
-const webpackConfig = require('./webpack.config.js');
-
-app.use(webpackMiddleware(webpack(webpackConfig)));
-
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/test.txt', (req, res) => {
+  res.sendFile(__dirname + '/test.txt');
+});
+
+app.get('/pmTriangle', (req, res) => {
+  res.sendFile(__dirname + '/pmTriangle.pm');
+});
+
+app.get('/pmPentagon', (req, res) => {
+  res.sendFile(__dirname + '/pmPentagon.pm');
+});
+
+app.get('/pmArrow', (req, res) => {
+  res.sendFile(__dirname + '/pmArrow.pm');
+});
+
+app.get('/pmSquare', (req, res) => {
+  res.sendFile(__dirname + '/pmSquare.pm');
 });
 
 app.listen(port, () => {

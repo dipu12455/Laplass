@@ -1,4 +1,6 @@
-class LPList{
+import { LPVector } from "./LPVector.js";
+
+export class LPList{
   constructor(){
     this.indexCounter = 0;
     this.array = [];
@@ -13,20 +15,22 @@ class LPList{
   put(_item,_index){
     this.array[_index] = _item;
   }
+  append(_list){//function to append an entire list onto this list
+    let i = this.getSize();
+    let j = 0;
+    for (j = 0; j < _list.getSize(); j += 1){
+      this.put(_list.get(j),i);
+      i += 1;
+    }
+  }
   get(_index){
     return this.array[_index];
   }
   getSize(){
     return this.array.length;
   }
-}
-
-export class Primitive extends LPList{
-  constructor(_xorigin,_yorigin){
-    super();
-    this.xorigin = _xorigin;
-    this.yorigin = _yorigin;
+  getPrint(){
+    return this.array;
   }
-  //this child class needs to be given LPVectors as its list of items, make them a vertex triangle list
 }
 
