@@ -48,27 +48,9 @@ export function checkCollision(_primitive1, _primitive2) {
     if (center2 > center1) halfwidth2 = center2 - pointList2.get(min2);
 
     //finally find overlap using the following formula
-    var overlap = (distanceBetweenCenters - halfwidth1 - halfwidth2) < 0;
-
-    //DEBUG-------------
-    if (isPrintConsole()){
-      console.log(`i = ${i} -------------------------------------------------------`);
-      console.log(`axisVector ${normalList.get(i).getX()} ${normalList.get(i).getY()}`);
-      console.log(`pointList1 = ${pointList1.getPrint()}`);
-      console.log(`min1 ${min1} max1 ${max1} center1 ${center1}`);
-      console.log(`pointList2 ${pointList2.getPrint()}`);
-      console.log(`min2 ${min2} max2 ${max2} center2 ${center2}`);
-      console.log(`distanceBetweenCenters ${distanceBetweenCenters}`);
-      console.log(`halfwidth1 ${halfwidth1}`);
-      console.log(`halfwidth2 ${halfwidth2}`);
-      console.log(`overlap ${overlap}`);
-    }
+    var overlap = (distanceBetweenCenters - halfwidth1 - halfwidth2) < 0
 
     if (overlap == false) return false; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
-  }
- if (isPrintConsole()){
-    timePause();
-    turnOffPrintConsole();
   }
   return overlap; //if overlap didn't return false for the above loop of all the normals, then there is collision.
 }
