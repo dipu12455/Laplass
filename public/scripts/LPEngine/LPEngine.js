@@ -66,17 +66,14 @@ export { getWireframe } from './modules/LPPrimitives.js';
 
 
 //LPEngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app
-export { init } from './modules/LPEngineCore.js';
+export { runEngine } from './modules/LPEngineCore.js';
 export { timeResume } from './modules/LPEngineCore.js';
 export { timePause } from './modules/LPEngineCore.js';
 export { printConsole } from './modules/LPEngineCore.js';
 export { getWorldDelta } from './modules/LPEngineCore.js';
 export { setWorldDelta } from './modules/LPEngineCore.js';
-export { getTicker } from './modules/LPEngineCore.js';
-export { defineDrawOperations } from './modules/LPEngineCore.js';
 export { showScreenGrid } from './modules/LPEngineCore.js';
 export { hideScreenGrid } from './modules/LPEngineCore.js';
-export { draw } from './modules/LPEngineCore.js';
 export { draw_line } from './modules/LPEngineCore.js';
 export { draw_anchor } from './modules/LPEngineCore.js';
 export { draw_vector_origin } from './modules/LPEngineCore.js';

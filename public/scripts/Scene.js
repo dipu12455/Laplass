@@ -8,7 +8,7 @@ var ins2 = Scene.ins2;
 var printed = false;
 var initExecuted = false;
 
-export function update(_delta) {
+export var update = (_delta) => {
   if (initExecuted == false) {
     initExecuted = true;
     //run the createRoutine for instances, a set of routines to set preset state of each instance
@@ -33,7 +33,7 @@ export function update(_delta) {
   LP.turnOffEvents(); //this location is temporary, try to hide this from the client app of LPE
 }
 
-export function draw() {
+export var draw = () => {
   //obtain the first primitive transformed into the orientation of its instance
   LP.selectInstance(ins1);
   var prim1 = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex()),
