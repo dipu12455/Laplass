@@ -1,5 +1,4 @@
 import * as LP from './LPEngine/LPEngine.js';
-//import * as Scene01 from './scene01.js';
 import * as Scene from './Scene.js';
 
 //these functions need to be run in this exact order

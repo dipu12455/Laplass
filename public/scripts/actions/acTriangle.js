@@ -1,10 +1,10 @@
 import * as LP from '../LPEngine/LPEngine.js';
 
-export var triangleInit = () => {
+var init = () => {
     LP.makeVar(150); //(0)elapsed = 0;
 }
 
-export var triangleUpdate = (_delta) => {
+var update = (_delta) => {
     var temp = LP.getVal(0);
     LP.setVal(0,  temp + _delta); //this.(0)elapsed += delta;
     var elapsed = LP.getVal(0);
@@ -16,3 +16,5 @@ export var triangleUpdate = (_delta) => {
     LP.setX(animateSlower * 10);
     LP.setY(animate2 * 10); //trst
 }
+
+export const acTriangle = LP.addAction(new LP.Action(init, update));
