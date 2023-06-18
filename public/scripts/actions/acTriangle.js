@@ -5,7 +5,7 @@ export var triangleInit = () => {
 }
 
 export var triangleUpdate = (_delta) => {
-    var temp = LP.getVal( 0);
+    var temp = LP.getVal(0);
     LP.setVal(0,  temp + _delta); //this.(0)elapsed += delta;
     var elapsed = LP.getVal(0);
     var animate = Math.cos(elapsed / 50.0);
