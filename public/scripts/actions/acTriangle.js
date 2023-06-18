@@ -14,5 +14,5 @@ export var triangleUpdate = (_delta) => {
 
     LP.setRot(LP.getRot() - 1.0 * _delta);
     LP.setX(animateSlower * 10);
-    LP.setY(animate2 * 10);
+    LP.setY(animate2 * 10); //trst
 }
