@@ -82,23 +82,39 @@ export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
 
 //some functions to manipulate the INSTANCES list, to make it more readable.
 
-//create an instance (new LP.LPInstance), then provide that object as argument
-export function addInstance(_instance, _primitiveIndex, _spriteIndex, _actionIndex) {
-    let ind = INSTANCES.add(_instance);
-    setPrimitiveIndex(ind, _primitiveIndex);
-    setSpriteIndex(ind, _spriteIndex);
-    setActionIndex(ind, _actionIndex);
+var selectedInstance = -1; //remembers which instance is being worked on, stores an instanceIndex, -1 means nothing is selected
+export function selectInstance(_index){
+    selectedInstance = _index;
+}
+export function getSelectedInstance(){
+    if (selectedInstance == -1) console.error(`No instance selected.`);
+    return selectedInstance;
+}
+export function unSelectAll(){
+    selectedInstance = -1;
+}
+
+//create an instance (new LP.LPInstance), then returns its index for use in other functions
+export function addInstance(_primitiveIndex, _spriteIndex, _actionIndex) {
+    let ind = INSTANCES.add(new LPInstance());
+    selectInstance(ind);
+    setPrimitiveIndex(_primitiveIndex);
+    setSpriteIndex(_spriteIndex);
+    setActionIndex(_actionIndex);
+    unSelectAll();
     return ind;
 }
 
 export function initInstances() {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        var actionIndex = getActionIndex(i);
+        selectInstance(i);
+        var actionIndex = getActionIndex();
         if (actionIndex != -1) { //if index is -1, then there is no action for this instance
             var initFunction = getAction(actionIndex).getInitFunction();
-            initFunction(i);
+            initFunction();
         }
+        unSelectAll();
     }
 }
 
@@ -106,11 +122,13 @@ export function updateInstances(_delta) {
     let i = 0;
     if (isTimeRunning()) { //allows the ability to pause all action, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
         for (i = 0; i < INSTANCES.getSize(); i += 1) {
-            var actionIndex = getActionIndex(i);
+            selectInstance(i);
+            var actionIndex = getActionIndex();
             if (actionIndex != -1) { //if index is -1, then there is no action for this instance
                 var updateFunction = getAction(actionIndex).getUpdateFunction();
-                updateFunction(i, _delta);
+                updateFunction(_delta);
             }
+            unSelectAll();
         }
     }
 }
@@ -118,83 +136,83 @@ export function updateInstances(_delta) {
 //the instances are registered with game engine and they live in this file in the INSTANCES list. the following functions are used to access
 //and change attrs of instances
 
-export function getPrimitiveIndex(_index) {
-    return INSTANCES.get(_index).primitiveIndex;
+export function getPrimitiveIndex() {
+    return INSTANCES.get(getSelectedInstance()).primitiveIndex;
 }
-export function setPrimitiveIndex(_index, _primitiveIndex) {
-    INSTANCES.get(_index).primitiveIndex = _primitiveIndex;
+export function setPrimitiveIndex(_primitiveIndex) {
+    INSTANCES.get(getSelectedInstance()).primitiveIndex = _primitiveIndex;
 }
-export function getSpriteIndex(_index) {
-    return INSTANCES.get(_index).spriteIndex;
+export function getSpriteIndex() {
+    return INSTANCES.get(getSelectedInstance()).spriteIndex;
 }
-export function setSpriteIndex(_index, _spriteIndex) {
-    INSTANCES.get(_index).spriteIndex = _spriteIndex;
+export function setSpriteIndex(_spriteIndex) {
+    INSTANCES.get(getSelectedInstance()).spriteIndex = _spriteIndex;
 }
-export function getActionIndex(_index) {
-    return INSTANCES.get(_index).actionIndex;
+export function getActionIndex() {
+    return INSTANCES.get(getSelectedInstance()).actionIndex;
 }
-export function setActionIndex(_index, _actionIndex) {
-    INSTANCES.get(_index).actionIndex = _actionIndex;
+export function setActionIndex( _actionIndex) {
+    INSTANCES.get(getSelectedInstance()).actionIndex = _actionIndex;
 }
-export function setX(_index, _x) {
-    INSTANCES.get(_index).xprev = INSTANCES.get(_index).x;
-    INSTANCES.get(_index).x = _x;
+export function setX(_x) {
+    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
+    INSTANCES.get(getSelectedInstance()).x = _x;
 }
-export function setY(_index, _y) {
-    INSTANCES.get(_index).yprev = INSTANCES.get(_index).y;
-    INSTANCES.get(_index).y = _y;
+export function setY(_y) {
+    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
+    INSTANCES.get(getSelectedInstance()).y = _y;
 }
-export function setPosition(_index, _p) { //takes in a point (vector) as argument
-    INSTANCES.get(_index).xprev = INSTANCES.get(_index).x;
-    INSTANCES.get(_index).yprev = INSTANCES.get(_index).y;
+export function setPosition(_p) { //takes in a point (vector) as argument
+    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
+    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
 
-    INSTANCES.get(_index).x = _p.getX();
-    INSTANCES.get(_index).y = _p.getY();
+    INSTANCES.get(getSelectedInstance()).x = _p.getX();
+    INSTANCES.get(getSelectedInstance()).y = _p.getY();
 }
-export function setRot(_index, _rot) {
-    INSTANCES.get(_index).rotprev = INSTANCES.get(_index).rot;
-    INSTANCES.get(_index).rot = _rot;
+export function setRot(_rot) {
+    INSTANCES.get(getSelectedInstance()).rotprev = INSTANCES.get(getSelectedInstance()).rot;
+    INSTANCES.get(getSelectedInstance()).rot = _rot;
 }
-export function getX(_index) {
-    return INSTANCES.get(_index).x;
+export function getX() {
+    return INSTANCES.get(getSelectedInstance()).x;
 }
-export function getY(_index) {
-    return INSTANCES.get(_index).y;
+export function getY() {
+    return INSTANCES.get(getSelectedInstance()).y;
 }
-export function getPosition(_index) {
-    return new LPVector(INSTANCES.get(_index).x,
-        INSTANCES.get(_index).y);
+export function getPosition() {
+    return new LPVector(INSTANCES.get(getSelectedInstance()).x,
+        INSTANCES.get(getSelectedInstance()).y);
 }
-export function getRot(_index) {
-    return INSTANCES.get(_index).rot;
+export function getRot() {
+    return INSTANCES.get(getSelectedInstance()).rot;
 }
-export function getPrevX(_index) {
-    return INSTANCES.get(_index).prevX;
+export function getPrevX() {
+    return INSTANCES.get(getSelectedInstance()).prevX;
 }
-export function getPrevY(_index) {
-    return INSTANCES.get(_index).prevY;
+export function getPrevY() {
+    return INSTANCES.get(getSelectedInstance()).prevY;
 }
-export function getPrevRot(_index) {
-    return INSTANCES.get(_index).prevRot;
+export function getPrevRot() {
+    return INSTANCES.get(getSelectedInstance()).prevRot;
 }
-export function makeVar(_index, _value) {
-    return INSTANCES.get(_index).vars.add(_value);
+export function makeVar( _value) {
+    return INSTANCES.get(getSelectedInstance()).vars.add(_value);
 }
-export function getVal(_index, _variableIndex) {
-    return INSTANCES.get(_index).vars.get(_variableIndex);
+export function getVal(_variableIndex) {
+    return INSTANCES.get(getSelectedInstance()).vars.get(_variableIndex);
 }
-export function setVal(_index, _variableIndex, _value) {
-    INSTANCES.get(_index).vars.put(_value, _variableIndex);
-}
-
-export function setBoundingBox(_index, _p1, _p2) {
-    INSTANCES.get(_index).boundingBox.set(_p1, _p2);
+export function setVal(_variableIndex, _value) {
+    INSTANCES.get(getSelectedInstance()).vars.put(_value, _variableIndex);
 }
 
-export function setBoundingBoxCoord(_index, _x1, _y1, _x2, _y2) {
-    INSTANCES.get(_index).boundingBox.setCoord(_x1, _y1, _x2, _y2);
+export function setBoundingBox(_p1, _p2) {
+    INSTANCES.get(getSelectedInstance()).boundingBox.set(_p1, _p2);
 }
 
-export function getBoundingBox(_index) { //returns the BoundingBox object of the primitive _index
-    return INSTANCES.get(_index).boundingBox;
+export function setBoundingBoxCoord(_x1, _y1, _x2, _y2) {
+    INSTANCES.get(getSelectedInstance()).boundingBox.setCoord(_x1, _y1, _x2, _y2);
+}
+
+export function getBoundingBox() { //returns the BoundingBox object of the primitive _index
+    return INSTANCES.get(getSelectedInstance()).boundingBox;
 }

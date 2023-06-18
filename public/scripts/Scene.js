@@ -35,16 +35,18 @@ export function update(_delta) {
 
 export function draw() {
   //obtain the first primitive transformed into the orientation of its instance
-  var prim1 = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex(ins1)),
-    LP.getX(ins1),
-    LP.getY(ins1),
-    LP.getRot(ins1));
+  LP.selectInstance(ins1);
+  var prim1 = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex()),
+    LP.getX(),
+    LP.getY(),
+    LP.getRot()); LP.unSelectAll();
 
   //obtain the second primitive tranformed into the orientation of its instance
-  var prim2 = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex(ins2)),
-    LP.getX(ins2),
-    LP.getY(ins2),
-    LP.getRot(ins2));
+  LP.selectInstance(ins2);
+  var prim2 = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex()),
+    LP.getX(),
+    LP.getY(),
+    LP.getRot()); LP.unSelectAll();
 
   //check collision between these two primitives, and if so draw a red dot
   if (LP.checkCollision(prim1, prim2)) {
@@ -52,15 +54,17 @@ export function draw() {
   }
   let i = 0;
   for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
-    draw_instance(i); //call the update action of each instance
+    LP.selectInstance(i);
+    draw_instance(); //call the update action of each instance
+    LP.unSelectAll();
   }
 }
 
-function draw_instance(_instanceIndex) {
-  var trans = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex(_instanceIndex)),
-    LP.getX(_instanceIndex),
-    LP.getY(_instanceIndex),
-    LP.getRot(_instanceIndex));
+function draw_instance() {
+  var trans = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex()),
+    LP.getX(),
+    LP.getY(),
+    LP.getRot());
 
   LP.draw_primitive(trans);//, 0x00ff00, 0xc9f0e8, true);
 }
