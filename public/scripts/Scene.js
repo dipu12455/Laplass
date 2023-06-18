@@ -22,17 +22,5 @@ export var draw = () => {
   if (LP.checkCollision(prim1, prim2)) {
     LP.draw_anchorV(new LP.LPVector(-5, 5), 0xff0000);
   }
-  let i = 0;
-  for (i = 0; i < LP.INSTANCES.getSize(); i += 1) {
-    LP.selectInstance(i);
-    draw_instance(); //call the update action of each instance
-    LP.unSelectAll();
-  }
 }
 
-function draw_instance() {
-  var trans = LP.transform_primitive(LP.getPrimitive(LP.getPrimitiveIndex()),
-  LP.getX(),LP.getY(),LP.getRot());
-
-  LP.draw_primitive(trans);//, 0x00ff00, 0xc9f0e8, true);
-}

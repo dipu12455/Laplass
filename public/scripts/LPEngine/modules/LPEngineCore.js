@@ -1,9 +1,9 @@
 //import * as PIXI from './pixi.js';
 
-import { getLineColor, getNormalsOfPrimitive } from './LPPrimitives.js';
+import { getLineColor, getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { LPVector, transformVector, v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { initInstances, updateInstances } from './LPInstances.js';
+import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -33,13 +33,17 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 
   //loop through the instances to execute their init functions
   initInstances();
-  
+
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     updateInstances(delta);
 
     drawObject.clear(); //clear drawing of last calls
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
+
+    //draw all the instances, here the drawings from the client app would be drawn over the instances
+    draw_instances();
+
     _LPDraw(); //run the draw operations defined by the client app
   });
 
@@ -163,6 +167,17 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
   var i = 0;
   for (i = 0; i < normals.getSize(); i += 1) {
     draw_lineV(_p, v1Plusv2(_p, normals.get(i)), _primColor, _secColor);
+  }
+}
+
+function draw_instances() { //works on the instance currently selected
+  let i = 0;
+  for (i = 0; i < INSTANCES.getSize(); i += 1) {
+    selectInstance(i);
+    var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
+      getX(), getY(), getRot());
+    draw_primitive(trans);
+    unSelectAll();
   }
 }
 
