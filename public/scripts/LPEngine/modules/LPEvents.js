@@ -10,6 +10,9 @@ export const evMouseUp = 2;
 export const evKeyG = 3;
 export const evKeyS = 4;
 export const evKeyP = 5;
+export const evKeyW = 6;
+export const evKeyA = 7;
+export const evKeyD = 8;
 
 var eventArray = [];
 eventArray[evMouseClick] = false; //evMouseClick
@@ -18,16 +21,25 @@ eventArray[evMouseUp] = false; //evMouseUp
 eventArray[evKeyG] = false; //KeyG non-sensitive to capital
 eventArray[evKeyS] = false; //KeyS non-sensitive to capital
 eventArray[evKeyP] = false; //KeyP non-sensitive to capital
+eventArray[evKeyW] = false; //KeyG non-sensitive to capital
+eventArray[evKeyA] = false; //KeyS non-sensitive to capital
+eventArray[evKeyD] = false; //KeyP non-sensitive to capital
 
 //persistent event codes
 export const evKeyG_p = 0;
 export const evKeyS_p = 1;
 export const evKeyP_p = 2;
+export const evKeyW_p = 3;
+export const evKeyA_p = 4;
+export const evKeyD_p = 5;
 
 var eventArray_p = [];
 eventArray_p[evKeyG_p] = false;
 eventArray_p[evKeyS_p] = false;
 eventArray_p[evKeyP_p] = false;
+eventArray_p[evKeyW_p] = false;
+eventArray_p[evKeyA_p] = false;
+eventArray_p[evKeyD_p] = false;
 
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
@@ -61,23 +73,38 @@ export function LPEventsInit(_window) {
         }
     }); //this event fires when a button is released after being pressed. it won't fire just by detection the button is released. the button needs to be pressed first, then released later for this event to fire. so the evMouseUpState var for example, will still need to be turned off after event is read, just like for evMouseClickState and evMouseClick()
 
-    _window.addEventListener('keydown', function (event){
+    _window.addEventListener('keydown', function (event) {
         var keyCode = event.code;
-        if(keyCode == 'KeyG'){
+        if (keyCode == 'KeyG') {
             console.log('Pressed G');
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
 
         }
-        if (keyCode == 'KeyS'){
+        if (keyCode == 'KeyS') {
             console.log('Pressed S');
             fireEvent(evKeyS);
             firePEvent(evKeyS_p);
         }
-        if (keyCode == 'KeyP'){
+        if (keyCode == 'KeyP') {
             console.log('Pressed P');
             fireEvent(evKeyP);
             firePEvent(evKeyP_p);
+        }
+        if (keyCode == 'KeyW') {
+            console.log('Pressed W');
+            fireEvent(evKeyW);
+            firePEvent(evKeyW_p);
+        }
+        if (keyCode == 'KeyA') {
+            console.log('Pressed A');
+            fireEvent(evKeyA);
+            firePEvent(evKeyA_p);
+        }
+        if (keyCode == 'KeyD') {
+            console.log('Pressed D');
+            fireEvent(evKeyD);
+            firePEvent(evKeyD_p);
         }
     });
 
@@ -86,20 +113,32 @@ export function LPEventsInit(_window) {
     event becomes in charge of turning off the event.
     But if you want a single click keypress function, then don't put a keyup event for it,
     and instead turnoff the event in the place where it gets consumed.*/
-    
-    _window.addEventListener('keyup', function(event){
+
+    _window.addEventListener('keyup', function (event) {
         var keyCode = event.code;
-        if(keyCode == 'KeyG'){
+        if (keyCode == 'KeyG') {
             console.log('Released G');
             turnOffPEvent(evKeyG_p);
         }
-        if (keyCode == 'KeyS'){
+        if (keyCode == 'KeyS') {
             console.log('Released S');
             turnOffPEvent(evKeyS_p);
         }
-        if (keyCode == 'KeyP'){
+        if (keyCode == 'KeyP') {
             console.log('Released S');
             turnOffPEvent(evKeyP_p);
+        }
+        if (keyCode == 'KeyW') {
+            console.log('Released W');
+            turnOffPEvent(evKeyW_p);
+        }
+        if (keyCode == 'KeyA') {
+            console.log('Released A');
+            turnOffPEvent(evKeyA_p);
+        }
+        if (keyCode == 'KeyD') {
+            console.log('Released D');
+            turnOffPEvent(evKeyD_p);
         }
     });
 }
@@ -115,33 +154,33 @@ export function getMousePosition() {
     return screenCoordtoWorldCoord(new LPVector(mouseX, mouseY));
 }
 
-function fireEvent(_event){
+function fireEvent(_event) {
     eventArray[_event] = true;
 }
 // reads an eventstate to see if its true or false
-export function isEventFired(_event){
+export function isEventFired(_event) {
     return eventArray[_event];
 }
 
-export function turnOffEvent(_event){
+export function turnOffEvent(_event) {
     eventArray[_event] = false;
 }
 
-function firePEvent(_event){
+function firePEvent(_event) {
     eventArray_p[_event] = true;
 }
-export function isPEventFired(_event){
+export function isPEventFired(_event) {
     return eventArray_p[_event];
 }
-function turnOffPEvent(_event){
+function turnOffPEvent(_event) {
     eventArray_p[_event] = false;
 }
 
 //turn off all events, usually done at the end of the instances update loop.
 //If none of the instances in the list consumed the event, then turn off the events.
-export function turnOffEvents(){
+export function turnOffEvents() {
     let i = 0;
-    for (i = 0; i < eventArray.length; i += 1){
+    for (i = 0; i < eventArray.length; i += 1) {
         eventArray[i] = false;
     }
 }
@@ -159,12 +198,12 @@ export function evMouseClickRegion(_boundingBox) {
 export function evMouseDownRegion(_boundingBox) {
     if (isEventFired(evMouseDown)) {
         var pos = getMousePosition();
-        var condition = checkPointInRegion(pos,_boundingBox);
-        if (condition){
+        var condition = checkPointInRegion(pos, _boundingBox);
+        if (condition) {
             turnOffEvent(evMouseDown);
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
