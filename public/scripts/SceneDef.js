@@ -1,14 +1,7 @@
 import * as LP from './LPEngine/LPEngine.js';
-import { acTriangle } from './actions/acTriangle.js';
-import { acPentagon } from './actions/acPentagon.js';
+import { acSquare } from './actions/acSquare.js';
 
 //define a primitive
-var pmTriangle = LP.addPrimitive('/pmTriangle');
+var pmSquare = LP.addPrimitive('/pmSquare');
 
-//pentagon
-var pmPentagon = LP.addPrimitive('/pmPentagon');
-
-//create instances
-export var ins1 = LP.addInstance(pmPentagon, -1, acPentagon);
-export var ins2 = LP.addInstance(pmTriangle, -1, acTriangle);
-
+export var square = LP.addInstance(pmSquare, -1, acSquare);

@@ -32,6 +32,8 @@ export class LPInstance {
         this.actionIndex = -1;
         this.boundingBox = new BoundingBox(new LPVector(0, 0), new LPVector(0, 0));
         // the following are all in LPE coordinate system
+        this.hidden = false;
+        this.freeze = false;
         this.x = 0;
         this.y = 0;
         this.rot = 0;
@@ -40,6 +42,7 @@ export class LPInstance {
         this.rotprev = 0;
         this.hspeed = 0;
         this.vspeed = 0;
+        this.rspeed = 0;
         this.vars = new LPList(); //list that stores custom variables
     }
 }
@@ -84,14 +87,14 @@ export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
 //some functions to manipulate the INSTANCES list, to make it more readable.
 
 var selectedInstance = -1; //remembers which instance is being worked on, stores an instanceIndex, -1 means nothing is selected
-export function selectInstance(_index){
+export function selectInstance(_index) {
     selectedInstance = _index;
 }
-export function getSelectedInstance(){
+export function getSelectedInstance() {
     if (selectedInstance == -1) console.error(`No instance selected.`);
     return selectedInstance;
 }
-export function unSelectAll(){
+export function unSelectAll() {
     selectedInstance = -1;
 }
 
@@ -125,9 +128,13 @@ export function updateInstances(_delta) {
         for (i = 0; i < INSTANCES.getSize(); i += 1) {
             selectInstance(i);
             var actionIndex = getActionIndex();
-            if (actionIndex != -1) { //if index is -1, then there is no action for this instance
+            if (actionIndex != -1 && !isFrozen()) { //if index is -1, then there is no action for this instance
                 var updateFunction = getAction(actionIndex).getUpdateFunction();
                 updateFunction(_delta);
+                //translate the instance according to their speed
+                setX(getX()+getHSpeed()*_delta);
+                setY(getY()+getVSpeed()*_delta);
+                setRot(getRot()+getRSpeed()*_delta);
             }
             unSelectAll();
         }
@@ -153,7 +160,7 @@ export function setSpriteIndex(_spriteIndex) {
 export function getActionIndex() {
     return INSTANCES.get(getSelectedInstance()).actionIndex;
 }
-export function setActionIndex( _actionIndex) {
+export function setActionIndex(_actionIndex) {
     INSTANCES.get(getSelectedInstance()).actionIndex = _actionIndex;
 }
 export function setX(_x) {
@@ -164,12 +171,19 @@ export function setY(_y) {
     INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
     INSTANCES.get(getSelectedInstance()).y = _y;
 }
-export function setPosition(_p) { //takes in a point (vector) as argument
+export function setPositionV(_p) { //takes in a point (vector) as argument
     INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
     INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
 
     INSTANCES.get(getSelectedInstance()).x = _p.getX();
     INSTANCES.get(getSelectedInstance()).y = _p.getY();
+}
+export function setPosition(_x, _y) {
+    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
+    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
+
+    INSTANCES.get(getSelectedInstance()).x = _x;
+    INSTANCES.get(getSelectedInstance()).y = _y;
 }
 export function setRot(_rot) {
     INSTANCES.get(getSelectedInstance()).rotprev = INSTANCES.get(getSelectedInstance()).rot;
@@ -197,7 +211,27 @@ export function getPrevY() {
 export function getPrevRot() {
     return INSTANCES.get(getSelectedInstance()).prevRot;
 }
-export function makeVar( _value) {
+
+export function setHSpeed(_hspeed){
+    INSTANCES.get(getSelectedInstance()).hspeed = _hspeed;
+}
+export function setVSpeed(_vspeed){
+    INSTANCES.get(getSelectedInstance()).vspeed = _vspeed;
+}
+export function setRSpeed(_rspeed){
+    INSTANCES.get(getSelectedInstance()).rspeed = _rspeed;
+}
+export function getHSpeed(){
+    return INSTANCES.get(getSelectedInstance()).hspeed;
+}
+export function getVSpeed(){
+    return INSTANCES.get(getSelectedInstance()).vspeed;
+}
+export function getRSpeed(){
+    return INSTANCES.get(getSelectedInstance()).rspeed;
+}
+
+export function makeVar(_value) {
     return INSTANCES.get(getSelectedInstance()).vars.add(_value);
 }
 export function getVal(_variableIndex) {
@@ -217,4 +251,23 @@ export function setBoundingBoxCoord(_x1, _y1, _x2, _y2) {
 
 export function getBoundingBox() { //returns the BoundingBox object of the primitive _index
     return INSTANCES.get(getSelectedInstance()).boundingBox;
+}
+
+export function hide() {
+    INSTANCES.get(getSelectedInstance()).hidden = true;
+}
+export function unhide() {
+    INSTANCES.get(getSelectedInstance()).hidden = false;
+}
+export function isHidden() {
+    return INSTANCES.get(getSelectedInstance()).hidden;
+}
+export function freeze() {
+    INSTANCES.get(getSelectedInstance()).freeze = true;
+}
+export function unfreeze() {
+    INSTANCES.get(getSelectedInstance()).freeze = false;
+}
+export function isFrozen() {
+    return INSTANCES.get(getSelectedInstance()).freeze;
 }

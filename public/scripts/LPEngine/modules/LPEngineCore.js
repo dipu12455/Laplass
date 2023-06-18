@@ -3,7 +3,7 @@
 import { getLineColor, getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { LPVector, transformVector, v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
+import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -174,9 +174,11 @@ function draw_instances() { //works on the instance currently selected
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     selectInstance(i);
-    var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
-      getX(), getY(), getRot());
-    draw_primitive(trans);
+    if (!isHidden()) {
+      var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
+        getX(), getY(), getRot());
+      draw_primitive(trans);
+    }
     unSelectAll();
   }
 }

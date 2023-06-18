@@ -31,6 +31,7 @@ export { getSpriteIndex } from './modules/LPInstances.js';
 export { setSpriteIndex } from './modules/LPInstances.js';
 export { setX } from './modules/LPInstances.js';
 export { setY } from './modules/LPInstances.js';
+export { setPositionV } from './modules/LPInstances.js';
 export { setPosition } from './modules/LPInstances.js';
 export { setRot } from './modules/LPInstances.js';
 export { getX } from './modules/LPInstances.js';
@@ -40,6 +41,13 @@ export { getRot } from './modules/LPInstances.js';
 export { getPrevX } from './modules/LPInstances.js';
 export { getPrevY } from './modules/LPInstances.js';
 export { getPrevRot } from './modules/LPInstances.js';
+export { setHSpeed } from './modules/LPInstances.js'
+export { setVSpeed } from './modules/LPInstances.js'
+export { setRSpeed } from './modules/LPInstances.js'
+export { getHSpeed } from './modules/LPInstances.js'
+export { getVSpeed } from './modules/LPInstances.js'
+export { getRSpeed } from './modules/LPInstances.js'
+
 export { makeVar } from './modules/LPInstances.js'
 export { getVal } from './modules/LPInstances.js'
 export { setVal } from './modules/LPInstances.js'
@@ -47,6 +55,12 @@ export { BoundingBox } from './modules/LPInstances.js';
 export { setBoundingBox } from './modules/LPInstances.js';
 export { setBoundingBoxCoord } from './modules/LPInstances.js';
 export { getBoundingBox } from './modules/LPInstances.js';
+export { hide } from './modules/LPInstances.js';
+export { unhide } from './modules/LPInstances.js';
+export { isHidden } from './modules/LPInstances.js';
+export { freeze } from './modules/LPInstances.js';
+export { unfreeze } from './modules/LPInstances.js';
+export { isFrozen } from './modules/LPInstances.js';
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
