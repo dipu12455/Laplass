@@ -34,8 +34,10 @@ export class Primitive extends LPList {
 
 var PRIMITIVES = new LPList(); //list of all primitives in LPE
 
-export function addPrimitive(_primitive) {
-  return PRIMITIVES.add(_primitive);
+export function addPrimitive(_primitivePath) {
+  var ind = PRIMITIVES.add(new Primitive());
+  loadPrimitive(ind, _primitivePath);
+  return ind;
 }
 
 export function getPrimitive(_index) {
