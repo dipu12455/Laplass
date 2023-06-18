@@ -138,7 +138,7 @@ export function updateInstances(_delta) {
             }
             unSelectAll();
         }
-        turnOffEvents();
+        turnOffEvents(); //only for non-persistent events
     }
 }
 

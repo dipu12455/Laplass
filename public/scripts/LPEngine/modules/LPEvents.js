@@ -19,6 +19,16 @@ eventArray[evKeyG] = false; //KeyG non-sensitive to capital
 eventArray[evKeyS] = false; //KeyS non-sensitive to capital
 eventArray[evKeyP] = false; //KeyP non-sensitive to capital
 
+//persistent event codes
+export const evKeyG_p = 0;
+export const evKeyS_p = 1;
+export const evKeyP_p = 2;
+
+var eventArray_p = [];
+eventArray_p[evKeyG_p] = false;
+eventArray_p[evKeyS_p] = false;
+eventArray_p[evKeyP_p] = false;
+
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
     _window.addEventListener('mousemove', function (event) {
@@ -56,16 +66,42 @@ export function LPEventsInit(_window) {
         if(keyCode == 'KeyG'){
             console.log('Pressed G');
             fireEvent(evKeyG);
+            firePEvent(evKeyG_p);
+
         }
         if (keyCode == 'KeyS'){
             console.log('Pressed S');
             fireEvent(evKeyS);
+            firePEvent(evKeyS_p);
         }
         if (keyCode == 'KeyP'){
             console.log('Pressed P');
             fireEvent(evKeyP);
+            firePEvent(evKeyP_p);
         }
-    })
+    });
+
+    /*keyboard events are different. If you want to move a player when the key is pressed,
+    the event needs to stay fired (true) until the key is released. THat's when the keyup
+    event becomes in charge of turning off the event.
+    But if you want a single click keypress function, then don't put a keyup event for it,
+    and instead turnoff the event in the place where it gets consumed.*/
+    
+    _window.addEventListener('keyup', function(event){
+        var keyCode = event.code;
+        if(keyCode == 'KeyG'){
+            console.log('Released G');
+            turnOffPEvent(evKeyG_p);
+        }
+        if (keyCode == 'KeyS'){
+            console.log('Released S');
+            turnOffPEvent(evKeyS_p);
+        }
+        if (keyCode == 'KeyP'){
+            console.log('Released S');
+            turnOffPEvent(evKeyP_p);
+        }
+    });
 }
 
 function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
@@ -89,6 +125,16 @@ export function isEventFired(_event){
 
 export function turnOffEvent(_event){
     eventArray[_event] = false;
+}
+
+function firePEvent(_event){
+    eventArray_p[_event] = true;
+}
+export function isPEventFired(_event){
+    return eventArray_p[_event];
+}
+function turnOffPEvent(_event){
+    eventArray_p[_event] = false;
 }
 
 //turn off all events, usually done at the end of the instances update loop.
