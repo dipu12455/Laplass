@@ -1,31 +1,12 @@
 import * as LP from './LPEngine/LPEngine.js';
-import * as S3 from './scene_sat3Def.js';
-import { findMin } from './LPEngine/LPEngine.js';
-import { findMax } from './LPEngine/LPEngine.js';
+import * as Scene from './SceneDef.js';
 
 //get the entity from def file
-var ins1 = S3.ins1;
-var ins2 = S3.ins2;
+var ins1 = Scene.ins1;
+var ins2 = Scene.ins2;
 
 var printed = false;
 var initExecuted = false;
-
-var testList = new LP.LPList();
-/* testList.add(-1.595368791568188);
-testList.add(-0.9453687915681881);
-testList.add(-0.7953687915681881); */
-
-/* testList.add(1.1969125277121258);
-testList.add(0.6969125277121255);
-testList.add(0.39691252771212554);
-console.log(`testList ${testList.getPrint()}`);
-console.log(`min ${testList.get(findMin(testList))}`);
-console.log(`max ${testList.get(findMax(testList))}`);
-var condition1 = 1.1969125277121258 < 0.6969125277121255;
-var condition2 = 0.6969125277121255 < 1.1969125277121258;
-console.log(`condition ${condition1}`);
-console.log(`condition ${condition2}`); */
-
 
 export function update(_delta) {
   if (initExecuted == false) {
