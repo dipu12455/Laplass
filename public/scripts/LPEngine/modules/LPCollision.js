@@ -20,13 +20,19 @@ export function checkCollision(_primitive1, _primitive2) {
     //find coefficients of projection of vertices of first primitive on this axisVector
     let pointList1 = getCoefficientsOfProjection(_primitive1, normalList.get(i));
     //now find min and max value of the list of points
-    let min1 = findMin(pointList1); let max1 = findMax(pointList1);
+    if (isPrintConsole()){console.log(`min1 = findMin(pointList1)-------`)};
+    let min1 = findMin(pointList1); 
+    if (isPrintConsole()){console.log(`max1 = findMax(pointList1)-------`)};
+    let max1 = findMax(pointList1);
     //find the average of the min and max value to obtain center of this primitive
     let center1 = (pointList1.get(max1) + pointList1.get(min1)) / 2;
 
     //repeat the above for the second primitive
     let pointList2 = getCoefficientsOfProjection(_primitive2, normalList.get(i));
-    let min2 = findMin(pointList2); let max2 = findMax(pointList2);
+    if (isPrintConsole()){console.log(`min2 = findMin(pointList2)-------`)};
+    let min2 = findMin(pointList2); 
+    if (isPrintConsole()){console.log(`max2 = findMax(pointList2)-------`)};
+    let max2 = findMax(pointList2);
     let center2 = (pointList2.get(max2) + pointList2.get(min2)) / 2;
 
     //think of all these values plotted on the x-axis (like a number line)
@@ -66,7 +72,7 @@ export function checkCollision(_primitive1, _primitive2) {
 
     //TEMPORARY FOR DEBUGGING if (overlap == false) return false; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
   }
-  if (isPrintConsole()){
+ if (isPrintConsole()){
     timePause();
     turnOffPrintConsole();
   }
@@ -106,14 +112,26 @@ export function projectPrimitiveOntoAxis(_primitive, _axisVector) {
 
 //takes a list and finds the min, returns the index of the min value of the list
 export function findMin(_list /*type LPList*/) { //TODO: what if there are more that one min values? it is possible for two different vertices to have equal projection vector
+  if (isPrintConsole()){
+    console.log(`findMin()---------------------------------`);
+    console.log(`_list = ${_list}`);
+  }
   var min = 0;
+  var value = 0;
+  min = _list.get(0); //important to initialize the min var to the first value of the list
   var index = 0;
   var i = 0;
-  for (i = 0; i < _list.getSize(); i += 1) {
-    let value = _list.get(i);
+  for (i = 1; i < _list.getSize(); i += 1) {
+    value = _list.get(i); //switch values per iteration for comparison
     if (value < min) {
       min = value;
       index = i;
+    }
+    if (isPrintConsole()){
+      console.log(`i = ${i}`);
+      console.log(`value ${value}`);
+      console.log(`min ${min}`);
+      console.log(`returning index ${index}`);
     }
   }
   return index;
@@ -121,14 +139,25 @@ export function findMin(_list /*type LPList*/) { //TODO: what if there are more 
 
 //takes a list and finds the max, returns the index of the max value of the list
 export function findMax(_list) {
+  if (isPrintConsole()){
+    console.log(`_list = ${_list}`);
+  }
   var max = 0;
+  var value = 0;
+  max = _list.get(0); //important to initialize the max var to the first value of the list
   var index = 0;
   var i = 0;
-  for (i = 0; i < _list.getSize(); i += 1) {
-    let value = _list.get(i);
+  for (i = 1; i < _list.getSize(); i += 1) {
+    value = _list.get(i); //switch values per iteration for comparison
     if (value > max) {
       max = value;
       index = i;
+    }
+    if (isPrintConsole()){
+      console.log(`i = ${i}`);
+      console.log(`value ${value}`);
+      console.log(`max ${max}`);
+      console.log(`returning index ${index}`);
     }
   }
   return index;
