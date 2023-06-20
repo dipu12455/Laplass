@@ -45,6 +45,14 @@ export function transformVector(_v, _x, _y, _theta){
   return v;
 }
 
+//a unit vector is used to indicate direction
+export function getUnitVector(_v){
+  var mag = _v.getMag();
+  var i = _v.getX()/mag;
+  var j = _v.getY()/mag;
+  return new LPVector(i,j);
+}
+
 export function dotProduct(_v1,_v2){
   return (_v1.getX() * _v2.getX()) + (_v1.getY() * _v2.getY());
 }

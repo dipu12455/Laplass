@@ -38,9 +38,9 @@ export { getX } from './modules/LPInstances.js';
 export { getY } from './modules/LPInstances.js';
 export { getPosition } from './modules/LPInstances.js';
 export { getRot } from './modules/LPInstances.js';
-export { getPrevX } from './modules/LPInstances.js';
-export { getPrevY } from './modules/LPInstances.js';
-export { getPrevRot } from './modules/LPInstances.js';
+export { getXPrev } from './modules/LPInstances.js';
+export { getYPrev } from './modules/LPInstances.js';
+export { getRotPrev } from './modules/LPInstances.js';
 export { setHSpeed } from './modules/LPInstances.js'
 export { setVSpeed } from './modules/LPInstances.js'
 export { setRSpeed } from './modules/LPInstances.js'

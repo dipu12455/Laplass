@@ -202,14 +202,14 @@ export function getPosition() {
 export function getRot() {
     return INSTANCES.get(getSelectedInstance()).rot;
 }
-export function getPrevX() {
-    return INSTANCES.get(getSelectedInstance()).prevX;
+export function getXPrev() {
+    return INSTANCES.get(getSelectedInstance()).xprev;
 }
-export function getPrevY() {
-    return INSTANCES.get(getSelectedInstance()).prevY;
+export function getYPrev() {
+    return INSTANCES.get(getSelectedInstance()).yprev;
 }
-export function getPrevRot() {
-    return INSTANCES.get(getSelectedInstance()).prevRot;
+export function getRotPrev() {
+    return INSTANCES.get(getSelectedInstance()).rotprev;
 }
 
 export function setHSpeed(_hspeed){

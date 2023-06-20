@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { sqr } from './LPVector.js';
+import { getUnitVector, sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, draw_anchorV, isPrintConsole, timePause, turnOffPrintConsole } from './LPEngineCore.js';
@@ -10,6 +10,7 @@ import { getPrimitiveIndex, getRot, getX, getY, selectInstance, unSelectAll } fr
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
 export function checkCollision(_primitive1, _primitive2) {
+  var mtvList = new LPList();
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
@@ -49,27 +50,43 @@ export function checkCollision(_primitive1, _primitive2) {
     if (center2 > center1) halfwidth2 = center2 - pointList2.get(min2);
 
     //finally find overlap using the following formula
-    var overlap = (distanceBetweenCenters - halfwidth1 - halfwidth2) < 0
+    var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
+    var overlap = distance < 0;
+    mtvList.add(distance); //any recorded distance is guaranteed to be less than zero
 
-    if (overlap == false) return false; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
+    if (overlap == false) break;
   }
-  return overlap; //if overlap didn't return false for the above loop of all the normals, then there is collision.
+  //try to put return statements after most usage is finished with data structures, otherwise compiler will delete the data before function reaches the return statement
+  if (overlap == true) {
+    //find which overlap was the closest to zero
+    var ind = findMax(mtvList);
+    var smallestOverLapVectorDirection = getUnitVector(normalList.get(ind)); //the index of closest-to-zero value in mtvlist has same index as the index of the normal in the normalList. Only need direction of this vector, so change to unit vector
+    var smallestOverLapVectorMagnitude = mtvList.get(ind); //that distance just found, is the mag of this Minimum Translation Vector (MTV)
+    
+    return [smallestOverLapVectorDirection.getX(),
+    smallestOverLapVectorDirection.getY(),
+      smallestOverLapVectorMagnitude,
+      1]; //if overlap didn't return false for the above loop of all the normals, then there is collision, which is the `1` value of the array that is returned. Respectively, it returns unit vector i, unit vector j and the mag of mtv, then overlap (0/1).
+  } else {
+    return [-1, -1, -1, 0]; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
+  }
+
 }
 
-export function checkCollisionInstances(_instanceIndex1, _instanceIndex2){
+export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
   var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
-    getX(),getY(),getRot());
-    unSelectAll();
+    getX(), getY(), getRot());
+  unSelectAll();
 
   //obtain the second primitive tranformed into the orientation of its instance
   selectInstance(_instanceIndex2);
   var prim2 = transform_primitive(getPrimitive(getPrimitiveIndex()),
-  getX(),getY(),getRot()); 
+    getX(), getY(), getRot());
   unSelectAll();
 
-  //check collision between these two primitives, and if so draw a red dot
+  //check collision between these two primitives
   return checkCollision(prim1, prim2);
 }
 

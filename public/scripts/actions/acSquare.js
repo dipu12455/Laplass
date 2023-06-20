@@ -5,49 +5,24 @@ var init = () => {
 };
 
 var update = (_delta) => {
+
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
 
-    var acc = move(0.02);
-
-    hspeed = applyFriction(hspeed, 0.005);
-    vspeed = applyFriction(vspeed, 0.005);
-
-    hspeed += acc[0];
-    vspeed += acc[1];
+    var gravity = -0.02;
+    var ax = 0;
+    var ay = gravity;
+    
+    vspeed += ay;
 
     LP.setHSpeed(hspeed);
     LP.setVSpeed(vspeed);
+
+    //console.log(`${LP.getX()} ${LP.getY()}`);
+    if (LP.isEventFired(LP.evKeyP)) {
+        LP.timePause();
+        LP.turnOffEvent(LP.evKeyP);
+    }
 };
 
 export var acSquare = LP.addAction(new LP.Action(init,update));
-
-function applyFriction(_speed, _amount){
-    if (_speed > 0){
-        return (_speed - _amount);
-    }
-    if (_speed < 0){
-        return (_speed + _amount);
-    }
-    return _speed;
-}
-
-function move(_speed){
-    var ax = 0;
-    var ay = 0;
-
-    if (LP.isPEventFired(LP.evKeyW_p)){
-        ay = _speed;
-    }
-    if (LP.isPEventFired(LP.evKeyS_p)){
-        ay = -_speed;
-    }
-    if (LP.isPEventFired(LP.evKeyA_p)){
-        ax = -_speed;
-    }
-    if (LP.isPEventFired(LP.evKeyD_p)){
-        ax = _speed;
-    }
-    return [ax,ay];
-
-}
