@@ -33,20 +33,20 @@ var update = (_delta) => {
 
 function handleCollision(_acc) {
     //see if collision is detected
-    var collision = LP.checkCollisionInstances(LP.getSelectedInstance(),square, ground);
-    var acc = [0,0];
+    var collision = LP.checkCollisionInstances(LP.getSelectedInstance(), square, ground);
+    var acc = [0, 0];
 
     if (collision[3] == 1) {
         //need to retract object to its position before the collision to un-overlap it.
         LP.setX(LP.getXPrev());
         LP.setY(LP.getYPrev());
 
-        acc = bounce(0); //returns an acceleration that the current physical state would yield
+        acc = bounce(0,0.9); //returns an acceleration that the current physical state would yield
     }
-    return v1Plusv2(_acc, acc) ; //add onto the acc you received from parameter
+    return v1Plusv2(_acc, acc); //add onto the acc you received from parameter
 }
 
-function bounce(_angleOfContact) {
+function bounce(_angleOfContact, _damp) {
     /*final velocity after colliding with wall is equal in
     magnitude but 'reflective' in direction to initial velocity.
     since acc is defined as the change in velocity, we get acc by v2 - v1,
@@ -68,7 +68,7 @@ function bounce(_angleOfContact) {
     var yy = tan(tt) * xx;
     v2[1] = 2 * yy - v1[1];
 
-    v2Mag = v1Mag; //magnitude is the same
+    v2Mag = v1Mag*_damp; //magnitude is the same
 
     /* now we have v2 and v1, acc is the difference between v2 and v1.*/
     v1 = getRegularVector(v1, v1Mag); //convert them to regular vector first before subtracting
