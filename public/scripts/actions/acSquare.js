@@ -68,7 +68,7 @@ function bounce(_angleOfContact) {
     var yy = tan(tt) * xx;
     v2[1] = 2 * yy - v1[1];
 
-    v1Mag = v1Mag; //magnitude is the same
+    v2Mag = v1Mag; //magnitude is the same
 
     /* now we have v2 and v1, acc is the difference between v2 and v1.*/
     v1 = getRegularVector(v1, v1Mag); //convert them to regular vector first before subtracting
