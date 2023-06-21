@@ -1,6 +1,6 @@
 export function sqr(_num){return _num * _num;}
-function radtodeg(_radians){return _radians * (180/Math.PI);}
-function degtorad(_degrees){return _degrees * (Math.PI/180);}
+export function radtodeg(_radians){return _radians * (180/Math.PI);}
+export function degtorad(_degrees){return _degrees * (Math.PI/180);}
 
 export class LPVector{
   constructor(_vx,_vy){

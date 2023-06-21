@@ -2,6 +2,8 @@
 
 //LPVector
 export { LPVector } from './modules/LPVector.js';
+export { degtorad } from './modules/LPVector.js';
+export { radtodeg } from './modules/LPVector.js';
 export { sqr } from './modules/LPVector.js';
 export { rotateVector } from './modules/LPVector.js';
 export { dotProduct } from './modules/LPVector.js';

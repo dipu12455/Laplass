@@ -73,7 +73,8 @@ export function checkCollision(_primitive1, _primitive2) {
 
 }
 
-export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
+export function checkCollisionInstances(_saveInstance, _instanceIndex1, _instanceIndex2) {
+  var savedIndex = _saveInstance;
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
   var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
@@ -86,6 +87,8 @@ export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
     getX(), getY(), getRot());
   unSelectAll();
 
+  //return instance selection to what it was, temp fix!!!
+  selectInstance(savedIndex);
   //check collision between these two primitives
   return checkCollision(prim1, prim2);
 }
