@@ -1,13 +1,16 @@
 import * as LP from '../LPEngine/LPEngine.js';
+import { isPrintConsole } from '../LPEngine/modules/LPEngineCore.js';
 import { ground, square } from '../SceneDef.js';
 
 var force = 0.04;
 var init = () => {
-    LP.setBoundingBox([-1,1],[1,-1]);
+    LP.setBoundingBox([-1, 1], [1, -1]);
     LP.setPosition(-5, 5);
 };
 
 var update = (_delta) => {
+    checkEvents();
+  
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
 
@@ -30,11 +33,15 @@ var update = (_delta) => {
     LP.setHSpeed(hspeed);
     LP.setVSpeed(vspeed);
 
+
+};
+
+function checkEvents(){
     if (LP.isEventFired(LP.evKeyP)) {
         LP.timePause();
         LP.turnOffEvent(LP.evKeyP);
     }
-};
+}
 
 function handleCollision(_acc) {
     //see if collision is detected
@@ -42,11 +49,12 @@ function handleCollision(_acc) {
     var acc = [0, 0];
 
     if (collision[3] == 1) {
+
         //need to retract object to its position before the collision to un-overlap it.
         LP.setX(LP.getXPrev());
         LP.setY(LP.getYPrev());
 
-        acc = bounce(0,1); //returns an acceleration that the current physical state would yield
+        acc = bounce(0, 0.6); //returns an acceleration that the current physical state would yield
     }
     return v1Plusv2(_acc, acc); //add onto the acc you received from parameter
 }
@@ -73,7 +81,7 @@ function bounce(_angleOfContact, _damp) {
     var yy = tan(tt) * xx;
     v2[1] = 2 * yy - v1[1];
 
-    v2Mag = v1Mag*_damp; //magnitude is the same
+    v2Mag = v1Mag * _damp; //magnitude is the same
 
     /* now we have v2 and v1, acc is the difference between v2 and v1.*/
     v1 = getRegularVector(v1, v1Mag); //convert them to regular vector first before subtracting
@@ -82,7 +90,7 @@ function bounce(_angleOfContact, _damp) {
     return acc;
 }
 
-function resetForces(){
+function resetForces() {
     force = 0;
 }
 

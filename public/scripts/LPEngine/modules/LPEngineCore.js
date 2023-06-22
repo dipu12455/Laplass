@@ -1,7 +1,7 @@
 //import * as PIXI from './pixi.js';
 
-import { getLineColor, getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
-import { LPVector, transformVector, v1Plusv2 } from './LPVector.js';
+import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
+import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
 import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 
@@ -50,7 +50,7 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 }
 
 export function getWorldOrigin() {
-  return new LPVector(worldOriginX, worldOriginY);
+  return [worldOriginX, worldOriginY];
 }
 
 export function getWorldDelta() {
@@ -62,9 +62,9 @@ export function setWorldDelta(_worldDelta) {
 }
 
 function moveToScreenCoord(_p) { //change from LP's coordinate system to screen coords, coordinates are converted to pixel positions on screen
-  var xx = worldOriginX + (_p.getX() * worldDelta);
-  var yy = worldOriginY - (_p.getY() * worldDelta);
-  return new LPVector(xx, yy);
+  var xx = worldOriginX + (_p[0] * worldDelta);
+  var yy = worldOriginY - (_p[1] * worldDelta);
+  return [xx, yy];
 }
 
 export function runTicker() {
@@ -97,41 +97,28 @@ export function isPrintConsole() {
 export function showScreenGrid() { screenGrid = true; }
 export function hideScreenGrid() { screenGrid = false; }
 
-export function draw_line(x1, y1, x2, y2, color) {
-  drawObject.lineStyle(1, color, 1);
-  drawObject.moveTo(worldOriginX + (x1 * worldDelta), worldOriginY - (y1 * worldDelta));
-  drawObject.lineTo(worldOriginX + (x2 * worldDelta), worldOriginY - (y2 * worldDelta));
-}
-
-export function draw_anchor(x, y, color) {
-  drawObject.lineStyle(0);
-  drawObject.beginFill(color, 1);
-  drawObject.drawCircle(worldOriginX + (x * worldDelta), worldOriginY - (y * worldDelta), 2);
-  drawObject.endFill();
-}
-
 //draws a line between the head of two vectors (using vectors as point input)
-export function draw_lineV(_v1, _v2, color) {
-  var v1 = moveToScreenCoord(_v1);
-  var v2 = moveToScreenCoord(_v2);
+export function draw_line(_p1, _p2, color) {
+  var p1 = moveToScreenCoord(_p1);
+  var p2 = moveToScreenCoord(_p2);
   drawObject.lineStyle(1, color, 1);
-  drawObject.moveTo(v1.getX(), v1.getY());
-  drawObject.lineTo(v2.getX(), v2.getY());
+  drawObject.moveTo(p1[0], p1[1]);
+  drawObject.lineTo(p2[0], p2[1]);
 }
 
 //takes a vector to take point input
-export function draw_anchorV(_v, color) {
-  var v = moveToScreenCoord(_v);
+export function draw_anchor(_p, color) { //point of array form [x,y]
+  var v = moveToScreenCoord(_p);
   drawObject.lineStyle(0);
   drawObject.beginFill(color, 1);
-  drawObject.drawCircle(v.getX(), v.getY(), 2);
+  drawObject.drawCircle(_p[0], _p[1], 2);
   drawObject.endFill();
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
-  var origin = new LPVector(0, 0);
-  draw_lineV(origin, _v, _lineColor);
-  draw_anchorV(_v, _anchorColor);
+  var origin = [0, 0];
+  draw_line(origin, _v, _lineColor);
+  draw_anchor(_v, _anchorColor);
 }
 
 export function draw_primitive(_primitive) {
@@ -146,8 +133,8 @@ export function draw_primitive(_primitive) {
   for (i = 0; i < _primitive.getSize(); i += 1) {
     var vertex = _primitive.get(i);
     var vertex2 = moveToScreenCoord(vertex);
-    path[j] = vertex2.getX();
-    path[j + 1] = vertex2.getY();
+    path[j] = vertex2[0];
+    path[j + 1] = vertex2[1];
     j = j + 2;
   }
   if (wireframe == true) {
@@ -166,7 +153,7 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
   var normals = getNormalsOfPrimitive(_primitive);
   var i = 0;
   for (i = 0; i < normals.getSize(); i += 1) {
-    draw_lineV(_p, v1Plusv2(_p, normals.get(i)), _primColor, _secColor);
+    draw_line(_p, v1Plusv2(_p, normals.get(i)), _primColor, _secColor);
   }
 }
 
@@ -188,19 +175,19 @@ function draw_screen_grid(_width, _height, _primColor, _secColor) {
   //line y-axis lines
   var n = _height / 2;
   while (true) {
-    draw_line(-_width / 2, n, _width / 2, n, _secColor);
+    draw_line([-_width / 2, n], [_width / 2, n], _secColor);
     n -= 1;
     if (n < -_height / 2) break;
   }
   //line y-axis lines
   n = -_width / 2;
   while (true) {
-    draw_line(n, _height / 2, n, -_height / 2, _secColor);
+    draw_line([n, _height / 2], [n, -_height / 2], _secColor);
     n += 1;
     if (n > _width / 2) break;
   }
 
   //draw the origin
-  draw_line(-_width / 2, 0, _width / 2, 0, _primColor);
-  draw_line(0, _height / 2, 0, -_height / 2, _primColor);
+  draw_line([-_width / 2, 0], [_width / 2, 0], _primColor);
+  draw_line([0, _height / 2], [0, -_height / 2], _primColor);
 }

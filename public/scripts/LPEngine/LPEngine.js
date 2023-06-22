@@ -1,7 +1,4 @@
-
-
 //LPVector
-export { LPVector } from './modules/LPVector.js';
 export { degtorad } from './modules/LPVector.js';
 export { radtodeg } from './modules/LPVector.js';
 export { sqr } from './modules/LPVector.js';
@@ -93,8 +90,6 @@ export { draw_line } from './modules/LPEngineCore.js';
 export { draw_anchor } from './modules/LPEngineCore.js';
 export { draw_vector_origin } from './modules/LPEngineCore.js';
 export { draw_primitive } from './modules/LPEngineCore.js';
-export { draw_lineV } from './modules/LPEngineCore.js';
-export { draw_anchorV } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
 
 //LPCollision

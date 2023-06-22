@@ -1,6 +1,5 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
-import { LPVector } from "./LPVector.js";
 import { isTimeRunning } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 

@@ -1,5 +1,4 @@
 import { getWorldDelta, getWorldOrigin } from "./LPEngineCore.js";
-import { LPVector } from "./LPVector.js";
 
 var mouseX = 0, mouseY = 0;
 
@@ -144,14 +143,14 @@ export function LPEventsInit(_window) {
 }
 
 function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
-    var xx = (_p.getX() - getWorldOrigin().getX()) / getWorldDelta();
-    var yy = (getWorldOrigin().getY() - _p.getY()) / getWorldDelta() //these are simply opposites of changing worldcoord into pixels
-    return new LPVector(xx, yy);
+    var xx = (_p[0] - getWorldOrigin()[0]) / getWorldDelta();
+    var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta() //these are simply opposites of changing worldcoord into pixels
+    return [xx, yy];
 }
 
 //the mouse coord need to be translated from pixels to worldCoord
 export function getMousePosition() {
-    return screenCoordtoWorldCoord(new LPVector(mouseX, mouseY));
+    return screenCoordtoWorldCoord([mouseX, mouseY]);
 }
 
 function fireEvent(_event) {
@@ -211,7 +210,7 @@ export function evMouseDownRegion(_boundingBox) {
 
 //returns true if the given point lies within the given bounding box
 function checkPointInRegion(_p, _boundingBox) {
-    var withinRegionX = (_p.getX() > _boundingBox.getP1().getX()) && (_p.getX() < _boundingBox.getP2().getX());
-    var withinRegionY = (_p.getY() < _boundingBox.getP1().getY()) && (_p.getY() > _boundingBox.getP2().getY());
+    var withinRegionX = (_p[0] > _boundingBox.getP1()[0]) && (_p[0] < _boundingBox.getP2()[0]);
+    var withinRegionY = (_p[1] < _boundingBox.getP1()[1]) && (_p[1] > _boundingBox.getP2()[1]);
     return (withinRegionX && withinRegionY);
 }

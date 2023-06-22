@@ -1,5 +1,3 @@
-import { LPVector } from "./LPVector.js";
-
 export class LPList{
   constructor(){
     this.indexCounter = 0;

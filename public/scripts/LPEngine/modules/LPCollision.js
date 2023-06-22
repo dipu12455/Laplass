@@ -1,8 +1,8 @@
 import { LPList } from "./LPList.js";
-import { getUnitVector, sqr } from './LPVector.js';
+import { getMag, getUnitVector, sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { draw_anchor, draw_anchorV, isPrintConsole, timePause, turnOffPrintConsole } from './LPEngineCore.js';
+import { draw_anchor, isPrintConsole, turnOffPrintConsole } from './LPEngineCore.js';
 import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getPrimitiveIndex, getRot, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
@@ -55,23 +55,27 @@ export function checkCollision(_primitive1, _primitive2) {
     mtvList.add(distance); //any recorded distance is guaranteed to be less than zero
 
     if (overlap == false) break;
+    
   }
+  turnOffPrintConsole();
+
   //try to put return statements after most usage is finished with data structures, otherwise compiler will delete the data before function reaches the return statement
   if (overlap == true) {
     //find which overlap was the closest to zero
     var ind = findMax(mtvList);
     var smallestOverLapVectorDirection = getUnitVector(normalList.get(ind)); //the index of closest-to-zero value in mtvlist has same index as the index of the normal in the normalList. Only need direction of this vector, so change to unit vector
     var smallestOverLapVectorMagnitude = mtvList.get(ind); //that distance just found, is the mag of this Minimum Translation Vector (MTV)
-    
-    return [smallestOverLapVectorDirection.getX(),
-    smallestOverLapVectorDirection.getY(),
+
+    return [smallestOverLapVectorDirection[0],
+    smallestOverLapVectorDirection[1],
       smallestOverLapVectorMagnitude,
       1]; //if overlap didn't return false for the above loop of all the normals, then there is collision, which is the `1` value of the array that is returned. Respectively, it returns unit vector i, unit vector j and the mag of mtv, then overlap (0/1).
   } else {
     return [-1, -1, -1, 0]; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
   }
-
 }
+
+
 
 export function checkCollisionInstances(_saveInstance, _instanceIndex1, _instanceIndex2) {
   var savedIndex = _saveInstance;
@@ -165,7 +169,7 @@ function projOfuOnv(_u, _v) {
 
 function coeffOfProjuOnv(_u, _v) {
   const dotProd = dotProduct(_u, _v);
-  const coefficient = dotProd / sqr(_v.getMag());
+  const coefficient = dotProd / sqr(getMag(_v));
   return coefficient; //this is a scalar
 }
 
@@ -177,14 +181,14 @@ export function draw_plotPointsXaxis(_pointsList, _scale, _min, _max) {
   for (i = 0; i < _pointsList.getSize(); i += 1) {
     var p = _pointsList.get(i);
     if (i == _min) {
-      draw_anchor(p * _scale, 0, 0xff0000); //if min, draw red
+      draw_anchor([p * _scale, 0], 0xff0000); //if min, draw red
       continue;
     }
     if (i == _max) {
-      draw_anchor(p * _scale, 0, 0x0000ff); //if max, draw green
+      draw_anchor([p * _scale, 0], 0x0000ff); //if max, draw green
       continue;
     }
-    draw_anchor(p * _scale, 0, 0x000000); //else draw black
+    draw_anchor([p * _scale, 0], 0x000000); //else draw black
   }
 }
 
@@ -193,13 +197,13 @@ export function draw_plotVectorList(_vectorList, _min, _max) {
   for (i = 0; i < _vectorList.getSize(); i += 1) {
     var p = _vectorList.get(i);
     if (i == _min) {
-      draw_anchorV(p, 0xff0000); //if min, draw red
+      draw_anchor(p, 0xff0000); //if min, draw red
       continue;
     }
     if (i == _max) {
-      draw_anchorV(p, 0x0000ff); //if max, draw green
+      draw_anchor(p, 0x0000ff); //if max, draw green
       continue;
     }
-    draw_anchorV(p, 0x000000); //else draw black
+    draw_anchor(p, 0x000000); //else draw black
   } //draw each projected point (vectors) onto the axis
 }
