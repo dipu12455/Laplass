@@ -2,19 +2,19 @@ import { LPList } from "./LPList.js";
 import { getMag, getUnitVector, sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { draw_anchor, isPrintConsole, turnOffPrintConsole } from './LPEngineCore.js';
-import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { getPrimitiveIndex, getRot, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
+import { draw_anchor, isPrintConsole, printConsole, turnOffPrintConsole } from './LPEngineCore.js';
+import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
+import { INSTANCES, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
 /* a function that takes in two primitives and checks if they have collision. These can be just two ordinary primitives, or primitives that represent collision points of
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
 export function checkCollision(_primitive1, _primitive2) {
-  var mtvList = new LPList();
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
   normalList.append(normalList2);
+  var overlap = false;
   let i = 0;
 
   //iterate through the  normallist
@@ -51,34 +51,15 @@ export function checkCollision(_primitive1, _primitive2) {
 
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
-    var overlap = distance < 0;
-    mtvList.add(distance); //any recorded distance is guaranteed to be less than zero
+    overlap = distance < 0;
 
     if (overlap == false) break;
-    
-  }
-  turnOffPrintConsole();
 
-  //try to put return statements after most usage is finished with data structures, otherwise compiler will delete the data before function reaches the return statement
-  if (overlap == true) {
-    //find which overlap was the closest to zero
-    var ind = findMax(mtvList);
-    var smallestOverLapVectorDirection = getUnitVector(normalList.get(ind)); //the index of closest-to-zero value in mtvlist has same index as the index of the normal in the normalList. Only need direction of this vector, so change to unit vector
-    var smallestOverLapVectorMagnitude = mtvList.get(ind); //that distance just found, is the mag of this Minimum Translation Vector (MTV)
-
-    return [smallestOverLapVectorDirection[0],
-    smallestOverLapVectorDirection[1],
-      smallestOverLapVectorMagnitude,
-      1]; //if overlap didn't return false for the above loop of all the normals, then there is collision, which is the `1` value of the array that is returned. Respectively, it returns unit vector i, unit vector j and the mag of mtv, then overlap (0/1).
-  } else {
-    return [-1, -1, -1, 0]; //exit out of this algorithm, because even a single lack of overlap in a normal means there is no collision.
   }
+  return overlap;
 }
 
-
-
-export function checkCollisionInstances(_saveInstance, _instanceIndex1, _instanceIndex2) {
-  var savedIndex = _saveInstance;
+export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
   var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
@@ -91,10 +72,66 @@ export function checkCollisionInstances(_saveInstance, _instanceIndex1, _instanc
     getX(), getY(), getRot());
   unSelectAll();
 
-  //return instance selection to what it was, temp fix!!!
-  selectInstance(savedIndex);
   //check collision between these two primitives
   return checkCollision(prim1, prim2);
+}
+
+//function to analyze collisions between all registered instances of LPE. For now, simply returns bounding box overlaps
+export function getCollisions() {
+  let i = 0;
+  for (i = 0; i < INSTANCES.getSize(); i += 1) {
+    //checking collision of each instance with every other instances
+    selectInstance(i); var current = getSelectedInstance(); unSelectAll(); //obtain the instance to check collision for
+    if (isPrintConsole()) console.log(`checking for ${current}`);
+    let j = 0;
+    for (j = 0; j < INSTANCES.getSize(); j += 1) {
+      selectInstance(j); var target = getSelectedInstance(); unSelectAll(); //get the target instance to check collision with
+      if (isPrintConsole()) console.log(`checking with ${target}`);
+
+      //if checking collision with self, skip to next
+      if (target == current){
+        if (isPrintConsole()) console.log(`Checking with self...skip`);
+        continue;
+      }
+      //first check for bounding box overlap, if so... then check for SAT collision
+      if (isOverlapBoundingBox(current, target)) {
+        if (isPrintConsole())  console.log(`Found boundingbox overlap between ${current} ${target}`);
+        if (checkCollisionInstances(current, target)) {
+          //save the instance index of target inside the current instance
+          if (isPrintConsole()) console.log(`Found SAT collision between ${current} ${target}`);
+        }
+      }
+    }
+  }
+  turnOffPrintConsole();
+}
+
+function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
+  //get boundingbox of instance1 and turn it into a primitive
+  selectInstance(_instanceIndex1);
+  var bbox1 = getBoundingBox();
+  //now transform this bbox into prim then, to xyrot of instance
+  var bbox1prim = transform_primitive(primFromBoundingBox(bbox1), getX(), getY(), getRot());
+  unSelectAll();
+
+  //get boundingbox of instance2 and turn it into a primitive
+  selectInstance(_instanceIndex2);
+  var bbox2 = getBoundingBox();
+  //now transform this bbox into prim then, to xyrot of instance
+  var bbox2prim = transform_primitive(primFromBoundingBox(bbox2), getX(), getY(), getRot());
+  unSelectAll();
+
+  return checkCollision(bbox1prim, bbox2prim);
+}
+
+function primFromBoundingBox(_bbox) {
+  var x1 = _bbox.getP1()[0], y1 = _bbox.getP1()[1], x2 = _bbox.getP2()[0], y2 = _bbox.getP2()[1];
+  var prim = new Primitive();
+  prim.add([x1, y1]);
+  prim.add([x2, y1]);
+  prim.add([x2, y2]);
+  prim.add([x1, y2]);
+  return prim;
 }
 
 //takes a primitive and only returns a list of the coefficient of each point with the axis

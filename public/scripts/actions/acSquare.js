@@ -2,7 +2,7 @@ import * as LP from '../LPEngine/LPEngine.js';
 import { isPrintConsole } from '../LPEngine/modules/LPEngineCore.js';
 import { ground, square } from '../SceneDef.js';
 
-var force = 0.04;
+var force = 0.1;
 var init = () => {
     LP.setBoundingBox([-1, 1], [1, -1]);
     LP.setPosition(-5, 5);
@@ -38,6 +38,7 @@ var update = (_delta) => {
 
 function checkEvents(){
     if (LP.isEventFired(LP.evKeyP)) {
+        LP.printConsole();
         LP.timePause();
         LP.turnOffEvent(LP.evKeyP);
     }
@@ -45,10 +46,10 @@ function checkEvents(){
 
 function handleCollision(_acc) {
     //see if collision is detected
-    var collision = LP.checkCollisionInstances(LP.getSelectedInstance(), square, ground);
+    var collision = false;
     var acc = [0, 0];
 
-    if (collision[3] == 1) {
+    if (collision) {
 
         //need to retract object to its position before the collision to un-overlap it.
         LP.setX(LP.getXPrev());

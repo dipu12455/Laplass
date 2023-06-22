@@ -1,6 +1,6 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
-import { isTimeRunning } from "./LPEngineCore.js";
+import { isTimeRunning, turnOffPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 
 export class BoundingBox {

@@ -4,6 +4,7 @@ import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPr
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
 import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
+import { getCollisions } from './LPCollision.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -36,7 +37,12 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
+    getCollisions();
+    
     updateInstances(delta);
+
+    //flushCollisions(); //function that resets the collisionArray of each instance to -1
+    //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
     drawObject.clear(); //clear drawing of last calls
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
