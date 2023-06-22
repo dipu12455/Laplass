@@ -4,12 +4,12 @@ import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, isPrintConsole, printConsole, turnOffPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
+import { INSTANCES, collisionListAdd, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
 /* a function that takes in two primitives and checks if they have collision. These can be just two ordinary primitives, or primitives that represent collision points of
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
-export function checkCollision(_primitive1, _primitive2) {
+export function checkCollisionPrimitives(_primitive1, _primitive2) {
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
@@ -59,7 +59,7 @@ export function checkCollision(_primitive1, _primitive2) {
   return overlap;
 }
 
-export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
+export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceIndex2) {
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
   var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
@@ -73,7 +73,7 @@ export function checkCollisionInstances(_instanceIndex1, _instanceIndex2) {
   unSelectAll();
 
   //check collision between these two primitives
-  return checkCollision(prim1, prim2);
+  return checkCollisionPrimitives(prim1, prim2);
 }
 
 //function to analyze collisions between all registered instances of LPE. For now, simply returns bounding box overlaps
@@ -96,14 +96,15 @@ export function getCollisions() {
       //first check for bounding box overlap, if so... then check for SAT collision
       if (isOverlapBoundingBox(current, target)) {
         if (isPrintConsole())  console.log(`Found boundingbox overlap between ${current} ${target}`);
-        if (checkCollisionInstances(current, target)) {
+        if (checkCollisionPrimitivesInstances(current, target)) {
           //save the instance index of target inside the current instance
           if (isPrintConsole()) console.log(`Found SAT collision between ${current} ${target}`);
+          selectInstance(current);
+          collisionListAdd(target); unSelectAll();
         }
       }
     }
   }
-  turnOffPrintConsole();
 }
 
 function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
@@ -121,7 +122,7 @@ function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
   var bbox2prim = transform_primitive(primFromBoundingBox(bbox2), getX(), getY(), getRot());
   unSelectAll();
 
-  return checkCollision(bbox1prim, bbox2prim);
+  return checkCollisionPrimitives(bbox1prim, bbox2prim);
 }
 
 function primFromBoundingBox(_bbox) {

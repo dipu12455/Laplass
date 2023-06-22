@@ -1,6 +1,6 @@
 import { LPList } from "./LPList.js";
 import { getAction } from "./LPActions.js";
-import { isTimeRunning, turnOffPrintConsole } from "./LPEngineCore.js";
+import { isPrintConsole, isTimeRunning, turnOffPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 
 export class BoundingBox {
@@ -39,6 +39,7 @@ export class LPInstance {
         this.vspeed = 0;
         this.rspeed = 0;
         this.vars = new LPList(); //list that stores custom variables
+        this.collisionList = new LPList();
     }
 }
 
@@ -74,6 +75,7 @@ class LPInstanceList extends LPList {
 
 
 export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
+
 //use the LPObject class to make a child class that is the game 'object'. define attributes and behaviors for that object class.
 //then create an instance of that object class which is the 'instance', its this instance you add to the INSTANCES list.
 //if you make changes to x or y or even the spriteindex, you change one instance of that object, not all of them.
@@ -85,9 +87,14 @@ var selectedInstance = -1; //remembers which instance is being worked on, stores
 export function selectInstance(_index) {
     selectedInstance = _index;
 }
+//returns the index that is currently selected
 export function getSelectedInstance() {
     if (selectedInstance == -1) console.error(`No instance selected.`);
     return selectedInstance;
+}
+function fetchInstance(){
+    //fetches the currently selected instance object
+    return INSTANCES.get(getSelectedInstance());
 }
 export function unSelectAll() {
     selectedInstance = -1;
@@ -141,124 +148,149 @@ export function updateInstances(_delta) {
 //and change attrs of instances
 
 export function getPrimitiveIndex() {
-    return INSTANCES.get(getSelectedInstance()).primitiveIndex;
+    return fetchInstance().primitiveIndex;
 }
 export function setPrimitiveIndex(_primitiveIndex) {
-    INSTANCES.get(getSelectedInstance()).primitiveIndex = _primitiveIndex;
+    fetchInstance().primitiveIndex = _primitiveIndex;
 }
 export function getSpriteIndex() {
-    return INSTANCES.get(getSelectedInstance()).spriteIndex;
+    return fetchInstance().spriteIndex;
 }
 export function setSpriteIndex(_spriteIndex) {
-    INSTANCES.get(getSelectedInstance()).spriteIndex = _spriteIndex;
+    fetchInstance().spriteIndex = _spriteIndex;
 }
 export function getActionIndex() {
-    return INSTANCES.get(getSelectedInstance()).actionIndex;
+    return fetchInstance().actionIndex;
 }
 export function setActionIndex(_actionIndex) {
-    INSTANCES.get(getSelectedInstance()).actionIndex = _actionIndex;
+    fetchInstance().actionIndex = _actionIndex;
 }
 export function setX(_x) {
-    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
-    INSTANCES.get(getSelectedInstance()).x = _x;
+    fetchInstance().xprev = fetchInstance().x;
+    fetchInstance().x = _x;
 }
 export function setY(_y) {
-    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
-    INSTANCES.get(getSelectedInstance()).y = _y;
+    fetchInstance().yprev = fetchInstance().y;
+    fetchInstance().y = _y;
 }
 export function setPositionV(_p) { //takes in a point (vector) as argument
-    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
-    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
+    fetchInstance().xprev = fetchInstance().x;
+    fetchInstance().yprev = fetchInstance().y;
 
-    INSTANCES.get(getSelectedInstance()).x = _p.getX();
-    INSTANCES.get(getSelectedInstance()).y = _p.getY();
+    fetchInstance().x = _p.getX();
+    fetchInstance().y = _p.getY();
 }
 export function setPosition(_x, _y) {
-    INSTANCES.get(getSelectedInstance()).xprev = INSTANCES.get(getSelectedInstance()).x;
-    INSTANCES.get(getSelectedInstance()).yprev = INSTANCES.get(getSelectedInstance()).y;
+    fetchInstance().xprev = fetchInstance().x;
+    fetchInstance().yprev = fetchInstance().y;
 
-    INSTANCES.get(getSelectedInstance()).x = _x;
-    INSTANCES.get(getSelectedInstance()).y = _y;
+    fetchInstance().x = _x;
+    fetchInstance().y = _y;
 }
 export function setRot(_rot) {
-    INSTANCES.get(getSelectedInstance()).rotprev = INSTANCES.get(getSelectedInstance()).rot;
-    INSTANCES.get(getSelectedInstance()).rot = _rot;
+    fetchInstance().rotprev = fetchInstance().rot;
+    fetchInstance().rot = _rot;
 }
 export function getX() {
-    return INSTANCES.get(getSelectedInstance()).x;
+    return fetchInstance().x;
 }
 export function getY() {
-    return INSTANCES.get(getSelectedInstance()).y;
+    return fetchInstance().y;
 }
 export function getPosition() {
-    return new LPVector(INSTANCES.get(getSelectedInstance()).x,
-        INSTANCES.get(getSelectedInstance()).y);
+    return new LPVector(fetchInstance().x,
+        fetchInstance().y);
 }
 export function getRot() {
-    return INSTANCES.get(getSelectedInstance()).rot;
+    return fetchInstance().rot;
 }
 export function getXPrev() {
-    return INSTANCES.get(getSelectedInstance()).xprev;
+    return fetchInstance().xprev;
 }
 export function getYPrev() {
-    return INSTANCES.get(getSelectedInstance()).yprev;
+    return fetchInstance().yprev;
 }
 export function getRotPrev() {
-    return INSTANCES.get(getSelectedInstance()).rotprev;
+    return fetchInstance().rotprev;
 }
 
 export function setHSpeed(_hspeed){
-    INSTANCES.get(getSelectedInstance()).hspeed = _hspeed;
+    fetchInstance().hspeed = _hspeed;
 }
 export function setVSpeed(_vspeed){
-    INSTANCES.get(getSelectedInstance()).vspeed = _vspeed;
+    fetchInstance().vspeed = _vspeed;
 }
 export function setRSpeed(_rspeed){
-    INSTANCES.get(getSelectedInstance()).rspeed = _rspeed;
+    fetchInstance().rspeed = _rspeed;
 }
 export function getHSpeed(){
-    return INSTANCES.get(getSelectedInstance()).hspeed;
+    return fetchInstance().hspeed;
 }
 export function getVSpeed(){
-    return INSTANCES.get(getSelectedInstance()).vspeed;
+    return fetchInstance().vspeed;
 }
 export function getRSpeed(){
-    return INSTANCES.get(getSelectedInstance()).rspeed;
+    return fetchInstance().rspeed;
 }
 
 export function makeVar(_value) {
-    return INSTANCES.get(getSelectedInstance()).vars.add(_value);
+    return fetchInstance().vars.add(_value);
 }
 export function getVal(_variableIndex) {
-    return INSTANCES.get(getSelectedInstance()).vars.get(_variableIndex);
+    return fetchInstance().vars.get(_variableIndex);
 }
 export function setVal(_variableIndex, _value) {
-    INSTANCES.get(getSelectedInstance()).vars.put(_value, _variableIndex);
+    fetchInstance().vars.put(_value, _variableIndex);
 }
 
 export function setBoundingBox(_p1, _p2) {
-    INSTANCES.get(getSelectedInstance()).boundingBox.set(_p1, _p2);
+    fetchInstance().boundingBox.set(_p1, _p2);
 }
 
 export function getBoundingBox() { //returns the BoundingBox object of the primitive _index
-    return INSTANCES.get(getSelectedInstance()).boundingBox;
+    return fetchInstance().boundingBox;
 }
 
 export function hide() {
-    INSTANCES.get(getSelectedInstance()).hidden = true;
+    fetchInstance().hidden = true;
 }
 export function unhide() {
-    INSTANCES.get(getSelectedInstance()).hidden = false;
+    fetchInstance().hidden = false;
 }
 export function isHidden() {
-    return INSTANCES.get(getSelectedInstance()).hidden;
+    return fetchInstance().hidden;
 }
 export function freeze() {
-    INSTANCES.get(getSelectedInstance()).freeze = true;
+    fetchInstance().freeze = true;
 }
 export function unfreeze() {
-    INSTANCES.get(getSelectedInstance()).freeze = false;
+    fetchInstance().freeze = false;
 }
 export function isFrozen() {
-    return INSTANCES.get(getSelectedInstance()).freeze;
+    return fetchInstance().freeze;
+}
+
+export function collisionListAdd(_instanceIndex){
+    fetchInstance().collisionList.add(_instanceIndex);
+    if (isPrintConsole()) console.log(`Added ${_instanceIndex} to collisionList of ${getSelectedInstance()}`);
+}
+
+//checks the collision list to see if this current instance has collision with the provided instance
+export function checkCollision(_instanceIndex){
+    var i = 0;
+    for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1){
+        if (fetchInstance().collisionList.get(i) == _instanceIndex){
+            if (isPrintConsole()) console.log(`Yes, collision of ${getSelectedInstance()} with ${_instanceIndex}`);
+        }
+    }
+    turnOffPrintConsole();
+}
+
+export function flushCollisions(){
+    var i = 0;
+    for (i = 0; i < INSTANCES.getSize(); i += 1){
+        selectInstance(i);
+        fetchInstance().collisionList = new LPList();
+        unSelectAll();
+    }
 }

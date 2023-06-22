@@ -19,7 +19,7 @@ var update = (_delta) => { //the update function of each action needs to contain
     var animateSlower = Math.cos(elapsed / 100.0);
 
     LP.setRot(LP.getRot() + 1.4 * _delta);
-    LP.setX(animateSlower * 5);
+    LP.setX(-5/* animateSlower * 5 */);
     LP.setY(0);
 }
 

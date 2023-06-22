@@ -1,4 +1,4 @@
-import { getWorldDelta, getWorldOrigin } from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin, turnOffPrintConsole } from "./LPEngineCore.js";
 
 var mouseX = 0, mouseY = 0;
 
@@ -78,7 +78,6 @@ export function LPEventsInit(_window) {
             console.log('Pressed G');
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
-
         }
         if (keyCode == 'KeyS') {
             console.log('Pressed S');

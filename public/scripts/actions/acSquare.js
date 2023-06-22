@@ -1,5 +1,6 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { isPrintConsole } from '../LPEngine/modules/LPEngineCore.js';
+import { isPrintConsole, turnOffPrintConsole } from '../LPEngine/modules/LPEngineCore.js';
+import { checkCollision } from '../LPEngine/modules/LPInstances.js';
 import { ground, square } from '../SceneDef.js';
 
 var force = 0.1;
@@ -10,6 +11,10 @@ var init = () => {
 
 var update = (_delta) => {
     checkEvents();
+    
+    checkCollision(1); //with ground
+
+    
   
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
@@ -32,7 +37,6 @@ var update = (_delta) => {
 
     LP.setHSpeed(hspeed);
     LP.setVSpeed(vspeed);
-
 
 };
 

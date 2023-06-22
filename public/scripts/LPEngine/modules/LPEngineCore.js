@@ -3,7 +3,7 @@
 import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
+import { INSTANCES, flushCollisions, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 import { getCollisions } from './LPCollision.js';
 
 // these variables need to be referenced from all functions
@@ -41,7 +41,7 @@ export function runEngine(_window, _width, _height, _LPDraw) {
     
     updateInstances(delta);
 
-    //flushCollisions(); //function that resets the collisionArray of each instance to -1
+    flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
     drawObject.clear(); //clear drawing of last calls
