@@ -281,9 +281,11 @@ export function checkCollision(_instanceIndex){
     for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1){
         if (fetchInstance().collisionList.get(i) == _instanceIndex){
             if (isPrintConsole()) console.log(`Yes, collision of ${getSelectedInstance()} with ${_instanceIndex}`);
+            return true;
         }
     }
-    turnOffPrintConsole();
+    return false;
+    
 }
 
 export function flushCollisions(){

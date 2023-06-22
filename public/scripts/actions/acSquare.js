@@ -11,11 +11,7 @@ var init = () => {
 
 var update = (_delta) => {
     checkEvents();
-    
-    checkCollision(1); //with ground
 
-    
-  
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
 
@@ -50,7 +46,7 @@ function checkEvents(){
 
 function handleCollision(_acc) {
     //see if collision is detected
-    var collision = false;
+    var collision = checkCollision(1);
     var acc = [0, 0];
 
     if (collision) {
