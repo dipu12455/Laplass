@@ -1,7 +1,9 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { ground, square } from '../SceneDef.js';
 
+var force = 0.04;
 var init = () => {
+    LP.setBoundingBox([-1,1],[1,-1]);
     LP.setPosition(-5, 5);
 };
 
@@ -10,7 +12,7 @@ var update = (_delta) => {
     var vspeed = LP.getVSpeed();
 
     var gravity = -0.02;
-    var ax = 0;
+    var ax = force;
     var ay = gravity;
 
     var acc = [ax, ay];
@@ -21,6 +23,9 @@ var update = (_delta) => {
 
     hspeed += acc[0];
     vspeed += acc[1];
+
+    //reset forces after velocities have been updated for this frame
+    resetForces();
 
     LP.setHSpeed(hspeed);
     LP.setVSpeed(vspeed);
@@ -41,7 +46,7 @@ function handleCollision(_acc) {
         LP.setX(LP.getXPrev());
         LP.setY(LP.getYPrev());
 
-        acc = bounce(0,0.9); //returns an acceleration that the current physical state would yield
+        acc = bounce(0,1); //returns an acceleration that the current physical state would yield
     }
     return v1Plusv2(_acc, acc); //add onto the acc you received from parameter
 }
@@ -75,6 +80,10 @@ function bounce(_angleOfContact, _damp) {
     v2 = getRegularVector(v2, v2Mag);
     var acc = v2Minusv1(v1, v2);
     return acc;
+}
+
+function resetForces(){
+    force = 0;
 }
 
 

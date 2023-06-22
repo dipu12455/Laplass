@@ -6,16 +6,12 @@ import { turnOffEvents } from "./LPEvents.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
-        this.p1 = new LPVector(_p1.getX(), _p1.getY());
-        this.p2 = new LPVector(_p2.getX(), _p2.getY());
+        this.p1 = [0,0];
+        this.p2 = [0,0];
     }
     set(_p1, _p2) {
-        this.p1.setVector2(_p1);
-        this.p2.setVector2(_p2);
-    }
-    setCoord(_x1, _y1, _x2, _y2) {
-        this.p1.setVector1(_x1, _y1);
-        this.p2.setVector1(_x2, _y2);
+        this.p1 = _p1;
+        this.p2 = _p2;
     }
     getP1() {
         return this.p1;
@@ -30,7 +26,7 @@ export class LPInstance {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
         this.actionIndex = -1;
-        this.boundingBox = new BoundingBox(new LPVector(0, 0), new LPVector(0, 0));
+        this.boundingBox = new BoundingBox([0,0],[0,0]);
         // the following are all in LPE coordinate system
         this.hidden = false;
         this.freeze = false;
@@ -243,10 +239,6 @@ export function setVal(_variableIndex, _value) {
 
 export function setBoundingBox(_p1, _p2) {
     INSTANCES.get(getSelectedInstance()).boundingBox.set(_p1, _p2);
-}
-
-export function setBoundingBoxCoord(_x1, _y1, _x2, _y2) {
-    INSTANCES.get(getSelectedInstance()).boundingBox.setCoord(_x1, _y1, _x2, _y2);
 }
 
 export function getBoundingBox() { //returns the BoundingBox object of the primitive _index

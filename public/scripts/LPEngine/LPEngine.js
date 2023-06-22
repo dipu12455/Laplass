@@ -55,7 +55,6 @@ export { getVal } from './modules/LPInstances.js'
 export { setVal } from './modules/LPInstances.js'
 export { BoundingBox } from './modules/LPInstances.js';
 export { setBoundingBox } from './modules/LPInstances.js';
-export { setBoundingBoxCoord } from './modules/LPInstances.js';
 export { getBoundingBox } from './modules/LPInstances.js';
 export { hide } from './modules/LPInstances.js';
 export { unhide } from './modules/LPInstances.js';
