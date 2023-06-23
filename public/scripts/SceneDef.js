@@ -6,13 +6,17 @@ import { pTriangle } from './properties/pTriangle.js';
 
 //define a primitive
 var pmSquare = LP.addPrimitive('/pmSquare');
-var pmGround = LP.addPrimitive('/pmGround');
 
-var pmPentagon = LP.addPrimitive('/pmPentagon');
-var pmTriangle = LP.addPrimitive('/pmTriangle');
+export var square1 = LP.addInstance(pmSquare, -1, pSquare);
+export var square2 = LP.addInstance(pmSquare, -1, pSquare);
 
-export var square = LP.addInstance(pmSquare, -1, pSquare);
-export var ground = LP.addInstance(pmGround, -1, pGround);
+//set initial forces for these two instances so they move towards one another.
+LP.selectInstance(square1);
+LP.makeVar(0.05);//1st slot as 0.3
+LP.setPosition(-5,0);
+LP.unSelectAll(); 
 
-export var pentagon = LP.addInstance(pmPentagon, -1, pPentagon);
-export var triangle = LP.addInstance(pmTriangle, -1, pTriangle);
+LP.selectInstance(square2);
+LP.makeVar(-0.05);
+LP.setPosition(5,0);
+LP.unSelectAll(); //1st slot as -0.3

@@ -2,10 +2,8 @@ import * as LP from '../LPEngine/LPEngine.js';
 import { pGround } from './pGround.js';
 import { pPentagon } from './pPentagon.js';
 
-var force = 0.1;
 var init = () => {
     LP.setBoundingBox([-1, 1], [1, -1]);
-    LP.setPosition(-5, 5);
 };
 
 var update = (_delta) => {
@@ -13,10 +11,11 @@ var update = (_delta) => {
 
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
+    var force = LP.getVal(0);
 
     var gravity = -0.02;
     var ax = force;
-    var ay = gravity;
+    var ay = 0;
 
     var acc = [ax, ay];
 
@@ -44,20 +43,16 @@ function checkEvents(){
 }
 
 function handleCollision(_acc) {
-    //see if collision is detected
-    if (LP.checkCollision(pPentagon)){
-        console.log(`Collided with pentagon bruv...`);
-    }
-    var collision = LP.checkCollision(pGround); //check collision with instances that contain property pGround
+    var angleOfContact = LP.checkCollision(pSquare); //check collision with instances that contain property pGround
     var acc = [0, 0];
 
-    if (collision) {
+    if (angleOfContact != -1) {
 
         //need to retract object to its position before the collision to un-overlap it.
         LP.setX(LP.getXPrev());
         LP.setY(LP.getYPrev());
 
-        acc = bounce(0, 0.6); //returns an acceleration that the current physical state would yield
+        acc = bounce(angleOfContact, 1); //returns an acceleration that the current physical state would yield
     }
     return v1Plusv2(_acc, acc); //add onto the acc you received from parameter
 }
@@ -94,7 +89,7 @@ function bounce(_angleOfContact, _damp) {
 }
 
 function resetForces() {
-    force = 0;
+    LP.setVal(0,0);
 }
 
 

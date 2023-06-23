@@ -270,16 +270,17 @@ export function isFrozen() {
     return fetchInstance().freeze;
 }
 
-export function collisionListAdd(_instanceIndex){
-    fetchInstance().collisionList.add(_instanceIndex);
-    if (isPrintConsole()) console.log(`Added ${_instanceIndex} to collisionList of ${getSelectedInstance()}`);
+export function collisionListAdd(_array){
+    fetchInstance().collisionList.add(_array);
+    if (isPrintConsole()) console.log(`Added ${_array} to collisionList of ${getSelectedInstance()}`);
 }
 
 //checks the collision list to see if this current instance has collision with the provided instance
+//returns angle of contact if collision detected, else returns -1
 export function checkCollision(_propertyIndex){
     var i = 0;
     for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1){
-        var targetInstanceIndex = fetchInstance().collisionList.get(i);
+        var targetInstanceIndex = fetchInstance().collisionList.get(i)[0];
         //START: get the target property index------
         var saved = getSelectedInstance(); //save current selection
         selectInstance(targetInstanceIndex);
@@ -290,10 +291,11 @@ export function checkCollision(_propertyIndex){
 
         if ( targetPropertyIndex == _propertyIndex){
             if (isPrintConsole()) console.log(`Yes, collision of ${getSelectedInstance()} with ${_instanceIndex}`);
-            return true;
+            var angleOfContact = fetchInstance().collisionList.get(i)[1];
+            return angleOfContact;
         }
     }
-    return false;
+    return -1;
 }
 
 export function flushCollisions(){

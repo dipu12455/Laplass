@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { getMag, getUnitVector, sqr } from './LPVector.js';
+import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, isPrintConsole, printConsole, turnOffPrintConsole } from './LPEngineCore.js';
@@ -14,7 +14,9 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
   normalList.append(normalList2);
+  var distances = new LPList();
   var overlap = false;
+  var minOverlapAxis = [];
   let i = 0;
 
   //iterate through the  normallist
@@ -51,12 +53,20 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
 
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
+    distances.add(distance);
     overlap = distance < 0;
 
     if (overlap == false) break;
 
   }
-  return overlap;
+  if (overlap == true) {
+    minOverlapAxis = normalList.get(findMin(distances));
+    //find perpendicular of minOverlapAxis, then find theta of that vector
+    var angleOfContact = getTheta(minOverlapAxis);
+    return [1, angleOfContact];
+  } else {
+    return [0, -1];
+  }
 }
 
 export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceIndex2) {
@@ -89,18 +99,20 @@ export function getCollisions() {
       if (isPrintConsole()) console.log(`checking with ${target}`);
 
       //if checking collision with self, skip to next
-      if (target == current){
+      if (target == current) {
         if (isPrintConsole()) console.log(`Checking with self...skip`);
         continue;
       }
       //first check for bounding box overlap, if so... then check for SAT collision
       if (isOverlapBoundingBox(current, target)) {
-        if (isPrintConsole())  console.log(`Found boundingbox overlap between ${current} ${target}`);
-        if (checkCollisionPrimitivesInstances(current, target)) {
-          //save the instance index of target inside the current instance
+        if (isPrintConsole()) console.log(`Found boundingbox overlap between ${current} ${target}`);
+        var collision = checkCollisionPrimitivesInstances(current, target);
+        var angleOfContact = collision[1];
+        if (collision[0] == 1) {
+          //save the instance index of target  and the angle of contact inside the current instance
           if (isPrintConsole()) console.log(`Found SAT collision between ${current} ${target}`);
           selectInstance(current);
-          collisionListAdd(target); unSelectAll();
+          collisionListAdd([target, angleOfContact]); unSelectAll();
         }
       }
     }
