@@ -24,8 +24,8 @@ export { initInstances } from './modules/LPInstances.js';
 export { updateInstances } from './modules/LPInstances.js';
 export { getPrimitiveIndex } from './modules/LPInstances.js';
 export { setPrimitiveIndex } from './modules/LPInstances.js';
-export { getActionIndex } from './modules/LPInstances.js';
-export { setActionIndex } from './modules/LPInstances.js';
+export { getPropertyIndex } from './modules/LPInstances.js';
+export { setPropertyIndex } from './modules/LPInstances.js';
 export { getSpriteIndex } from './modules/LPInstances.js';
 export { setSpriteIndex } from './modules/LPInstances.js';
 export { setX } from './modules/LPInstances.js';
@@ -103,10 +103,10 @@ export { findMax } from './modules/LPCollision.js';
 export { draw_plotPointsXaxis } from './modules/LPCollision.js';
 export { draw_plotVectorList } from './modules/LPCollision.js';
 
-//LPActions
-export { Action } from './modules/LPActions.js';
-export { addAction } from './modules/LPActions.js';
-export { getAction } from './modules/LPActions.js';
+//LPPropertys
+export { Property } from './modules/LPProperties.js';
+export { addProperty } from './modules/LPProperties.js';
+export { getProperty } from './modules/LPProperties.js';
 
 //LPEvents
 export { evMouseClick } from './modules/LPEvents.js';

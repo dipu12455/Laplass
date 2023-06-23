@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { getAction } from "./LPActions.js";
+import { getProperty } from "./LPProperties.js";
 import { isPrintConsole, isTimeRunning, turnOffPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 
@@ -24,7 +24,7 @@ export class LPInstance {
     constructor() {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
-        this.actionIndex = -1;
+        this.propertyIndex = -1;
         this.boundingBox = new BoundingBox([0,0],[0,0]);
         // the following are all in LPE coordinate system
         this.hidden = false;
@@ -101,12 +101,12 @@ export function unSelectAll() {
 }
 
 //create an instance (new LP.LPInstance), then returns its index for use in other functions
-export function addInstance(_primitiveIndex, _spriteIndex, _actionIndex) {
+export function addInstance(_primitiveIndex, _spriteIndex, _propertyIndex) {
     let ind = INSTANCES.add(new LPInstance());
     selectInstance(ind);
     setPrimitiveIndex(_primitiveIndex);
     setSpriteIndex(_spriteIndex);
-    setActionIndex(_actionIndex);
+    setPropertyIndex(_propertyIndex);
     unSelectAll();
     return ind;
 }
@@ -115,9 +115,9 @@ export function initInstances() {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         selectInstance(i);
-        var actionIndex = getActionIndex();
-        if (actionIndex != -1) { //if index is -1, then there is no action for this instance
-            var initFunction = getAction(actionIndex).getInitFunction();
+        var propertyIndex = getPropertyIndex();
+        if (propertyIndex != -1) { //if index is -1, then there is no Property for this instance
+            var initFunction = getProperty(propertyIndex).getInitFunction();
             initFunction();
         }
         unSelectAll();
@@ -126,12 +126,12 @@ export function initInstances() {
 
 export function updateInstances(_delta) {
     let i = 0;
-    if (isTimeRunning()) { //allows the ability to pause all action, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
+    if (isTimeRunning()) { //allows the ability to pause all Property, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
         for (i = 0; i < INSTANCES.getSize(); i += 1) {
             selectInstance(i);
-            var actionIndex = getActionIndex();
-            if (actionIndex != -1 && !isFrozen()) { //if index is -1, then there is no action for this instance
-                var updateFunction = getAction(actionIndex).getUpdateFunction();
+            var propertyIndex = getPropertyIndex();
+            if (propertyIndex != -1 && !isFrozen()) { //if index is -1, then there is no Property for this instance
+                var updateFunction = getProperty(propertyIndex).getUpdateFunction();
                 updateFunction(_delta);
                 //translate the instance according to their speed
                 setX(getX()+getHSpeed()*_delta);
@@ -159,11 +159,11 @@ export function getSpriteIndex() {
 export function setSpriteIndex(_spriteIndex) {
     fetchInstance().spriteIndex = _spriteIndex;
 }
-export function getActionIndex() {
-    return fetchInstance().actionIndex;
+export function getPropertyIndex() {
+    return fetchInstance().propertyIndex;
 }
-export function setActionIndex(_actionIndex) {
-    fetchInstance().actionIndex = _actionIndex;
+export function setPropertyIndex(_propertyIndex) {
+    fetchInstance().propertyIndex = _propertyIndex;
 }
 export function setX(_x) {
     fetchInstance().xprev = fetchInstance().x;

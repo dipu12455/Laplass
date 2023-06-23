@@ -9,4 +9,4 @@ var update = (_delta) => {
 
 }
 
-export var acGround = LP.addAction(new LP.Action(init,update));
+export var pGround = LP.addProperty(new LP.Property(init,update));

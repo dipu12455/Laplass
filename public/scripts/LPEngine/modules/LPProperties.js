@@ -1,6 +1,6 @@
 import { LPList } from "./LPList.js";
 
-export class Action{
+export class Property{
     constructor(_initFunction, _updateFunction){
         this.initFunction = _initFunction;
         this.updateFunction = _updateFunction;
@@ -13,15 +13,15 @@ export class Action{
     }
 }
 
-var ACTIONS = new LPList();
+var PROPERTIES = new LPList();
 
-export function addAction(_action){ //the parameter is an Action object
-    return ACTIONS.add(_action);
+export function addProperty(_property){ //the parameter is an Property object
+    return PROPERTIES.add(_property);
 }
 
-export function getAction(_actionIndex){
-    return ACTIONS.get(_actionIndex);
+export function getProperty(_propertyIndex){
+    return PROPERTIES.get(_propertyIndex);
 }
 
-//you don't need any more action modifying functions because these are meant to
+//you don't need any more Property modifying functions because these are meant to
 //be hard coded into the game

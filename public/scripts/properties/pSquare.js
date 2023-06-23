@@ -117,4 +117,4 @@ function v1Plusv2(_v1, _v2) {
     return [_v1[0] + _v2[0], _v1[1] + _v2[1]];
 }
 
-export var acSquare = LP.addAction(new LP.Action(init, update));
+export var pSquare = LP.addProperty(new LP.Property(init, update));

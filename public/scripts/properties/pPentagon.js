@@ -5,7 +5,7 @@ var init = () => {
     LP.makeVar(0); //(0)elapsed = 0;
 }
 
-var update = (_delta) => { //the update function of each action needs to contain the exact same parameters.
+var update = (_delta) => { //the update function of each Property needs to contain the exact same parameters.
     //the following is how we are using persistent variables on an each instance basis
     //the '0' is the index of that persistent variable for this particular instance
     //for now, the programmer remembers what index they are using for an instance's persitent variable,
@@ -23,4 +23,4 @@ var update = (_delta) => { //the update function of each action needs to contain
     LP.setY(0);
 }
 
-export const acPentagon = LP.addAction(new LP.Action(init, update));
+export const pPentagon = LP.addProperty(new LP.Property(init, update));
