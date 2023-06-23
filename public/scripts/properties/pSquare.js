@@ -11,11 +11,11 @@ var update = (_delta) => {
 
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
-    var force = LP.getVal(0);
+    var force = [LP.getVal(0), LP.getVal(1)];
 
     var gravity = -0.02;
-    var ax = force;
-    var ay = 0;
+    var ax = force[0];
+    var ay = force[1];
 
     var acc = [ax, ay];
 
@@ -89,7 +89,8 @@ function bounce(_angleOfContact, _damp) {
 }
 
 function resetForces() {
-    LP.setVal(0,0);
+    LP.setVal(0,0); //(0)forceX = 0
+    LP.setVal(1,0); //(1)forceY = 0
 }
 
 
