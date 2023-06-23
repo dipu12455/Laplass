@@ -59,6 +59,7 @@ export { isHidden } from './modules/LPInstances.js';
 export { freeze } from './modules/LPInstances.js';
 export { unfreeze } from './modules/LPInstances.js';
 export { isFrozen } from './modules/LPInstances.js';
+export { checkCollision } from './modules/LPInstances.js';
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';

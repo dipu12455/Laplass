@@ -1,7 +1,6 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { isPrintConsole, turnOffPrintConsole } from '../LPEngine/modules/LPEngineCore.js';
-import { checkCollision } from '../LPEngine/modules/LPInstances.js';
-import { ground, square } from '../SceneDef.js';
+import { pGround } from './pGround.js';
+import { pPentagon } from './pPentagon.js';
 
 var force = 0.1;
 var init = () => {
@@ -46,7 +45,10 @@ function checkEvents(){
 
 function handleCollision(_acc) {
     //see if collision is detected
-    var collision = checkCollision(1);
+    if (LP.checkCollision(pPentagon)){
+        console.log(`Collided with pentagon bruv...`);
+    }
+    var collision = LP.checkCollision(pGround); //check collision with instances that contain property pGround
     var acc = [0, 0];
 
     if (collision) {

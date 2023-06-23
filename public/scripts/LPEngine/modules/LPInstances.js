@@ -276,16 +276,24 @@ export function collisionListAdd(_instanceIndex){
 }
 
 //checks the collision list to see if this current instance has collision with the provided instance
-export function checkCollision(_instanceIndex){
+export function checkCollision(_propertyIndex){
     var i = 0;
     for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1){
-        if (fetchInstance().collisionList.get(i) == _instanceIndex){
+        var targetInstanceIndex = fetchInstance().collisionList.get(i);
+        //START: get the target property index------
+        var saved = getSelectedInstance(); //save current selection
+        selectInstance(targetInstanceIndex);
+        var targetPropertyIndex = getPropertyIndex(); 
+        unSelectAll(); 
+        selectInstance(saved);
+        //END: get the target property index---------
+
+        if ( targetPropertyIndex == _propertyIndex){
             if (isPrintConsole()) console.log(`Yes, collision of ${getSelectedInstance()} with ${_instanceIndex}`);
             return true;
         }
     }
     return false;
-    
 }
 
 export function flushCollisions(){
