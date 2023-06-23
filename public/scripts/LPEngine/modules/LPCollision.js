@@ -69,6 +69,35 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   }
 }
 
+export function checkPointInsidePrimitive(_p, _primitive){
+  //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
+  var normalList = getNormalsOfPrimitive(_primitive);
+  var overlap = false;
+  let i = 0;
+
+  //iterate through the  normallist
+  for (i = 0; i < normalList.getSize(); i += 1) {
+    //find coefficients of projection of vertices of primitive on this axisVector
+    let pointList = getCoefficientsOfProjection(_primitive, normalList.get(i));
+    //now find min and max value of the list of points
+    let min = pointList.get(findMin(pointList)); let max = pointList.get(findMax(pointList));
+
+    //think of all these values plotted on the x-axis (like a number line)
+
+    //project the given point to this axisVector
+    var projPoint = coeffOfProjuOnv(_p,normalList.get(i));
+
+    //if this projected point lies between min and max, then overlap is true with this axisVector
+    if (projPoint > min && projPoint < max){
+      overlap = true;
+    }else{
+      overlap = false;
+      break; //if a single non-overlap found, point doesn't exist within the primitive
+    }
+  }
+  return overlap;
+}
+
 export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceIndex2) {
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
@@ -137,7 +166,7 @@ function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
   return checkCollisionPrimitives(bbox1prim, bbox2prim);
 }
 
-function primFromBoundingBox(_bbox) {
+export function primFromBoundingBox(_bbox) {
   var x1 = _bbox.getP1()[0], y1 = _bbox.getP1()[1], x2 = _bbox.getP2()[0], y2 = _bbox.getP2()[1];
   var prim = new Primitive();
   prim.add([x1, y1]);

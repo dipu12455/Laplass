@@ -1,4 +1,7 @@
+import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
 import { getWorldDelta, getWorldOrigin, turnOffPrintConsole } from "./LPEngineCore.js";
+import { getRot, getX, getY } from "./LPInstances.js";
+import { transform_primitive } from "./LPPrimitives.js";
 
 var mouseX = 0, mouseY = 0;
 
@@ -185,13 +188,20 @@ export function turnOffEvents() {
 
 //checks if a mouse click event occured within the provided bounding box
 //takes a BoundingBox object as input
-/* can't be used anymore, but preserving the code.
 export function evMouseClickRegion(_boundingBox) {
-    if (evMouseClick()) {
+    if (isEventFired(evMouseClick)) {
         var pos = getMousePosition(); //can't use mouseX/mouseY vars directly because boundingbox is in terms of LP coord
-        return checkPointInRegion(pos,_boundingBox);
+        var primbbox = transform_primitive(primFromBoundingBox(_boundingBox), getX(), getY(), getRot());
+        var condition = checkPointInsidePrimitive(pos,primbbox);
+        if (condition){
+            turnOffEvent(evMouseClick); //consume the event
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-} */
+}
 
 export function evMouseDownRegion(_boundingBox) {
     if (isEventFired(evMouseDown)) {
@@ -205,11 +215,4 @@ export function evMouseDownRegion(_boundingBox) {
             return false;
         }
     }
-}
-
-//returns true if the given point lies within the given bounding box
-function checkPointInRegion(_p, _boundingBox) {
-    var withinRegionX = (_p[0] > _boundingBox.getP1()[0]) && (_p[0] < _boundingBox.getP2()[0]);
-    var withinRegionY = (_p[1] < _boundingBox.getP1()[1]) && (_p[1] > _boundingBox.getP2()[1]);
-    return (withinRegionX && withinRegionY);
 }
