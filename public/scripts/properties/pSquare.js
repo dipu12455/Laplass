@@ -39,9 +39,6 @@ var update = (_delta) => {
         vspeed = 0;
     }
 
-    console.log(`1. hspeed ${hspeed}`);
-    console.log(`2. vspeed ${vspeed}`);
-
     //reset forces after velocities have been updated for this frame
     resetForces();
 
