@@ -15,12 +15,12 @@ LP.selectInstance(square1);
 LP.makeVar(0); //(0)forcex = 0
 LP.makeVar(0); //(1)forcey = 0
 LP.makeVar(0); //(2)selected=0;
-LP.setPosition(0,5);
+LP.setPosition(-5,0);
 LP.unSelectAll(); 
 
 LP.selectInstance(square2);
 LP.makeVar(0); //(0)forcex = 0
 LP.makeVar(0); //(1)forcey = 0
 LP.makeVar(0); //(2)selected=0;
-LP.setPosition(0,-5); //(1)forcey = 0
+LP.setPosition(5,0); //(1)forcey = 0
 LP.unSelectAll(); //1st slot as -0.3
