@@ -65,18 +65,19 @@ function checkEvents() {
     if (LP.isEventFired(LP.evKeyG)) {
         LP.setVal(2, 0);
     }
+    var moveAmount = 0.01;
     if (LP.getVal(2) == 1) {
         if (LP.isPEventFired(LP.evKeyW_p)) {
-            LP.setVal(1, 0.05);
+            LP.setVal(1, moveAmount);
         }
         if (LP.isPEventFired(LP.evKeyS_p)) {
-            LP.setVal(1, -0.05);
+            LP.setVal(1, -moveAmount);
         }
         if (LP.isPEventFired(LP.evKeyA_p)) {
-            LP.setVal(0, -0.05);
+            LP.setVal(0, -moveAmount);
         }
         if (LP.isPEventFired(LP.evKeyD_p)) {
-            LP.setVal(0, 0.05);
+            LP.setVal(0, moveAmount);
         }
     }
 

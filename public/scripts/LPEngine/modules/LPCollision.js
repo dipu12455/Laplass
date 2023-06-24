@@ -38,18 +38,15 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     //find the distance between the centers, do (larger - smaller), imagine their larger and smaller values on the x-axis. the larger would be on the right and the smaller would be on the left.
     //this is a way to make sure to always have shape1 on the left, and shape2 on the right.
     let distanceBetweenCenters = 0;
-    if (center1 > center2) distanceBetweenCenters = center1 - center2;
-    if (center2 > center1) distanceBetweenCenters = center2 - center1;
+    distanceBetweenCenters = Math.abs(center1 - center2);
 
     //find halfwidth1, this is always the halfwidth of primitive that has smaller center value on the x-axis
     let halfwidth1 = 0;
-    if (center1 < center2) halfwidth1 = pointList1.get(max1) - center1;
-    if (center2 < center1) halfwidth1 = pointList2.get(max2) - center2;
+    halfwidth1 = Math.abs(pointList1.get(max1) - center1);
 
     //find halfwidth2, this is always the halfwidth of primitive that has larger center value on the x-axis
     let halfwidth2 = 0;
-    if (center1 > center2) halfwidth2 = center1 - pointList1.get(min1);
-    if (center2 > center1) halfwidth2 = center2 - pointList2.get(min2);
+    halfwidth2 = Math.abs(pointList2.get(max2) - center2);
 
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
@@ -69,7 +66,7 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   }
 }
 
-export function checkPointInsidePrimitive(_p, _primitive){
+export function checkPointInsidePrimitive(_p, _primitive) {
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive);
   var overlap = false;
@@ -85,12 +82,12 @@ export function checkPointInsidePrimitive(_p, _primitive){
     //think of all these values plotted on the x-axis (like a number line)
 
     //project the given point to this axisVector
-    var projPoint = coeffOfProjuOnv(_p,normalList.get(i));
+    var projPoint = coeffOfProjuOnv(_p, normalList.get(i));
 
     //if this projected point lies between min and max, then overlap is true with this axisVector
-    if (projPoint > min && projPoint < max){
+    if (projPoint > min && projPoint < max) {
       overlap = true;
-    }else{
+    } else {
       overlap = false;
       break; //if a single non-overlap found, point doesn't exist within the primitive
     }
