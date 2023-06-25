@@ -1,9 +1,10 @@
 import { LPList } from "./LPList.js";
 
 export class Property{
-    constructor(_initFunction, _updateFunction){
+    constructor(_initFunction, _updateFunction, _drawFunction){
         this.initFunction = _initFunction;
         this.updateFunction = _updateFunction;
+        this.drawFunction = _drawFunction;
     }
     getInitFunction(){
         return this.initFunction;
@@ -11,12 +12,16 @@ export class Property{
     getUpdateFunction(){
         return this.updateFunction;
     }
+    getDrawFunction(){
+        return this.drawFunction;
+    }
 }
 
 var PROPERTIES = new LPList();
 
-export function addProperty(_property){ //the parameter is an Property object
-    return PROPERTIES.add(_property);
+export function addProperty(_initFunction, _updateFunction, _drawFunction){ //the parameter is an Property object
+    var temp = new Property(_initFunction, _updateFunction, _drawFunction);
+    return PROPERTIES.add(temp);
 }
 
 export function getProperty(_propertyIndex){

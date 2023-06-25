@@ -18,4 +18,8 @@ var update = (_delta) => {
     LP.setY(animate2 * 10); //trst
 }
 
-export const pTriangle = LP.addProperty(new LP.Property(init, update));
+var draw = () => {
+
+}
+
+export const pTriangle = LP.addProperty(init, update, draw);

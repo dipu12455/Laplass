@@ -3,8 +3,9 @@
 import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, flushCollisions, getPrimitiveIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
+import { INSTANCES, flushCollisions, getPrimitiveIndex, getPropertyIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 import { getCollisions } from './LPCollision.js';
+import { getProperty } from './LPProperties.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -38,7 +39,7 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     getCollisions();
-    
+
     updateInstances(delta);
 
     flushCollisions(); //function that resets the collisionArray of each instance to -1
@@ -49,8 +50,6 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 
     //draw all the instances, here the drawings from the client app would be drawn over the instances
     draw_instances();
-
-    _LPDraw(); //run the draw operations defined by the client app
   });
 
 }
@@ -117,7 +116,15 @@ export function draw_anchor(_p, color) { //point of array form [x,y]
   var v = moveToScreenCoord(_p);
   drawObject.lineStyle(0);
   drawObject.beginFill(color, 1);
-  drawObject.drawCircle(_p[0], _p[1], 2);
+  drawObject.drawCircle(v[0], v[1], 2);
+  drawObject.endFill();
+}
+
+export function draw_circle(_p, _radius, color) { //point of array form [x,y]
+  var v = moveToScreenCoord(_p);
+  var r = _radius * getWorldDelta();
+  drawObject.lineStyle(1, color, 1);
+  drawObject.drawCircle(v[0], v[1], r);
   drawObject.endFill();
 }
 
@@ -168,9 +175,18 @@ function draw_instances() { //works on the instance currently selected
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     selectInstance(i);
     if (!isHidden()) {
-      var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
-        getX(), getY(), getRot());
-      draw_primitive(trans);
+      if (getPrimitiveIndex() != -1) {
+        var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
+          getX(), getY(), getRot());
+        draw_primitive(trans);
+      }
+
+      //carry out draw operation of that instance after its primitive is drawn
+      var propertyIndex = getPropertyIndex();
+      if (propertyIndex != -1) {
+        var drawFunction = getProperty(propertyIndex).getDrawFunction();
+        drawFunction();
+      }
     }
     unSelectAll();
   }

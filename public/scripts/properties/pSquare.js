@@ -164,4 +164,8 @@ function isVectorWithinRange(_v, low, high) {
     return false;
 }
 
-export var pSquare = LP.addProperty(new LP.Property(init, update));
+var draw = () =>{
+
+}
+
+export var pSquare = LP.addProperty(init, update, draw);

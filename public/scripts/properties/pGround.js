@@ -9,4 +9,8 @@ var update = (_delta) => {
 
 }
 
-export var pGround = LP.addProperty(new LP.Property(init,update));
+var draw = () => {
+
+}
+
+export var pGround = LP.addProperty(init,update, draw);

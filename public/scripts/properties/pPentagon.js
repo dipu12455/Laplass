@@ -23,4 +23,8 @@ var update = (_delta) => { //the update function of each Property needs to conta
     LP.setY(0);
 }
 
-export const pPentagon = LP.addProperty(new LP.Property(init, update));
+var draw = () => {
+
+}
+
+export const pPentagon = LP.addProperty(init, update, draw);

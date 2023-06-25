@@ -96,15 +96,22 @@ export function checkPointInsidePrimitive(_p, _primitive) {
 }
 
 export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceIndex2) {
+  //if instances don't have primitives, skip collision check
+  selectInstance(_instanceIndex1); var prim1index = getPrimitiveIndex(); unSelectAll();
+  selectInstance(_instanceIndex2); var prim2index = getPrimitiveIndex(); unSelectAll();
+  if (prim1index == -1 || prim2index == -1) {
+    console.error(`Instance with undefined primitive.`);
+    return [0, -1];
+  }
   //obtain the first primitive transformed into the orientation of its instance
   selectInstance(_instanceIndex1);
-  var prim1 = transform_primitive(getPrimitive(getPrimitiveIndex()),
+  var prim1 = transform_primitive(getPrimitive(prim1index),
     getX(), getY(), getRot());
   unSelectAll();
 
   //obtain the second primitive tranformed into the orientation of its instance
   selectInstance(_instanceIndex2);
-  var prim2 = transform_primitive(getPrimitive(getPrimitiveIndex()),
+  var prim2 = transform_primitive(getPrimitive(prim2index),
     getX(), getY(), getRot());
   unSelectAll();
 
@@ -117,16 +124,19 @@ export function getCollisions() {
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     //checking collision of each instance with every other instances
-    selectInstance(i); var current = getSelectedInstance(); unSelectAll(); //obtain the instance to check collision for
-    if (isPrintConsole()) console.log(`checking for ${current}`);
+    selectInstance(i); var current = getSelectedInstance(); 
+    if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+    unSelectAll();
+    //obtain the instance to check collision for
+
     let j = 0;
     for (j = 0; j < INSTANCES.getSize(); j += 1) {
-      selectInstance(j); var target = getSelectedInstance(); unSelectAll(); //get the target instance to check collision with
-      if (isPrintConsole()) console.log(`checking with ${target}`);
+      selectInstance(j); var target = getSelectedInstance();
+      if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+      unSelectAll(); //get the target instance to check collision with
 
       //if checking collision with self, skip to next
       if (target == current) {
-        if (isPrintConsole()) console.log(`Checking with self...skip`);
         continue;
       }
       //first check for bounding box overlap, if so... then check for SAT collision
