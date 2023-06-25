@@ -34,7 +34,7 @@ var update = (_delta) => {
     vspeed += acc[1];
 
     //if velocity is too small, make it equal to zero
-    if (isVectorWithinRange([hspeed,vspeed],0,0.001)){
+    if (isVectorWithinRange([hspeed,vspeed],0,0.009)){
         hspeed = 0;
         vspeed = 0;
     }
