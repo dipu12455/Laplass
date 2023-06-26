@@ -6,6 +6,19 @@ import { draw_anchor, isPrintConsole, printConsole, turnOffPrintConsole } from '
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
+//check collision between circles
+export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
+  var lineBetweenCenters = v2Minusv1(_p2, _p1);
+  var distanceBetweenCenters = getMag(lineBetweenCenters);
+  var overlap = distanceBetweenCenters - _r1 - _r2 < 0;
+  var angleOfContact = getTheta(findLeftPerpendicular(lineBetweenCenters));
+  if (overlap == true) {
+    return [1, angleOfContact];
+  } else {
+    return [0, - 1];
+  }
+}
+
 /* a function that takes in two primitives and checks if they have collision. These can be just two ordinary primitives, or primitives that represent collision points of
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
