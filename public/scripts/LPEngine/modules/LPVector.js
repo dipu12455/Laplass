@@ -50,3 +50,5 @@ export function v1Plusv2(_v1, _v2) {
 export function findLeftPerpendicular(_v) {
   return [-_v[1], _v[0]];
 }
+
+//unit tests

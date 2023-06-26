@@ -6,6 +6,7 @@ import { LPEventsInit } from './LPEvents.js';
 import { INSTANCES, flushCollisions, getPrimitiveIndex, getPropertyIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 import { getCollisions } from './LPCollision.js';
 import { getProperty } from './LPProperties.js';
+import { runAllTests } from './LPTest.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -15,6 +16,7 @@ var worldOriginX, worldOriginY, worldDelta;
 var screenGrid = false;
 var timeRun = true;
 var printConsoleState = false;
+var unitTestState = false;
 
 var LPDraw; //variable to hold the user coded draw function
 
@@ -22,6 +24,9 @@ var LPDraw; //variable to hold the user coded draw function
 
 
 export function runEngine(_window, _width, _height, _LPDraw) {
+  //run test if toggled
+  runAllTests();
+
   worldOriginX = _width / 2;
   worldOriginY = _height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
@@ -98,6 +103,13 @@ export function isPrintConsole() {
   return printConsoleState;
 }
 
+export function setUnitTest(_state) {
+  unitTestState = _state;
+}
+
+export function isUnitTest() {
+  return unitTestState;
+}
 
 export function showScreenGrid() { screenGrid = true; }
 export function hideScreenGrid() { screenGrid = false; }

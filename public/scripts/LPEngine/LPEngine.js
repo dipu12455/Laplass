@@ -83,6 +83,8 @@ export { runEngine } from './modules/LPEngineCore.js';
 export { timeResume } from './modules/LPEngineCore.js';
 export { timePause } from './modules/LPEngineCore.js';
 export { printConsole } from './modules/LPEngineCore.js';
+export { setUnitTest } from './modules/LPEngineCore.js';
+export { isUnitTest } from './modules/LPEngineCore.js';
 export { getWorldDelta } from './modules/LPEngineCore.js';
 export { setWorldDelta } from './modules/LPEngineCore.js';
 export { showScreenGrid } from './modules/LPEngineCore.js';
