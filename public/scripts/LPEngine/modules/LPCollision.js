@@ -2,9 +2,9 @@ import { LPList } from "./LPList.js";
 import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { draw_anchor, printConsole } from './LPEngineCore.js';
+import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, isPhysical, selectInstance, setPosition, unSelectAll } from "./LPInstances.js";
+import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
 //check collision between circles
 export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
@@ -162,35 +162,72 @@ export function getCollisions() {
           //save the instance index of target  and the angle of contact inside the current instance
           selectInstance(current);
           collisionListAdd([target, angleOfContact]); unSelectAll();
-          //here, check if these two instances are physical, and if so move them away
-          if (C_isPhysical(current) && C_isPhysical(target)){
-            selectInstance(current);
-            var center1 = findCenterOfInstancePrimitive(); unSelectAll();
-            selectInstance(target);
-            var center2 = findCenterOfInstancePrimitive(); unSelectAll();
-
-            var vectorBetweenCenters = v2Minusv1(center1,center2);
-            //this is the direction of the vector to move them apart
-            var vU_dirToMoveApart = getUnitVector(vectorBetweenCenters);
-            //this is the magnitude by which to move each instance apart
-            var distToMoveApart = collision[2]/2;
-
-            selectInstance(current);
-            setPosition(getX() - vU_dirToMoveApart[0]*distToMoveApart,
-            getY() - vU_dirToMoveApart[1]*distToMoveApart); unSelectAll();
-            selectInstance(target);
-            setPosition(getX() + vU_dirToMoveApart[0]*distToMoveApart,
-            getY() + vU_dirToMoveApart[1]*distToMoveApart); unSelectAll();
+          //here, check if these two instances are physical, and if so
+          //move them apart, then exchange their linear momentum
+          if (C_isPhysical(current) && C_isPhysical(target)) {
+            unOverlapInstances(current, target, collision);
+            exchangeMomenta(current, target); //changes their velocities respectively
           }
-          
+
         }
       }
     }
   }
 }
 
+//if two instances overlap by n units, it moves each instance n/2 units away from one another, in the 
+//direction of the vector that passes through their centers.
+function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
+  selectInstance(_instanceIndex1);
+  var center1 = findCenterOfInstancePrimitive(); unSelectAll();
+  selectInstance(_instanceIndex2);
+  var center2 = findCenterOfInstancePrimitive(); unSelectAll();
+
+  var vectorBetweenCenters = v2Minusv1(center1, center2);
+  //this is the direction of the vector to move them apart
+  var vU_dirToMoveApart = getUnitVector(vectorBetweenCenters);
+  //this is the magnitude by which to move each instance apart
+  var distToMoveApart = _collision[2] / 2;
+
+  selectInstance(_instanceIndex1);
+  setPosition(getX() - vU_dirToMoveApart[0] * distToMoveApart,
+    getY() - vU_dirToMoveApart[1] * distToMoveApart); unSelectAll();
+  selectInstance(_instanceIndex2);
+  setPosition(getX() + vU_dirToMoveApart[0] * distToMoveApart,
+    getY() + vU_dirToMoveApart[1] * distToMoveApart); unSelectAll();
+}
+
+//changes the velocity of both instances according to their mutual momentum transfer
+function exchangeMomenta(_instanceIndex1, _instanceIndex2) {
+  //obtain mass and velocities of each instance
+  selectInstance(_instanceIndex1);
+  var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
+  selectInstance(_instanceIndex2);
+  var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
+
+  //calculate their respective momenta
+  var p1 = scalarXvector(m1, v1);
+  var p2 = scalarXvector(m2, v2);
+
+  //now p1dash (the new momentum) is equal to p2
+  var p1dash = p2;
+  /*mass stays constant, so the new momentum is compensated by change in velocity
+  p1dash = m1 * v1dash => v1dash = p1dash / m1 */
+  var v1dash = scalarXvector(1 / m1, p1dash);
+
+  //similarly for 2nd instance
+  var p2dash = p1;
+  var v2dash = scalarXvector(1 / m2, p2dash);
+
+  //update each instances' respective velocities
+  selectInstance(_instanceIndex1);
+  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]); unSelectAll();
+  selectInstance(_instanceIndex2);
+  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]); unSelectAll();
+}
+
 //returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved
-function C_isPhysical(_instanceIndex){
+function C_isPhysical(_instanceIndex) {
   selectInstance(_instanceIndex);
   var state = isPhysical(); unSelectAll();
   return state;

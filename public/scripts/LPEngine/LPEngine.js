@@ -50,6 +50,8 @@ export { getRSpeed } from './modules/LPInstances.js'
 export { setPhysical } from './modules/LPInstances.js';
 export { isPhysical } from './modules/LPInstances.js'
 export { findCenterOfInstancePrimitive } from './modules/LPInstances.js'
+export { setMass } from './modules/LPInstances.js'
+export { getMass } from './modules/LPInstances.js'
 
 export { makeVar } from './modules/LPInstances.js'
 export { getVal } from './modules/LPInstances.js'

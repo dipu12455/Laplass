@@ -41,7 +41,8 @@ export class LPInstance {
         this.rspeed = 0;
         this.vars = new LPList(); //list that stores custom variables
         this.collisionList = new LPList();
-        var physical = false;
+        this.physical = false;
+        this.mass = 1; //1 is default, so it won't multiply anything
     }
 }
 
@@ -283,6 +284,12 @@ export function setPhysical(_state) { //set it as true or false
 
 export function isPhysical() {
     return fetchInstance().physical;
+}
+export function setMass(_mass){
+    fetchInstance().mass = _mass;
+}
+export function getMass(){
+    return fetchInstance().mass;
 }
 
 //this function obtains the instance's primitive, transforms it to the instance's
