@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr } from './LPVector.js';
+import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor } from './LPEngineCore.js';

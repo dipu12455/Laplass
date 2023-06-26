@@ -31,6 +31,10 @@ export function getUnitVector(_v) {
   return [i, j];
 }
 
+export function getVectorRTHeta(_r, _theta) { //theta in degrees
+  return [_r * Math.cos(degtorad(_theta)), _r * Math.sin(degtorad(_theta))];
+}
+
 export function dotProduct(_v1, _v2) {
   return (_v1[0] * _v2[0]) + (_v1[1] * _v2[1]);
 }

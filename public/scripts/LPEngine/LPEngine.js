@@ -1,9 +1,8 @@
-import { setPrintConsole } from './modules/LPEngineCore.js';
-
 //LPVector
 export { degtorad } from './modules/LPVector.js';
 export { radtodeg } from './modules/LPVector.js';
 export { sqr } from './modules/LPVector.js';
+export { getVectorRTHeta } from './modules/LPVector.js';
 export { rotateVector } from './modules/LPVector.js';
 export { dotProduct } from './modules/LPVector.js';
 export { scalarXvector } from './modules/LPVector.js';
@@ -100,6 +99,7 @@ export { draw_primitive } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
 
 //LPCollision
+export { checkCollisionCircles } from './modules/LPCollision.js';
 export { checkCollisionPrimitives } from './modules/LPCollision.js';
 export { checkCollisionPrimitivesInstances } from './modules/LPCollision.js';
 export { projectPrimitiveOntoAxis } from './modules/LPCollision.js';

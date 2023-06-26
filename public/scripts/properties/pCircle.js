@@ -25,8 +25,6 @@ var update = (_delta) => {
 
     var acc = [ax, ay];
 
-    //place for collision
-
     hspeed += acc[0];
     vspeed += acc[1];
 
@@ -62,6 +60,10 @@ function checkEvents() {
     }
 
 
+}
+
+function checkCollision(){
+    return LP.checkCollisionCircles([LP.getX(),LP.getY()],2,[0,0],2);
 }
 
 function resetForces() {
@@ -101,6 +103,10 @@ function isVectorWithinRange(_v, low, high) {
 
 var draw = () => {
     LP.draw_circle([LP.getX(), LP.getY()],2,0x000000);
+    var collision = checkCollision();
+    if (collision[0] == 1) {
+        LP.draw_vector_origin(LP.getVectorRTHeta(5,collision[1]),0x00ff00, 0xff0000);
+    }
 
 }
 
