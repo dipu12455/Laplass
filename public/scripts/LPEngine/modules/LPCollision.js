@@ -4,7 +4,7 @@ import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, printConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES, collisionListAdd, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
+import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, isPhysical, selectInstance, setPosition, unSelectAll } from "./LPInstances.js";
 
 //check collision between circles
 export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
@@ -160,13 +160,40 @@ export function getCollisions() {
         var angleOfContact = collision[1];
         if (collision[0] == 1) {
           //save the instance index of target  and the angle of contact inside the current instance
-
           selectInstance(current);
           collisionListAdd([target, angleOfContact]); unSelectAll();
+          //here, check if these two instances are physical, and if so move them away
+          if (C_isPhysical(current) && C_isPhysical(target)){
+            selectInstance(current);
+            var center1 = findCenterOfInstancePrimitive(); unSelectAll();
+            selectInstance(target);
+            var center2 = findCenterOfInstancePrimitive(); unSelectAll();
+
+            var vectorBetweenCenters = v2Minusv1(center1,center2);
+            //this is the direction of the vector to move them apart
+            var vU_dirToMoveApart = getUnitVector(vectorBetweenCenters);
+            //this is the magnitude by which to move each instance apart
+            var distToMoveApart = collision[2]/2;
+
+            selectInstance(current);
+            setPosition(getX() - vU_dirToMoveApart[0]*distToMoveApart,
+            getY() - vU_dirToMoveApart[1]*distToMoveApart); unSelectAll();
+            selectInstance(target);
+            setPosition(getX() + vU_dirToMoveApart[0]*distToMoveApart,
+            getY() + vU_dirToMoveApart[1]*distToMoveApart); unSelectAll();
+          }
+          
         }
       }
     }
   }
+}
+
+//returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved
+function C_isPhysical(_instanceIndex){
+  selectInstance(_instanceIndex);
+  var state = isPhysical(); unSelectAll();
+  return state;
 }
 
 function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
