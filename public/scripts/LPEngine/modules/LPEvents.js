@@ -1,5 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin, turnOffPrintConsole } from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin} from "./LPEngineCore.js";
 import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 

@@ -93,14 +93,11 @@ export function isTimeRunning() {
   return timeRun;
 }
 
-export function printConsole() {
-  printConsoleState = true;
+export function printConsole(_string) {
+  if (printConsoleState == true) console.log(_string);
 }
-export function turnOffPrintConsole() {
-  printConsoleState = false;
-}
-export function isPrintConsole() {
-  return printConsoleState;
+export function setPrintConsole(_state) {
+  printConsoleState = _state;
 }
 
 export function setUnitTest(_state) {

@@ -1,10 +1,13 @@
 import * as LP from '../LPEngine/LPEngine.js';
 
 var init = () => {
+    LP.setPrintConsole(true);
 
 }
 
 var update = () => {
+    LP.printConsole(`test1`);
+    LP.setPrintConsole(false);
 
 }
 

@@ -1,4 +1,4 @@
-import { isPrintConsole } from "./LPEngineCore.js";
+
 import { LPList } from "./LPList.js";
 import { getTheta, v2Minusv1 } from './LPVector.js';
 import { findLeftPerpendicular } from './LPVector.js';

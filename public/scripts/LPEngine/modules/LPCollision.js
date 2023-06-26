@@ -2,7 +2,7 @@ import { LPList } from "./LPList.js";
 import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { draw_anchor, isPrintConsole, printConsole, turnOffPrintConsole } from './LPEngineCore.js';
+import { draw_anchor } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
@@ -137,7 +137,7 @@ export function getCollisions() {
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     //checking collision of each instance with every other instances
-    selectInstance(i); var current = getSelectedInstance(); 
+    selectInstance(i); var current = getSelectedInstance();
     if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
     unSelectAll();
     //obtain the instance to check collision for
@@ -154,12 +154,12 @@ export function getCollisions() {
       }
       //first check for bounding box overlap, if so... then check for SAT collision
       if (isOverlapBoundingBox(current, target)) {
-        if (isPrintConsole()) console.log(`Found boundingbox overlap between ${current} ${target}`);
+
         var collision = checkCollisionPrimitivesInstances(current, target);
         var angleOfContact = collision[1];
         if (collision[0] == 1) {
           //save the instance index of target  and the angle of contact inside the current instance
-          if (isPrintConsole()) console.log(`Found SAT collision between ${current} ${target}`);
+
           selectInstance(current);
           collisionListAdd([target, angleOfContact]); unSelectAll();
         }

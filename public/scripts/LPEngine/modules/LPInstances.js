@@ -1,6 +1,6 @@
 import { LPList } from "./LPList.js";
 import { getProperty } from "./LPProperties.js";
-import { isPrintConsole, isTimeRunning, turnOffPrintConsole } from "./LPEngineCore.js";
+import { isTimeRunning } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 
 export class BoundingBox {
@@ -272,7 +272,7 @@ export function isFrozen() {
 
 export function collisionListAdd(_array){
     fetchInstance().collisionList.add(_array);
-    if (isPrintConsole()) console.log(`Added ${_array} to collisionList of ${getSelectedInstance()}`);
+
 }
 
 //checks the collision list to see if this current instance has collision with the provided instance
@@ -290,7 +290,7 @@ export function checkCollision(_propertyIndex){
         //END: get the target property index---------
 
         if ( targetPropertyIndex == _propertyIndex){
-            if (isPrintConsole()) console.log(`Yes, collision of ${getSelectedInstance()} with ${_instanceIndex}`);
+
             var angleOfContact = fetchInstance().collisionList.get(i)[1];
             return angleOfContact;
         }
