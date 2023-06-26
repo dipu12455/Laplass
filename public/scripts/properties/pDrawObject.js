@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 
 var init = () => { };
-var update = () => { };
+var update = (_delta) => { };
 
 var draw = () => {
     //draw a circle in the center just to test collision function with
