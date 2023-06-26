@@ -2,7 +2,7 @@ import { LPList } from "./LPList.js";
 import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
-import { draw_anchor } from './LPEngineCore.js';
+import { draw_anchor, printConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, getBoundingBox, getPrimitiveIndex, getRot, getSelectedInstance, getX, getY, selectInstance, unSelectAll } from "./LPInstances.js";
 
@@ -73,9 +73,9 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     minOverlapAxis = normalList.get(findMin(distances));
     //find perpendicular of minOverlapAxis, then find theta of that vector
     var angleOfContact = getTheta(minOverlapAxis);
-    return [1, angleOfContact];
+    return [1, angleOfContact, Math.abs(distances.get(findMin(distances)))]; //the last element is the length of the overlap
   } else {
-    return [0, -1];
+    return [0, -1, -1];
   }
 }
 
@@ -132,7 +132,8 @@ export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceInde
   return checkCollisionPrimitives(prim1, prim2);
 }
 
-//function to analyze collisions between all registered instances of LPE. For now, simply returns bounding box overlaps
+//function to analyze collisions between all registered instances of LPE.
+//if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
 export function getCollisions() {
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {

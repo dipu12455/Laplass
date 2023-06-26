@@ -2,11 +2,12 @@ import { LPList } from "./LPList.js";
 import { getProperty } from "./LPProperties.js";
 import { isTimeRunning } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
+import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
-        this.p1 = [0,0];
-        this.p2 = [0,0];
+        this.p1 = [0, 0];
+        this.p2 = [0, 0];
     }
     set(_p1, _p2) {
         this.p1 = _p1;
@@ -25,7 +26,7 @@ export class LPInstance {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
         this.propertyIndex = -1;
-        this.boundingBox = new BoundingBox([0,0],[0,0]);
+        this.boundingBox = new BoundingBox([0, 0], [0, 0]);
         // the following are all in LPE coordinate system
         this.hidden = false;
         this.freeze = false;
@@ -40,6 +41,7 @@ export class LPInstance {
         this.rspeed = 0;
         this.vars = new LPList(); //list that stores custom variables
         this.collisionList = new LPList();
+        var physical = false;
     }
 }
 
@@ -92,7 +94,7 @@ export function getSelectedInstance() {
     if (selectedInstance == -1) console.error(`No instance selected.`);
     return selectedInstance;
 }
-function fetchInstance(){
+function fetchInstance() {
     //fetches the currently selected instance object
     return INSTANCES.get(getSelectedInstance());
 }
@@ -134,9 +136,9 @@ export function updateInstances(_delta) {
                 var updateFunction = getProperty(propertyIndex).getUpdateFunction();
                 updateFunction(_delta);
                 //translate the instance according to their speed
-                setX(getX()+getHSpeed()*_delta);
-                setY(getY()+getVSpeed()*_delta);
-                setRot(getRot()+getRSpeed()*_delta);
+                setX(getX() + getHSpeed() * _delta);
+                setY(getY() + getVSpeed() * _delta);
+                setRot(getRot() + getRSpeed() * _delta);
             }
             unSelectAll();
         }
@@ -214,22 +216,22 @@ export function getRotPrev() {
     return fetchInstance().rotprev;
 }
 
-export function setHSpeed(_hspeed){
+export function setHSpeed(_hspeed) {
     fetchInstance().hspeed = _hspeed;
 }
-export function setVSpeed(_vspeed){
+export function setVSpeed(_vspeed) {
     fetchInstance().vspeed = _vspeed;
 }
-export function setRSpeed(_rspeed){
+export function setRSpeed(_rspeed) {
     fetchInstance().rspeed = _rspeed;
 }
-export function getHSpeed(){
+export function getHSpeed() {
     return fetchInstance().hspeed;
 }
-export function getVSpeed(){
+export function getVSpeed() {
     return fetchInstance().vspeed;
 }
-export function getRSpeed(){
+export function getRSpeed() {
     return fetchInstance().rspeed;
 }
 
@@ -270,26 +272,49 @@ export function isFrozen() {
     return fetchInstance().freeze;
 }
 
-export function collisionListAdd(_array){
+export function collisionListAdd(_array) {
     fetchInstance().collisionList.add(_array);
+
+}
+
+export function setPhysical(_state) { //set it as true or false
+    fetchInstance().physical = _state;
+}
+
+export function isPhysical() {
+    return fetchInstance().physical;
+}
+
+//this function obtains the instance's primitive, transforms it to the instance's
+//orientation, then computes the center coordinate by averaging all the vertices
+export function findCenterOfInstancePrimitive() {
+    var prim1 = getPrimitive(getPrimitiveIndex());
+    var prim2 = transform_primitive(prim1, getX(), getY(), getRot());
+    let i = 0;
+    var sumX = 0; var sumY = 0;
+    for (i = 0; i < prim2.getSize(); i += 1) {
+        sumX = sumX + prim2.get(i)[0];
+        sumY = sumY + prim2.get(i)[1];
+    }
+    return [sumX / prim2.getSize(), sumY / prim2.getSize()];
 
 }
 
 //checks the collision list to see if this current instance has collision with the provided instance
 //returns angle of contact if collision detected, else returns -1
-export function checkCollision(_propertyIndex){
+export function checkCollision(_propertyIndex) {
     var i = 0;
-    for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1){
+    for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1) {
         var targetInstanceIndex = fetchInstance().collisionList.get(i)[0];
         //START: get the target property index------
         var saved = getSelectedInstance(); //save current selection
         selectInstance(targetInstanceIndex);
-        var targetPropertyIndex = getPropertyIndex(); 
-        unSelectAll(); 
+        var targetPropertyIndex = getPropertyIndex();
+        unSelectAll();
         selectInstance(saved);
         //END: get the target property index---------
 
-        if ( targetPropertyIndex == _propertyIndex){
+        if (targetPropertyIndex == _propertyIndex) {
 
             var angleOfContact = fetchInstance().collisionList.get(i)[1];
             return angleOfContact;
@@ -298,9 +323,9 @@ export function checkCollision(_propertyIndex){
     return -1;
 }
 
-export function flushCollisions(){
+export function flushCollisions() {
     var i = 0;
-    for (i = 0; i < INSTANCES.getSize(); i += 1){
+    for (i = 0; i < INSTANCES.getSize(); i += 1) {
         selectInstance(i);
         fetchInstance().collisionList = new LPList();
         unSelectAll();

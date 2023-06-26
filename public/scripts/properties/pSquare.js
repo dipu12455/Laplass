@@ -4,6 +4,10 @@ import { pPentagon } from './pPentagon.js';
 
 var init = () => {
     LP.setBoundingBox([-1, 1], [1, -1]);
+    LP.makeVar(0);//(0)forcex = 0
+    LP.makeVar(0); //(1)forcey = 0
+    LP.makeVar(0); //(2)selected = 0
+    LP.setPhysical(true); //this turns the instance that embues this property into a 'physical' object that the physics engine will interact with
 };
 
 var update = (_delta) => {
@@ -20,27 +24,19 @@ var update = (_delta) => {
     var vU_friction = getUnitVector([-hspeed, -vspeed]); //direction of friction is always opposite the velocity
     var friction = [vU_friction[0] * mag_fric, vU_friction[1] * mag_fric] //should be positive
 
-
     var ax = force[0] + friction[0];
     var ay = force[1] + friction[1];
 
     var acc = [ax, ay];
 
-    //collisions will change acc values, do it after all the forces have been calculated.
-    //but just before the speed of the instance gets updated.
-    acc = handleCollision(acc);
-
     hspeed += acc[0];
     vspeed += acc[1];
 
     //if velocity is too small, make it equal to zero
-    if (isVectorWithinRange([hspeed,vspeed],0,0.009)){
+    if (isVectorWithinRange([hspeed, vspeed], 0, 0.009)) {
         hspeed = 0;
         vspeed = 0;
     }
-
-    console.log(`1. hspeed ${hspeed}`);
-    console.log(`2. vspeed ${vspeed}`);
 
     //reset forces after velocities have been updated for this frame
     resetForces();
@@ -83,52 +79,6 @@ function checkEvents() {
 
 }
 
-function handleCollision(_acc) {
-    var angleOfContact = LP.checkCollision(pSquare); //check collision with instances that contain property pGround
-    var acc = [0, 0];
-
-    if (angleOfContact != -1) {
-
-        //need to retract object to its position before the collision to un-overlap it.
-        LP.setX(LP.getXPrev());
-        LP.setY(LP.getYPrev());
-
-        acc = bounce(angleOfContact, 1); //returns an acceleration that the current physical state would yield
-    }
-    return v1Plusv2(_acc, acc); //add onto the acc you received from parameter
-}
-
-function bounce(_angleOfContact, _damp) {
-    /*final velocity after colliding with wall is equal in
-    magnitude but 'reflective' in direction to initial velocity.
-    since acc is defined as the change in velocity, we get acc by v2 - v1,
-    which is a vector subtraction.*/
-
-    var v1 = [LP.getHSpeed(), LP.getVSpeed()]; var v1Mag = getMag(v1);//initial velocity
-    var v2 = [0, 0]; var v2Mag = 0;//final velocity
-
-    //change to unit vector form
-    v1 = getUnitVector(v1);
-
-    //find v2 which is an exact reflection of v1 along the line of the contact surface
-    var theta = _angleOfContact;
-
-    var tt = LP.degtorad(theta);
-    var xx = ((tan(tt) * v1[1]) + v1[0]) / (LP.sqr(tan(tt)) + 1);
-    v2[0] = 2 * xx - v1[0];
-
-    var yy = tan(tt) * xx;
-    v2[1] = 2 * yy - v1[1];
-
-    v2Mag = v1Mag * _damp; //magnitude is the same
-
-    /* now we have v2 and v1, acc is the difference between v2 and v1.*/
-    v1 = getRegularVector(v1, v1Mag); //convert them to regular vector first before subtracting
-    v2 = getRegularVector(v2, v2Mag);
-    var acc = v2Minusv1(v1, v2);
-    return acc;
-}
-
 function resetForces() {
     LP.setVal(0, 0); //(0)forceX = 0
     LP.setVal(1, 0); //(1)forceY = 0
@@ -164,7 +114,8 @@ function isVectorWithinRange(_v, low, high) {
     return false;
 }
 
-var draw = () =>{
+var draw = () => {
+    LP.draw_anchor(LP.findCenterOfInstancePrimitive(), 0xff0000);
 
 }
 
