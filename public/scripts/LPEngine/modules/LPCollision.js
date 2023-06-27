@@ -89,6 +89,10 @@ export function getCollisions() {
             if (gameStartUnoverlapRoutine==true){
               unOverlapInstances(current,target,collision);
             }
+            if (gameStartUnoverlapRoutine==false){//also unoverlap of these two instances are too much for exchangeMomenta to handle, if they overlap too much
+            var OT = 1; //overlap threshold
+            if (collision[2] > OT) unOverlapInstances(current, target, collision);
+            }
             updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
