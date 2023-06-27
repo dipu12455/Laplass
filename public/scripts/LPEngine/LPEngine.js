@@ -10,6 +10,7 @@ export { v2Minusv1 } from './modules/LPVector.js';
 export { findLeftPerpendicular } from './modules/LPVector.js';
 export { v1Plusv2 } from './modules/LPVector.js';
 export { transformVector } from './modules/LPVector.js';
+export { isVectorWithinRange } from './modules/LPVector.js';
 
 //LPList
 export { LPList } from './modules/LPList.js';
@@ -54,6 +55,9 @@ export { setMass } from './modules/LPInstances.js';
 export { getMass } from './modules/LPInstances.js';
 export { setVelocity } from './modules/LPInstances.js';
 export { getVelocity } from './modules/LPInstances.js';
+export { setAcceleration } from './modules/LPInstances.js';
+export { getAcceleration } from './modules/LPInstances.js';
+
 
 export { makeVar } from './modules/LPInstances.js'
 export { getVal } from './modules/LPInstances.js'

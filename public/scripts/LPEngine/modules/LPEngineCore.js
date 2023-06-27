@@ -43,10 +43,7 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   collisionsInit();
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
-    getCollisions();
-
     updateInstances(delta);
-    setPrintConsole(false);
 
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances

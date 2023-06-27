@@ -56,4 +56,11 @@ export function findLeftPerpendicular(_v) {
   return [-_v[1], _v[0]];
 }
 
+export function isVectorWithinRange(_v, low, high) {
+  var mag = getMag(_v);
+  if (mag >= low && mag <= high) {
+      return true;
+  }
+  return false;
+}
 //unit tests

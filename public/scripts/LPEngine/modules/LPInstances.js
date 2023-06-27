@@ -3,6 +3,8 @@ import { getProperty } from "./LPProperties.js";
 import { isTimeRunning, printConsole, setPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
+import { getCollisions } from "./LPCollision.js";
+import { isVectorWithinRange } from "./LPVector.js";
 
 export class BoundingBox {
     constructor(_p1, _p2) {
@@ -43,6 +45,7 @@ export class LPInstance {
         this.collisionList = new LPList();
         this.physical = false;
         this.mass = 1; //1 is default, so it won't multiply anything
+        this.acceleration = [0, 0];
     }
 }
 
@@ -128,26 +131,60 @@ export function initInstances() {
 }
 
 export function updateInstances(_delta) {
-    printConsole(`Entered update instances`);
-    let i = 0;
+    /* changed the order of things happening just like in bounce equation.
+    the update function of the instance property only deals with accelerations, nothing else.
+    after that, next step is directly into collision detection. the objects velocities haven't been touched yet.
+    here, you don't replace the previous acch value, but add to it -- depending on how the collision went.
+    then now you have a final acch after all needed processing, and this is where you finally update velocity.
+    this way, only the acch value goes through change throghout the frame, and velocity is updated only once.*/
     if (isTimeRunning()) { //allows the ability to pause all Property, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
-        for (i = 0; i < INSTANCES.getSize(); i += 1) {
-            selectInstance(i);
-            var propertyIndex = getPropertyIndex();
-            if (propertyIndex != -1 && !isFrozen()) { //if index is -1, then there is no Property for this instance
-                var updateFunction = getProperty(propertyIndex).getUpdateFunction();
-                printConsole(`Update function for ins ${getSelectedInstance()}`);
-                updateFunction(_delta);
-                printConsole(`After update function for ins ${getSelectedInstance()} gethspeed ${getHSpeed()} getvspeed ${getVSpeed()}`);
-                //translate the instance according to their speed
-                setX(getX() + getHSpeed() * _delta);
-                setY(getY() + getVSpeed() * _delta);
-                setRot(getRot() + getRSpeed() * _delta);
-                printConsole(`After setting its orientation: gethspeed ${getHSpeed()} getvspeed ${getVSpeed()} getx ${getX()} gety ${getY()} getrot ${getRot()}`);
-            }
-            unSelectAll();
+        runUpdateFunctions(_delta); //updates accelerations of all instances
+        getCollisions(); //add any necessary acch to each instance to account for collisions
+        factorVelocitiesAndPositions(_delta);//factor the acch of all instances into their respective velocities, and trajectories
+    }
+    turnOffEvents(); //only for non-persistent events
+
+}
+
+function runUpdateFunctions(_delta) {
+    let i = 0;
+    for (i = 0; i < INSTANCES.getSize(); i += 1) {
+        selectInstance(i);
+        var propertyIndex = getPropertyIndex();
+        if (propertyIndex != -1 && !isFrozen()) { //if index is -1, then there is no Property for this instance
+            var updateFunction = getProperty(propertyIndex).getUpdateFunction();
+            updateFunction(_delta); //only the accs of instances are updated
         }
-        turnOffEvents(); //only for non-persistent events
+        unSelectAll();
+    }
+}
+function factorVelocitiesAndPositions(_delta) {
+    //loop through all instances to factor their velocities and positions according to their acchs.
+    let i = 0;
+    for (i = 0; i < INSTANCES.getSize(); i += 1) {
+        selectInstance(i);
+        //get its hspeed and vspeed
+        var hspeed = getHSpeed();
+        var vspeed = getVSpeed();
+
+        var acc = getAcceleration();
+
+        hspeed += acc[0];
+        vspeed += acc[1];
+
+        //if velocity is too small, make it equal to zero
+        if (isVectorWithinRange([hspeed, vspeed], 0, 0.009)) {
+            hspeed = 0;
+            vspeed = 0;
+        }
+
+        setHSpeed(hspeed);
+        setVSpeed(vspeed);
+
+        //translate the instance according to their speed
+        setX(getX() + getHSpeed() * _delta);
+        setY(getY() + getVSpeed() * _delta);
+        setRot(getRot() + getRSpeed() * _delta);
     }
 }
 
@@ -302,7 +339,12 @@ export function setVelocity(_v) {
 export function getVelocity() {
     return [getHSpeed(), getVSpeed()];
 }
-
+export function setAcceleration(_acc) {
+    fetchInstance().accceleration = _acc;
+}
+export function getAcceleration() {
+    return fetchInstance().accceleration;
+}
 //this function obtains the instance's primitive, transforms it to the instance's
 //orientation, then computes the center coordinate by averaging all the vertices
 export function findCenterOfInstancePrimitive() {

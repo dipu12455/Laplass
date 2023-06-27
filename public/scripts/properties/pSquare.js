@@ -27,23 +27,10 @@ var update = (_delta) => {
     var ax = force[0] + friction[0];
     var ay = force[1] + friction[1];
 
-    var acc = [ax, ay];
-
-    hspeed += acc[0];
-    vspeed += acc[1];
-
-    //if velocity is too small, make it equal to zero
-    if (isVectorWithinRange([hspeed, vspeed], 0, 0.009)) {
-        hspeed = 0;
-        vspeed = 0;
-    }
-
     //reset forces after velocities have been updated for this frame
     resetForces();
 
-    LP.setHSpeed(hspeed);
-    LP.setVSpeed(vspeed);
-
+    LP.setAcceleration([ax, ay]);
 };
 
 function checkEvents() {
@@ -106,13 +93,7 @@ function v2Minusv1(_v1, _v2) {
 function v1Plusv2(_v1, _v2) {
     return [_v1[0] + _v2[0], _v1[1] + _v2[1]];
 }
-function isVectorWithinRange(_v, low, high) {
-    var mag = getMag(_v);
-    if (mag >= low && mag <= high) {
-        return true;
-    }
-    return false;
-}
+
 
 var draw = () => {
     LP.draw_anchor(LP.findCenterOfInstancePrimitive(), 0xff0000);

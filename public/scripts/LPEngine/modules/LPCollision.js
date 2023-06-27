@@ -4,7 +4,7 @@ import { dotProduct } from './LPVector.js';
 import { scalarXvector } from './LPVector.js';
 import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
+import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
 var collisionPatternList = [];
 export function collisionsInit() { //call this after all instances are added to LPE, best call it after instancesInit()
@@ -24,15 +24,15 @@ export function collisionsInit() { //call this after all instances are added to 
   }
 }
 
-function resetCollisionPatternList(){
+function resetCollisionPatternList() {
   let i = 0;
-  for (i = 0; i < collisionPatternList.length; i += 1){
+  for (i = 0; i < collisionPatternList.length; i += 1) {
     let j = 0;
-    for (j = 0; j < collisionPatternList.length; j += 1){
+    for (j = 0; j < collisionPatternList.length; j += 1) {
       collisionPatternList[i][j] = 0;
     }
   }
-  
+
 }
 
 //check collision between circles
@@ -164,7 +164,7 @@ export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceInde
 //function to analyze collisions between all registered instances of LPE.
 //if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
 export function getCollisions() {
-  
+
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     //checking collision of each instance with every other instances
@@ -179,7 +179,7 @@ export function getCollisions() {
       if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
       unSelectAll(); //get the target instance to check collision with
 
-      printConsole(`iterating i ${i} and j ${j}`);
+
       //if checking collision with self, skip to next
       if (target == current) {
         continue;
@@ -187,14 +187,14 @@ export function getCollisions() {
       //check if pattern already encountered, to only calculate collision between unique instances each frame
       if (collisionPatternList[current][target] == 1 ||
         collisionPatternList[target][current] == 1) {
-        printConsole(`Found pattern, skipping`);
+
         continue;
       }
       else {
         //if not, record this collision
         collisionPatternList[current][target] = 1;
         collisionPatternList[target][current] = 1;
-        printConsole(`recorded: ${i} and ${j} as ${collisionPatternList[i][j]}`);
+
       }
       //first check for bounding box overlap, if so... then check for SAT collision
       if (isOverlapBoundingBox(current, target)) {
@@ -208,11 +208,8 @@ export function getCollisions() {
           //here, check if these two instances are physical, and if so
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
-            setPrintConsole(true);
-            
-            printConsole(`two physical instances, collision detected. unoverlap disabled.`);
-            //unOverlapInstances(current, target, collision);
-            exchangeMomenta(current, target); //changes their velocities respectively
+            unOverlapInstances(current, target, collision);
+            updateAcchByExchangeOfMomenta(current, target); //this function will add acch to instances automatically
           }
 
         }
@@ -248,44 +245,41 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
 }
 
 //changes the velocity of both instances according to their mutual momentum transfer
-function exchangeMomenta(_instanceIndex1, _instanceIndex2) {
-  printConsole(`Entered exchangeMomenta()`);
+function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
   var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
   selectInstance(_instanceIndex2);
   var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
 
-  printConsole(`m1 ${m1} v1 ${v1} m2 ${m2} v2 ${v2}`);
-
   //calculate their respective momenta
   var p1 = scalarXvector(m1, v1);
   var p2 = scalarXvector(m2, v2);
-
-  printConsole(`momenta: p1 ${p1} p2 ${p2}`);
 
   //now p1dash (the new momentum) is equal to p2
   var p1dash = p2;
   /*mass stays constant, so the new momentum is compensated by change in velocity
   p1dash = m1 * v1dash => v1dash = p1dash / m1 */
   var v1dash = scalarXvector(1 / m1, p1dash);
-  printConsole(`p1dash ${p1dash} v1dash ${v1dash}`);
 
   //similarly for 2nd instance
   var p2dash = p1;
   var v2dash = scalarXvector(1 / m2, p2dash);
-  printConsole(`p2dash ${p2dash} v2dash ${v2dash}`);
 
-  //update each instances' respective velocities
+  //now you have initial and final velocities of both instance
+  //their difference yields the acceleration that would be be caused by their exchange of momentum
+  var acc1 = v2Minusv1(v1, v1dash);
+  var acc2 = v2Minusv1(v2, v2dash);
+
+  //now add these accelerations to each instance's previous acceleration
   selectInstance(_instanceIndex1);
-  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]);
-  printConsole(`ins 1 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
-  unSelectAll();
+  var acc1Prev = getAcceleration();
+  setAcceleration(acc1Prev + acc1); unSelectAll();
 
+  //likewise for 2nd instance
   selectInstance(_instanceIndex2);
-  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]);
-  printConsole(`ins 2 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
-  unSelectAll();
+  var acc2Prev = getAcceleration();
+  setAcceleration(acc2Prev + acc2); unSelectAll();
 }
 
 //returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved
