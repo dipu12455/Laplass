@@ -137,7 +137,7 @@ export function updateInstances(_delta) {
     here, you don't replace the previous acch value, but add to it -- depending on how the collision went.
     then now you have a final acch after all needed processing, and this is where you finally update velocity.
     this way, only the acch value goes through change throghout the frame, and velocity is updated only once.*/
-    if (isTimeRunning()) { //allows the ability to pause all Property, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
+    if (isTimeRunning()) {
         runUpdateFunctions(_delta); //updates accelerations of all instances
         getCollisions(); //add any necessary acch to each instance to account for collisions
         factorVelocitiesAndPositions(_delta, 0.009);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
@@ -149,8 +149,10 @@ export function updateInstances(_delta) {
     The force applied tells how much to move that instance. the collision then takes what the force outputs,
     and tells the instance *how much it is allowed* to move. "You got this amount of force, but sorry, your final velocity should be this
     and this, so you can ony accelerate this much."
-    this is what allows LPE to snap objects out of overlap directly by their position. The object isn't moved yet, only its acch is recorded.
-    it is only moved when the final acch value is outputed.*/
+    this is what allows LPE to prevent objects from overlapping each other, without having to do any of the xprev/yprev or unoverlap.
+    The exchange of momentum function outputs the exact acceleration needed to prevent an overlap. 
+    But, the order of object motion processing needs to be
+    **specifically** in the **exact order** laid out in here.*/
     turnOffEvents(); //only for non-persistent events
 
 }

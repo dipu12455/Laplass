@@ -6,6 +6,8 @@ import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
+var gameStartUnoverlapRoutine = true; //place instances out of each others way, when program is initialized. Any further, the exchange momentum will take care of the rest.
+var collisionPerFrame = 0;
 var collisionPatternList = [];
 export function collisionsInit() { //call this after all instances are added to LPE, best call it after instancesInit()
   let i = 0;
@@ -35,6 +37,115 @@ function resetCollisionPatternList() {
 
 }
 
+//function to analyze collisions between all registered instances of LPE.
+//if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
+export function getCollisions() {
+  collisionPerFrame = 0;
+
+  let i = 0;
+  for (i = 0; i < INSTANCES.getSize(); i += 1) {
+    //checking collision of each instance with every other instances
+    selectInstance(i); var current = getSelectedInstance();
+    if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+    unSelectAll();
+    //obtain the instance to check collision for
+
+    let j = 0;
+    for (j = 0; j < INSTANCES.getSize(); j += 1) {
+      selectInstance(j); var target = getSelectedInstance();
+      if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+      unSelectAll(); //get the target instance to check collision with
+
+
+      //if checking collision with self, skip to next
+      if (target == current) {
+        continue;
+      }
+      //check if pattern already encountered, to only calculate collision between unique instances each frame
+      if (collisionPatternList[current][target] == 1 ||
+        collisionPatternList[target][current] == 1) {
+
+        continue;
+      }
+      else {
+        //if not, record this collision
+        collisionPatternList[current][target] = 1;
+        collisionPatternList[target][current] = 1;
+
+      }
+      //first check for bounding box overlap, if so... then check for SAT collision
+      if (isOverlapBoundingBox(current, target)) {
+
+        var collision = checkCollisionPrimitivesInstances(current, target);
+        var angleOfContact = collision[1];
+        if (collision[0] == 1) {
+          collisionPerFrame += 1;
+          //save the instance index of target  and the angle of contact inside the current instance
+          selectInstance(current);
+          collisionListAdd([target, angleOfContact]); unSelectAll();
+          //here, check if these two instances are physical, and if so
+          //move them apart, then exchange their linear momentum
+          if (C_isPhysical(current) && C_isPhysical(target)) {
+            if (gameStartUnoverlapRoutine==true){
+              unOverlapInstances(current,target,collision);
+            }
+            updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
+          }
+
+        }
+      }
+    }
+  }
+  //reset the collisionPatternList
+  resetCollisionPatternList();
+  if (collisionPerFrame == 0) gameStartUnoverlapRoutine = false; //once you detect no more collision happening, turn off unoverlap
+}
+
+//changes the velocity of both instances according to their mutual momentum transfer
+function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
+  setPrintConsole(true);
+  //obtain mass and velocities of each instance
+  selectInstance(_instanceIndex1);
+  var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
+  selectInstance(_instanceIndex2);
+  var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
+
+  //calculate their respective momenta
+  var p1 = scalarXvector(m1, v1);
+  var p2 = scalarXvector(m2, v2);
+
+  //now p1dash (the new momentum) is equal to p2
+  var p1dash = p2;
+  /*mass stays constant, so the new momentum is compensated by change in velocity
+  p1dash = m1 * v1dash => v1dash = p1dash / m1 */
+  var v1dash = scalarXvector(1 / m1, p1dash);
+
+  //similarly for 2nd instance
+  var p2dash = p1;
+  var v2dash = scalarXvector(1 / m2, p2dash);
+
+  //now you have initial and final velocities of both instance
+  //their difference yields the acceleration that would be be caused by their exchange of momentum
+  var acc1 = v2Minusv1(v1, v1dash);
+  var acc2 = v2Minusv1(v2, v2dash);
+  printConsole(`acc1 ${acc1} acc2 ${acc2}`);
+
+  //now add these accelerations to each instance's previous acceleration
+  selectInstance(_instanceIndex1);
+  var acc1Prev = getAcceleration();
+  printConsole(`acc1prev ${acc1Prev}`);
+  setAcceleration(v1Plusv2(acc1Prev, acc1));
+  printConsole(`final acch1 ${getAcceleration()}`);
+  unSelectAll();
+
+  //likewise for 2nd instance
+  selectInstance(_instanceIndex2);
+  var acc2Prev = getAcceleration();
+  printConsole(`acc2prev ${acc2Prev}`);
+  setAcceleration(v1Plusv2(acc2Prev, acc2));
+  printConsole(`final acch2 ${getAcceleration()}`);
+  unSelectAll();
+}
 //check collision between circles
 export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
   var lineBetweenCenters = v2Minusv1(_p2, _p1);
@@ -102,7 +213,7 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     minOverlapAxis = normalList.get(findMin(distances));
     //find perpendicular of minOverlapAxis, then find theta of that vector
     var angleOfContact = getTheta(minOverlapAxis);
-    return [1, angleOfContact, Math.abs(distances.get(findMin(distances))), minOverlapAxis[0], minOverlapAxis[1]]; //the last element is the length of the overlap
+    return [1, angleOfContact, Math.abs(distances.get(findMin(distances)))]; //the last element is the length of the overlap
   } else {
     return [0, -1, -1];
   }
@@ -161,64 +272,7 @@ export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceInde
   return checkCollisionPrimitives(prim1, prim2);
 }
 
-//function to analyze collisions between all registered instances of LPE.
-//if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
-export function getCollisions() {
 
-  let i = 0;
-  for (i = 0; i < INSTANCES.getSize(); i += 1) {
-    //checking collision of each instance with every other instances
-    selectInstance(i); var current = getSelectedInstance();
-    if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
-    unSelectAll();
-    //obtain the instance to check collision for
-
-    let j = 0;
-    for (j = 0; j < INSTANCES.getSize(); j += 1) {
-      selectInstance(j); var target = getSelectedInstance();
-      if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
-      unSelectAll(); //get the target instance to check collision with
-
-
-      //if checking collision with self, skip to next
-      if (target == current) {
-        continue;
-      }
-      //check if pattern already encountered, to only calculate collision between unique instances each frame
-      if (collisionPatternList[current][target] == 1 ||
-        collisionPatternList[target][current] == 1) {
-
-        continue;
-      }
-      else {
-        //if not, record this collision
-        collisionPatternList[current][target] = 1;
-        collisionPatternList[target][current] = 1;
-
-      }
-      //first check for bounding box overlap, if so... then check for SAT collision
-      if (isOverlapBoundingBox(current, target)) {
-
-        var collision = checkCollisionPrimitivesInstances(current, target);
-        var angleOfContact = collision[1];
-        if (collision[0] == 1) {
-          //save the instance index of target  and the angle of contact inside the current instance
-          selectInstance(current);
-          collisionListAdd([target, angleOfContact]); unSelectAll();
-          //here, check if these two instances are physical, and if so
-          //move them apart, then exchange their linear momentum
-          if (C_isPhysical(current) && C_isPhysical(target)) {
-            unOverlapInstances(current, target, collision);
-            updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
-          }
-
-        }
-      }
-    }
-  }
-  //reset the collisionPatternList
-  resetCollisionPatternList();
-}
 
 //if two instances overlap by n units, it moves each instance n/2 units away from one another, in the 
 //direction of the vector that passes through their centers.
@@ -244,51 +298,7 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
     getY() + vU_dirToMoveApart[1] * distToMoveApart); unSelectAll();
 }
 
-//changes the velocity of both instances according to their mutual momentum transfer
-function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
-  setPrintConsole(true);
-  //obtain mass and velocities of each instance
-  selectInstance(_instanceIndex1);
-  var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
-  selectInstance(_instanceIndex2);
-  var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
 
-  //calculate their respective momenta
-  var p1 = scalarXvector(m1, v1);
-  var p2 = scalarXvector(m2, v2);
-
-  //now p1dash (the new momentum) is equal to p2
-  var p1dash = p2;
-  /*mass stays constant, so the new momentum is compensated by change in velocity
-  p1dash = m1 * v1dash => v1dash = p1dash / m1 */
-  var v1dash = scalarXvector(1 / m1, p1dash);
-
-  //similarly for 2nd instance
-  var p2dash = p1;
-  var v2dash = scalarXvector(1 / m2, p2dash);
-
-  //now you have initial and final velocities of both instance
-  //their difference yields the acceleration that would be be caused by their exchange of momentum
-  var acc1 = v2Minusv1(v1, v1dash);
-  var acc2 = v2Minusv1(v2, v2dash);
-  printConsole(`acc1 ${acc1} acc2 ${acc2}`);
-
-  //now add these accelerations to each instance's previous acceleration
-  selectInstance(_instanceIndex1);
-  var acc1Prev = getAcceleration();
-  printConsole(`acc1prev ${acc1Prev}`);
-  setAcceleration(v1Plusv2(acc1Prev, acc1));
-  printConsole(`final acch1 ${getAcceleration()}`);
-  unSelectAll();
-
-  //likewise for 2nd instance
-  selectInstance(_instanceIndex2);
-  var acc2Prev = getAcceleration();
-  printConsole(`acc2prev ${acc2Prev}`);
-  setAcceleration(v1Plusv2(acc2Prev, acc2));
-  printConsole(`final acch2 ${getAcceleration()}`);
-  unSelectAll();
-}
 
 //returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved
 function C_isPhysical(_instanceIndex) {
