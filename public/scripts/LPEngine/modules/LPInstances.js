@@ -148,7 +148,6 @@ export function updateInstances(_delta) {
             unSelectAll();
         }
         turnOffEvents(); //only for non-persistent events
-        printConsole(`End of a frame. only draw functions here on...`); setPrintConsole(false);
     }
 }
 

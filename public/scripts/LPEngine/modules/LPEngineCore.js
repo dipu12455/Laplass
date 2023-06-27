@@ -4,7 +4,7 @@ import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPr
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
 import { INSTANCES, flushCollisions, getPrimitiveIndex, getPropertyIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
-import { getCollisions } from './LPCollision.js';
+import { collisionsInit, getCollisions } from './LPCollision.js';
 import { getProperty } from './LPProperties.js';
 import { runAllTests } from './LPTest.js';
 
@@ -40,12 +40,13 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 
   //loop through the instances to execute their init functions
   initInstances();
-
+  collisionsInit();
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     getCollisions();
 
     updateInstances(delta);
+    setPrintConsole(false);
 
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances

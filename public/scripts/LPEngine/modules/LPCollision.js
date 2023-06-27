@@ -6,6 +6,35 @@ import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
+var collisionPatternList = [];
+export function collisionsInit() { //call this after all instances are added to LPE, best call it after instancesInit()
+  let i = 0;
+  for (i = 0; i < INSTANCES.getSize(); i += 1) {
+    collisionPatternList[i] = [];
+  }//each element of this array will hold elements equal to number of instances
+  //if n is number of instances in LPE, the main array has n slots, and each of those n slots have n slots
+
+  //now loop through all and fill with 0. 0 means pattern not encountered. 1 means pattern encountered
+  i = 0;
+  for (i = 0; i < INSTANCES.getSize(); i += 1) {
+    let j = 0;
+    for (j = 0; j < INSTANCES.getSize(); j += 1) {
+      collisionPatternList[i][j] = 0;
+    }
+  }
+}
+
+function resetCollisionPatternList(){
+  let i = 0;
+  for (i = 0; i < collisionPatternList.length; i += 1){
+    let j = 0;
+    for (j = 0; j < collisionPatternList.length; j += 1){
+      collisionPatternList[i][j] = 0;
+    }
+  }
+  
+}
+
 //check collision between circles
 export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
   var lineBetweenCenters = v2Minusv1(_p2, _p1);
@@ -135,6 +164,7 @@ export function checkCollisionPrimitivesInstances(_instanceIndex1, _instanceInde
 //function to analyze collisions between all registered instances of LPE.
 //if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
 export function getCollisions() {
+  
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     //checking collision of each instance with every other instances
@@ -149,9 +179,22 @@ export function getCollisions() {
       if (getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
       unSelectAll(); //get the target instance to check collision with
 
+      printConsole(`iterating i ${i} and j ${j}`);
       //if checking collision with self, skip to next
       if (target == current) {
         continue;
+      }
+      //check if pattern already encountered, to only calculate collision between unique instances each frame
+      if (collisionPatternList[current][target] == 1 ||
+        collisionPatternList[target][current] == 1) {
+        printConsole(`Found pattern, skipping`);
+        continue;
+      }
+      else {
+        //if not, record this collision
+        collisionPatternList[current][target] = 1;
+        collisionPatternList[target][current] = 1;
+        printConsole(`recorded: ${i} and ${j} as ${collisionPatternList[i][j]}`);
       }
       //first check for bounding box overlap, if so... then check for SAT collision
       if (isOverlapBoundingBox(current, target)) {
@@ -166,8 +209,9 @@ export function getCollisions() {
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
             setPrintConsole(true);
+            
             printConsole(`two physical instances, collision detected. unoverlap disabled.`);
-            unOverlapInstances(current, target, collision);
+            //unOverlapInstances(current, target, collision);
             exchangeMomenta(current, target); //changes their velocities respectively
           }
 
@@ -175,6 +219,8 @@ export function getCollisions() {
       }
     }
   }
+  //reset the collisionPatternList
+  resetCollisionPatternList();
 }
 
 //if two instances overlap by n units, it moves each instance n/2 units away from one another, in the 
@@ -232,12 +278,12 @@ function exchangeMomenta(_instanceIndex1, _instanceIndex2) {
 
   //update each instances' respective velocities
   selectInstance(_instanceIndex1);
-  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]); 
+  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]);
   printConsole(`ins 1 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
   unSelectAll();
 
   selectInstance(_instanceIndex2);
-  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]); 
+  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]);
   printConsole(`ins 2 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
   unSelectAll();
 }
