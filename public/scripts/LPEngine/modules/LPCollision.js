@@ -73,7 +73,7 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     minOverlapAxis = normalList.get(findMin(distances));
     //find perpendicular of minOverlapAxis, then find theta of that vector
     var angleOfContact = getTheta(minOverlapAxis);
-    return [1, angleOfContact, Math.abs(distances.get(findMin(distances)))]; //the last element is the length of the overlap
+    return [1, angleOfContact, Math.abs(distances.get(findMin(distances))), minOverlapAxis[0], minOverlapAxis[1]]; //the last element is the length of the overlap
   } else {
     return [0, -1, -1];
   }
@@ -165,6 +165,8 @@ export function getCollisions() {
           //here, check if these two instances are physical, and if so
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
+            setPrintConsole(true);
+            printConsole(`two physical instances, collision detected. unoverlap disabled.`);
             unOverlapInstances(current, target, collision);
             exchangeMomenta(current, target); //changes their velocities respectively
           }
@@ -182,12 +184,14 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
   var center1 = findCenterOfInstancePrimitive(); unSelectAll();
   selectInstance(_instanceIndex2);
   var center2 = findCenterOfInstancePrimitive(); unSelectAll();
+  //nudge them a little if their centers are the same
+  if (center1 == center2) center1 += 0.01;
 
   var vectorBetweenCenters = v2Minusv1(center1, center2);
   //this is the direction of the vector to move them apart
   var vU_dirToMoveApart = getUnitVector(vectorBetweenCenters);
   //this is the magnitude by which to move each instance apart
-  var distToMoveApart = _collision[2] / 2;
+  var distToMoveApart = _collision[2] / 2; //should be half
 
   selectInstance(_instanceIndex1);
   setPosition(getX() - vU_dirToMoveApart[0] * distToMoveApart,
@@ -199,31 +203,43 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
 
 //changes the velocity of both instances according to their mutual momentum transfer
 function exchangeMomenta(_instanceIndex1, _instanceIndex2) {
+  printConsole(`Entered exchangeMomenta()`);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
   var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
   selectInstance(_instanceIndex2);
   var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
 
+  printConsole(`m1 ${m1} v1 ${v1} m2 ${m2} v2 ${v2}`);
+
   //calculate their respective momenta
   var p1 = scalarXvector(m1, v1);
   var p2 = scalarXvector(m2, v2);
+
+  printConsole(`momenta: p1 ${p1} p2 ${p2}`);
 
   //now p1dash (the new momentum) is equal to p2
   var p1dash = p2;
   /*mass stays constant, so the new momentum is compensated by change in velocity
   p1dash = m1 * v1dash => v1dash = p1dash / m1 */
   var v1dash = scalarXvector(1 / m1, p1dash);
+  printConsole(`p1dash ${p1dash} v1dash ${v1dash}`);
 
   //similarly for 2nd instance
   var p2dash = p1;
   var v2dash = scalarXvector(1 / m2, p2dash);
+  printConsole(`p2dash ${p2dash} v2dash ${v2dash}`);
 
   //update each instances' respective velocities
   selectInstance(_instanceIndex1);
-  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]); unSelectAll();
+  setHSpeed(v1dash[0]); setVSpeed(v1dash[1]); 
+  printConsole(`ins 1 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
+  unSelectAll();
+
   selectInstance(_instanceIndex2);
-  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]); unSelectAll();
+  setHSpeed(v2dash[0]); setVSpeed(v2dash[1]); 
+  printConsole(`ins 2 hspeed set as ${getHSpeed()} vspeed set as ${getVSpeed()}`);
+  unSelectAll();
 }
 
 //returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved

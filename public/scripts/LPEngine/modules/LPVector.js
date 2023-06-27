@@ -26,6 +26,7 @@ export function transformVector(_v, _x, _y, _theta) {
 //a unit vector is used to indicate direction
 export function getUnitVector(_v) {
   var mag = getMag(_v);
+  if(mag <= 0)return [0,0]; //avoid divide by 0
   var i = _v[0] / mag;
   var j = _v[1] / mag;
   return [i, j];

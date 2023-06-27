@@ -1,6 +1,6 @@
 import { LPList } from "./LPList.js";
 import { getProperty } from "./LPProperties.js";
-import { isTimeRunning } from "./LPEngineCore.js";
+import { isTimeRunning, printConsole, setPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 
@@ -128,6 +128,7 @@ export function initInstances() {
 }
 
 export function updateInstances(_delta) {
+    printConsole(`Entered update instances`);
     let i = 0;
     if (isTimeRunning()) { //allows the ability to pause all Property, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
         for (i = 0; i < INSTANCES.getSize(); i += 1) {
@@ -135,15 +136,19 @@ export function updateInstances(_delta) {
             var propertyIndex = getPropertyIndex();
             if (propertyIndex != -1 && !isFrozen()) { //if index is -1, then there is no Property for this instance
                 var updateFunction = getProperty(propertyIndex).getUpdateFunction();
+                printConsole(`Update function for ins ${getSelectedInstance()}`);
                 updateFunction(_delta);
+                printConsole(`After update function for ins ${getSelectedInstance()} gethspeed ${getHSpeed()} getvspeed ${getVSpeed()}`);
                 //translate the instance according to their speed
                 setX(getX() + getHSpeed() * _delta);
                 setY(getY() + getVSpeed() * _delta);
                 setRot(getRot() + getRSpeed() * _delta);
+                printConsole(`After setting its orientation: gethspeed ${getHSpeed()} getvspeed ${getVSpeed()} getx ${getX()} gety ${getY()} getrot ${getRot()}`);
             }
             unSelectAll();
         }
         turnOffEvents(); //only for non-persistent events
+        printConsole(`End of a frame. only draw functions here on...`); setPrintConsole(false);
     }
 }
 
@@ -285,11 +290,18 @@ export function setPhysical(_state) { //set it as true or false
 export function isPhysical() {
     return fetchInstance().physical;
 }
-export function setMass(_mass){
+export function setMass(_mass) {
     fetchInstance().mass = _mass;
 }
-export function getMass(){
+export function getMass() {
     return fetchInstance().mass;
+}
+export function setVelocity(_v) {
+    setHSpeed(_v[0]);
+    setVSpeed(_v[1]);
+}
+export function getVelocity() {
+    return [getHSpeed(), getVSpeed()];
 }
 
 //this function obtains the instance's primitive, transforms it to the instance's
