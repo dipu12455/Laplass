@@ -1,7 +1,7 @@
 import { LPList } from "./LPList.js";
 import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
-import { scalarXvector } from './LPVector.js';
+import { scalarXvector, v1Plusv2 } from './LPVector.js';
 import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
@@ -209,7 +209,7 @@ export function getCollisions() {
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
             unOverlapInstances(current, target, collision);
-            updateAcchByExchangeOfMomenta(current, target); //this function will add acch to instances automatically
+            updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
         }
@@ -246,6 +246,7 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
 
 //changes the velocity of both instances according to their mutual momentum transfer
 function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
+  setPrintConsole(true);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
   var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
@@ -270,16 +271,23 @@ function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
   //their difference yields the acceleration that would be be caused by their exchange of momentum
   var acc1 = v2Minusv1(v1, v1dash);
   var acc2 = v2Minusv1(v2, v2dash);
+  printConsole(`acc1 ${acc1} acc2 ${acc2}`);
 
   //now add these accelerations to each instance's previous acceleration
   selectInstance(_instanceIndex1);
   var acc1Prev = getAcceleration();
-  setAcceleration(acc1Prev + acc1); unSelectAll();
+  printConsole(`acc1prev ${acc1Prev}`);
+  setAcceleration(v1Plusv2(acc1Prev, acc1));
+  printConsole(`final acch1 ${getAcceleration()}`);
+  unSelectAll();
 
   //likewise for 2nd instance
   selectInstance(_instanceIndex2);
   var acc2Prev = getAcceleration();
-  setAcceleration(acc2Prev + acc2); unSelectAll();
+  printConsole(`acc2prev ${acc2Prev}`);
+  setAcceleration(v1Plusv2(acc2Prev, acc2));
+  printConsole(`final acch2 ${getAcceleration()}`);
+  unSelectAll();
 }
 
 //returns if an instance is physical, make sure nothing is selected before using this, or the selection is saved

@@ -140,8 +140,17 @@ export function updateInstances(_delta) {
     if (isTimeRunning()) { //allows the ability to pause all Property, drawing loop still continues, just instances don't update their orientations so everything freezes in place.
         runUpdateFunctions(_delta); //updates accelerations of all instances
         getCollisions(); //add any necessary acch to each instance to account for collisions
-        factorVelocitiesAndPositions(_delta);//factor the acch of all instances into their respective velocities, and trajectories
-    }
+        factorVelocitiesAndPositions(_delta, 0.009);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
+    }/* a key is pressed, a force is applied on an instance. That force application is recorded into its acceleration amount.
+    Before letting the force affect the velocity of the object, the collision calculates of a possible collision,
+    and given the instance's initial velocity, we know *what* it's final velocity *should* be. To reach *that* final velocity,
+    the acch that gets it there, is v2 - v1. This, acch is then added into the acceleration that would have been
+    from the force applied on the instance. And this final collision-controled acceleration is what you allow the object to move with.
+    The force applied tells how much to move that instance. the collision then takes what the force outputs,
+    and tells the instance *how much it is allowed* to move. "You got this amount of force, but sorry, your final velocity should be this
+    and this, so you can ony accelerate this much."
+    this is what allows LPE to snap objects out of overlap directly by their position. The object isn't moved yet, only its acch is recorded.
+    it is only moved when the final acch value is outputed.*/
     turnOffEvents(); //only for non-persistent events
 
 }
@@ -158,7 +167,7 @@ function runUpdateFunctions(_delta) {
         unSelectAll();
     }
 }
-function factorVelocitiesAndPositions(_delta) {
+function factorVelocitiesAndPositions(_delta, _threshold) {
     //loop through all instances to factor their velocities and positions according to their acchs.
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
@@ -173,7 +182,7 @@ function factorVelocitiesAndPositions(_delta) {
         vspeed += acc[1];
 
         //if velocity is too small, make it equal to zero
-        if (isVectorWithinRange([hspeed, vspeed], 0, 0.009)) {
+        if (isVectorWithinRange([hspeed, vspeed], 0, _threshold)) {
             hspeed = 0;
             vspeed = 0;
         }
@@ -185,6 +194,7 @@ function factorVelocitiesAndPositions(_delta) {
         setX(getX() + getHSpeed() * _delta);
         setY(getY() + getVSpeed() * _delta);
         setRot(getRot() + getRSpeed() * _delta);
+        unSelectAll(); //don't forget to unselect
     }
 }
 
@@ -340,10 +350,10 @@ export function getVelocity() {
     return [getHSpeed(), getVSpeed()];
 }
 export function setAcceleration(_acc) {
-    fetchInstance().accceleration = _acc;
+    fetchInstance().acceleration = _acc;
 }
 export function getAcceleration() {
-    return fetchInstance().accceleration;
+    return fetchInstance().acceleration;
 }
 //this function obtains the instance's primitive, transforms it to the instance's
 //orientation, then computes the center coordinate by averaging all the vertices
