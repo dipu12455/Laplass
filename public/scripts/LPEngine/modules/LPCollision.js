@@ -132,22 +132,17 @@ function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
   //their difference yields the acceleration that would be be caused by their exchange of momentum
   var acc1 = v2Minusv1(v1, v1dash);
   var acc2 = v2Minusv1(v2, v2dash);
-  printConsole(`acc1 ${acc1} acc2 ${acc2}`);
 
   //now add these accelerations to each instance's previous acceleration
   selectInstance(_instanceIndex1);
   var acc1Prev = getAcceleration();
-  printConsole(`acc1prev ${acc1Prev}`);
   setAcceleration(v1Plusv2(acc1Prev, acc1));
-  printConsole(`final acch1 ${getAcceleration()}`);
   unSelectAll();
 
   //likewise for 2nd instance
   selectInstance(_instanceIndex2);
   var acc2Prev = getAcceleration();
-  printConsole(`acc2prev ${acc2Prev}`);
   setAcceleration(v1Plusv2(acc2Prev, acc2));
-  printConsole(`final acch2 ${getAcceleration()}`);
   unSelectAll();
 }
 //check collision between circles
