@@ -1,6 +1,7 @@
 import * as LP from './LPEngine/LPEngine.js';
 import { pDrawObject } from './properties/pDrawObject.js';
 import { pSquare } from './properties/pSquare.js';
+import { pSquareManual } from './properties/pSquareManual.js';
 
 var pmSquare = LP.addPrimitive('/pmSquare');
 var pmPentagon = LP.addPrimitive('/pmPentagon');
@@ -20,12 +21,12 @@ function getRandomInt(max) {
  */
 
   //create two squares that move towards each other
-var sq1 = LP.addInstance(pmSquare, -1, pSquare);
+var sq1 = LP.addInstance(pmSquare, -1, pSquareManual);
 LP.selectInstance(sq1);
 LP.setPosition(-5, 0); 
 LP.unSelectAll();
 
-var sq2 = LP.addInstance(pmSquare, -1, pSquare);
+var sq2 = LP.addInstance(pmSquare, -1, pSquareManual);
 LP.selectInstance(sq2);
 LP.setPosition(5, 0); 
 LP.unSelectAll();

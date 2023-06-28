@@ -87,7 +87,7 @@ export function getCollisions() {
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
             printConsole(` passed overlap distance > OT `);
-            unOverlapInstances(current, target, collision);
+            //unOverlapInstances(current, target, collision);
             updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
