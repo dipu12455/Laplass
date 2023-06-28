@@ -93,6 +93,7 @@ export function getCollisions() {
             var OT = 1; //overlap threshold
             if (collision[2] > OT) unOverlapInstances(current, target, collision);
             }
+            printConsole(` overlap distance ${collision[2]} OT ${OT} `);
             updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
@@ -107,41 +108,49 @@ export function getCollisions() {
 
 //changes the velocity of both instances according to their mutual momentum transfer
 function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
+  printConsole(` entering updateAcchByExchangeOfMomenta() `);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
   var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
   selectInstance(_instanceIndex2);
   var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
+  printConsole(` m1 = ${m1} m2 = ${m2} v1 = ${v1} v2 = ${v2} `);
 
   //calculate their respective momenta
   var p1 = scalarXvector(m1, v1);
   var p2 = scalarXvector(m2, v2);
+  printConsole(` p1 = ${p1} p2 = ${p2}`);
 
   //now p1dash (the new momentum) is equal to p2
   var p1dash = p2;
   /*mass stays constant, so the new momentum is compensated by change in velocity
   p1dash = m1 * v1dash => v1dash = p1dash / m1 */
   var v1dash = scalarXvector(1 / m1, p1dash);
+  printConsole(` p1dash = ${p1dash} v1dash = ${v1dash}`);
 
   //similarly for 2nd instance
   var p2dash = p1;
   var v2dash = scalarXvector(1 / m2, p2dash);
+  printConsole(` p2dash = ${p2dash} v2dash = ${v2dash}`);
 
   //now you have initial and final velocities of both instance
   //their difference yields the acceleration that would be be caused by their exchange of momentum
   var acc1 = v2Minusv1(v1, v1dash);
   var acc2 = v2Minusv1(v2, v2dash);
+  printConsole(` acc1 = ${acc1} acc2 = ${acc2}`);
 
   //now add these accelerations to each instance's previous acceleration
   selectInstance(_instanceIndex1);
   var acc1Prev = getAcceleration();
   setAcceleration(v1Plusv2(acc1Prev, acc1));
+  printConsole(` acc1Prev = ${acc1Prev} getAcceleration() after v1Plusv2 = ${getAcceleration()} `);
   unSelectAll();
 
   //likewise for 2nd instance
   selectInstance(_instanceIndex2);
   var acc2Prev = getAcceleration();
   setAcceleration(v1Plusv2(acc2Prev, acc2));
+  printConsole(` acc2Prev = ${acc2Prev} getAcceleration() after v1Plusv2 = ${getAcceleration()} `);
   unSelectAll();
 }
 //check collision between circles
