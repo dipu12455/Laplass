@@ -1,5 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin} from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin, setPrintConsole} from "./LPEngineCore.js";
 import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 
@@ -62,7 +62,6 @@ export function LPEventsInit(_window) {
     _window.addEventListener('mousedown', function (event) {
         //check if the left mouse button (primary button) was pressed
         if (event.button == 0) {
-            console.log('Left button down');
             fireEvent(evMouseDown);
         }
     });
@@ -70,7 +69,6 @@ export function LPEventsInit(_window) {
     _window.addEventListener('mouseup', function (event) {
         //check if the left mouse button was released
         if (event.button == 0) {
-            console.log('Left mouse button released');
             fireEvent(evMouseUp);
         }
     }); //this event fires when a button is released after being pressed. it won't fire just by detection the button is released. the button needs to be pressed first, then released later for this event to fire. so the evMouseUpState var for example, will still need to be turned off after event is read, just like for evMouseClickState and evMouseClick()
@@ -78,37 +76,32 @@ export function LPEventsInit(_window) {
     _window.addEventListener('keydown', function (event) {
         var keyCode = event.code;
         if (keyCode == 'KeyG') {
-            console.log('Pressed G');
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
+            setPrintConsole(false);
         }
         if (keyCode == 'KeyS') {
-            console.log('Pressed S');
             fireEvent(evKeyS);
             firePEvent(evKeyS_p);
         }
         if (keyCode == 'KeyP') {
-            console.log('Pressed P');
             fireEvent(evKeyP);
             firePEvent(evKeyP_p);
+            setPrintConsole(true);
         }
         if (keyCode == 'KeyW') {
-            console.log('Pressed W');
             fireEvent(evKeyW);
             firePEvent(evKeyW_p);
         }
         if (keyCode == 'KeyA') {
-            console.log('Pressed A');
             fireEvent(evKeyA);
             firePEvent(evKeyA_p);
         }
         if (keyCode == 'KeyD') {
-            console.log('Pressed D');
             fireEvent(evKeyD);
             firePEvent(evKeyD_p);
         }
     });
-
     /*keyboard events are different. If you want to move a player when the key is pressed,
     the event needs to stay fired (true) until the key is released. THat's when the keyup
     event becomes in charge of turning off the event.
@@ -118,27 +111,21 @@ export function LPEventsInit(_window) {
     _window.addEventListener('keyup', function (event) {
         var keyCode = event.code;
         if (keyCode == 'KeyG') {
-            console.log('Released G');
             turnOffPEvent(evKeyG_p);
         }
         if (keyCode == 'KeyS') {
-            console.log('Released S');
             turnOffPEvent(evKeyS_p);
         }
         if (keyCode == 'KeyP') {
-            console.log('Released S');
             turnOffPEvent(evKeyP_p);
         }
         if (keyCode == 'KeyW') {
-            console.log('Released W');
             turnOffPEvent(evKeyW_p);
         }
         if (keyCode == 'KeyA') {
-            console.log('Released A');
             turnOffPEvent(evKeyA_p);
         }
         if (keyCode == 'KeyD') {
-            console.log('Released D');
             turnOffPEvent(evKeyD_p);
         }
     });

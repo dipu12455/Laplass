@@ -138,6 +138,7 @@ export function updateInstances(_delta) {
     then now you have a final acch after all needed processing, and this is where you finally update velocity.
     this way, only the acch value goes through change throghout the frame, and velocity is updated only once.*/
     if (isTimeRunning()) {
+        printConsole(`printing`);
         runUpdateFunctions(_delta); //updates accelerations of all instances
         getCollisions(); //add any necessary acch to each instance to account for collisions
         factorVelocitiesAndPositions(_delta, 0.009);//def-0.009factor the acch of all instances into their respective velocities, and trajectories

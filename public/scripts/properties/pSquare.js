@@ -34,12 +34,6 @@ var update = (_delta) => {
 };
 
 function checkEvents() {
-    if (LP.isEventFired(LP.evKeyP)) {
-        LP.printConsole();
-        LP.timePause();
-        LP.turnOffEvent(LP.evKeyP);
-    }
-
     //select this square if clicked on
     if (LP.evMouseClickRegion(LP.getBoundingBox())) {
         LP.setVal(2, 1); //(2)selected=1

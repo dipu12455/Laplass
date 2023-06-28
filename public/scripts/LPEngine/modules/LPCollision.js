@@ -107,7 +107,6 @@ export function getCollisions() {
 
 //changes the velocity of both instances according to their mutual momentum transfer
 function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
-  setPrintConsole(true);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
   var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
