@@ -7,7 +7,10 @@ var init = () => {
     LP.makeVar(0);//(0)forcex = 0
     LP.makeVar(0); //(1)forcey = 0
     LP.makeVar(0); //(2)selected = 0
+    LP.makeVar(0); //(3) direction = 0 -> if 1, then right, if -1, then left. set this value at start of instance creation
     LP.setPhysical(true); //this turns the instance that embues this property into a 'physical' object that the physics engine will interact with
+    if (LP.getX() < 0) LP.setVal(3, 1);
+    if (LP.getX() > 0) LP.setVal(3, -1);
 };
 
 var update = (_delta) => {
@@ -16,6 +19,7 @@ var update = (_delta) => {
     var hspeed = LP.getHSpeed();
     var vspeed = LP.getVSpeed();
     var force = [LP.getVal(0), LP.getVal(1)];
+    var force2 = 0.01;
 
     var gravity = -0.02;
 
@@ -26,6 +30,14 @@ var update = (_delta) => {
 
     var ax = force[0] + friction[0];
     var ay = force[1] + friction[1];
+
+    //if (3) = 1, force applied to right, if -1, force applied to left
+    if (LP.getVal(3) == 1) {
+        ax += force2;
+    }
+    if (LP.getVal(3) == -1) {
+        ax -= force2;
+    }
 
     //reset forces after velocities have been updated for this frame
     resetForces();

@@ -86,14 +86,8 @@ export function getCollisions() {
           //here, check if these two instances are physical, and if so
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
-            if (gameStartUnoverlapRoutine==true){
-              unOverlapInstances(current,target,collision);
-            }
-            if (gameStartUnoverlapRoutine==false){//also unoverlap of these two instances are too much for exchangeMomenta to handle, if they overlap too much
-            var OT = 1; //overlap threshold
-            if (collision[2] > OT) unOverlapInstances(current, target, collision);
-            }
-            printConsole(` overlap distance ${collision[2]} OT ${OT} `);
+            printConsole(` passed overlap distance > OT `);
+            unOverlapInstances(current, target, collision);
             updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
@@ -170,6 +164,7 @@ export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
 export function checkCollisionPrimitives(_primitive1, _primitive2) {
+  printConsole(`entering checkCollisionPrimitives() `);
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
@@ -181,6 +176,7 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
 
   //iterate through the  normallist
   for (i = 0; i < normalList.getSize(); i += 1) {
+    printConsole(` i = ${i} `);
     //find coefficients of projection of vertices of first primitive on this axisVector
     let pointList1 = getCoefficientsOfProjection(_primitive1, normalList.get(i));
     //now find min and max value of the list of points
@@ -213,6 +209,8 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     distances.add(distance);
     overlap = distance < 0;
 
+    printConsole(` distance = ${distance} `);
+
     if (overlap == false) break;
 
   }
@@ -220,7 +218,9 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     minOverlapAxis = normalList.get(findMin(distances));
     //find perpendicular of minOverlapAxis, then find theta of that vector
     var angleOfContact = getTheta(minOverlapAxis);
-    return [1, angleOfContact, Math.abs(distances.get(findMin(distances)))]; //the last element is the length of the overlap
+    var minDistance = Math.abs(distances.get(findMin(distances)));
+    printConsole(` minDistance = ${minDistance}`);
+    return [1, angleOfContact, minDistance]; //the last element is the length of the overlap
   } else {
     return [0, -1, -1];
   }
