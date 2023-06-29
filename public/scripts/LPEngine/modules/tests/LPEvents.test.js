@@ -1,23 +1,14 @@
-import { TEST, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest } from "../LPTest.js";
+import { screenCoordtoWorldCoord } from "../LPEvents.js";
+import { TEST, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest, printTest } from "../LPTest.js";
 
 var testFunctionsArray = [];
 
 var name = "LPEvents";
 
-
-
-
-
-/* testFunctionsArray[0] = () => {
-    nameTheTest(`dotProduct`);
-
-    printTest(areAlmostEqualScalar(dotProduct([1, 2], [3, 4]), 11));
-    printTest(areAlmostEqualScalar(dotProduct([-3, 1], [-7, -22]), -1));
-    printTest(areAlmostEqualScalar(dotProduct([4, 7], [10000, 0.779]), 40005.453));
-    printTest(areAlmostEqualScalar(dotProduct([999, -999], [723, 421]), 301698));
-    //printtest for [1/2,3/7] and [0,0] for 0
-    printTest(areAlmostEqualScalar(dotProduct([1 / 2, 3 / 7], [0, 0]), 0));
-} */
+//if unitTesting is switched on in LPEngine, the LPEvents module prints out its own console logs when events are fired through JS
+//also events need to be fired manually to be tested
+//regular functions can still be tested here
+ 
 export var LPEventsTest = new TEST();
 LPEventsTest.setName(name);
 LPEventsTest.setTestFunctionsArray(testFunctionsArray);

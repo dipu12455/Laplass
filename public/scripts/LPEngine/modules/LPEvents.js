@@ -1,5 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin, setPrintConsole} from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin, isUnitTest, setPrintConsole} from "./LPEngineCore.js";
 import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 
@@ -43,24 +43,33 @@ eventArray_p[evKeyW_p] = false;
 eventArray_p[evKeyA_p] = false;
 eventArray_p[evKeyD_p] = false;
 
+//all functions in this module are exported for testing purposes, and for usage inside the LPE.
+//the functions that are not allowed to be used by the client app are not included in LPEngine.js
+
+//unit testing is a little different for this module at this time
+//the events need to be triggered by the user, and then if unitTesting is switched on in LPEngine, this module will just print to console
+//the regular functions towards the end can still be tested as normal in LPEvents.test.js
+
 //test function, takes in window object of the DOM then attaches a mousemove event listener to it.
 export function LPEventsInit(_window) {
     _window.addEventListener('mousemove', function (event) {
         mouseX = event.clientX - 8;
         mouseY = event.clientY - 10; //the pixels were off
+        if (isUnitTest()) console.log(`JS: Mouse position: ${mouseX}, ${mouseY}`);
     });
     //registers an event listener with the window object, then passes a function to execute when event is fired.
     //the function updates these variable which the client app can access using the exported functions
 
     // Add the event listener for the click event
     _window.addEventListener('click', function (event) {
-        //console.log('First click event listener');
+        if (isUnitTest()) console.log(`JS: Mouse click`);
         fireEvent(evMouseClick);
     });
 
     //mousedown event
     _window.addEventListener('mousedown', function (event) {
         //check if the left mouse button (primary button) was pressed
+        if (isUnitTest()) console.log(`JS: Mouse down`);
         if (event.button == 0) {
             fireEvent(evMouseDown);
         }
@@ -68,6 +77,7 @@ export function LPEventsInit(_window) {
 
     _window.addEventListener('mouseup', function (event) {
         //check if the left mouse button was released
+        if (isUnitTest()) console.log(`JS: Mouse up`);
         if (event.button == 0) {
             fireEvent(evMouseUp);
         }
@@ -76,28 +86,34 @@ export function LPEventsInit(_window) {
     _window.addEventListener('keydown', function (event) {
         var keyCode = event.code;
         if (keyCode == 'KeyG') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyG`);
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
             setPrintConsole(false);
         }
         if (keyCode == 'KeyS') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyS`);
             fireEvent(evKeyS);
             firePEvent(evKeyS_p);
         }
         if (keyCode == 'KeyP') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyP`);
             fireEvent(evKeyP);
             firePEvent(evKeyP_p);
             setPrintConsole(true);
         }
         if (keyCode == 'KeyW') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyW`);
             fireEvent(evKeyW);
             firePEvent(evKeyW_p);
         }
         if (keyCode == 'KeyA') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyA`);
             fireEvent(evKeyA);
             firePEvent(evKeyA_p);
         }
         if (keyCode == 'KeyD') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyD`);
             fireEvent(evKeyD);
             firePEvent(evKeyD_p);
         }
@@ -111,29 +127,36 @@ export function LPEventsInit(_window) {
     _window.addEventListener('keyup', function (event) {
         var keyCode = event.code;
         if (keyCode == 'KeyG') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyG`);
             turnOffPEvent(evKeyG_p);
         }
         if (keyCode == 'KeyS') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyS`);
             turnOffPEvent(evKeyS_p);
         }
         if (keyCode == 'KeyP') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyP`);
             turnOffPEvent(evKeyP_p);
         }
         if (keyCode == 'KeyW') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyW`);
             turnOffPEvent(evKeyW_p);
         }
         if (keyCode == 'KeyA') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyA`);
             turnOffPEvent(evKeyA_p);
         }
         if (keyCode == 'KeyD') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyD`);
             turnOffPEvent(evKeyD_p);
         }
     });
 }
 
-function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
+export function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
+    if (getWorldDelta() <= 0) console.error(`worldDelta cannot be zero`);
     var xx = (_p[0] - getWorldOrigin()[0]) / getWorldDelta();
-    var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta() //these are simply opposites of changing worldcoord into pixels
+    var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta(); //these are simply opposites of changing worldcoord into pixels
     return [xx, yy];
 }
 
@@ -142,7 +165,7 @@ export function getMousePosition() {
     return screenCoordtoWorldCoord([mouseX, mouseY]);
 }
 
-function fireEvent(_event) {
+export function fireEvent(_event) {
     eventArray[_event] = true;
 }
 // reads an eventstate to see if its true or false
@@ -154,13 +177,13 @@ export function turnOffEvent(_event) {
     eventArray[_event] = false;
 }
 
-function firePEvent(_event) {
+export function firePEvent(_event) {
     eventArray_p[_event] = true;
 }
 export function isPEventFired(_event) {
     return eventArray_p[_event];
 }
-function turnOffPEvent(_event) {
+export function turnOffPEvent(_event) {
     eventArray_p[_event] = false;
 }
 

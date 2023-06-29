@@ -26,9 +26,6 @@ var LPDraw; //variable to hold the user coded draw function
 
 
 export function runEngine(_window, _width, _height, _LPDraw) {
-  //run test if toggled
-  runAllTests();
-
   worldOriginX = _width / 2;
   worldOriginY = _height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
@@ -43,6 +40,8 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   //loop through the instances to execute their init functions
   initInstances();
   collisionsInit();
+  //run test if toggled
+  runAllTests();
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     updateInstances(delta);
