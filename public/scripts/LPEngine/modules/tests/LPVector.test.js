@@ -1,44 +1,11 @@
-import { isUnitTest } from "../LPEngineCore.js";
 import { degtorad, dotProduct, findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, getVectorRTHeta, isVectorWithinRange, radtodeg, rotateVector, scalarXvector, sqr, sumOfSqr, transformVector, v1Plusv2, v2Minusv1 } from "../LPVector.js";
+import { TEST, printTest, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest } from "../LPTest.js";
+
+
+
+var name = "LPVector";
 
 var testFunctionsArray = [];
-
-export function runTest() {
-    //execute the test functions, the test functions need to have similar name to original function, for readability
-    let i = 0;
-    for (i = 0; i < testFunctionsArray.length; i++) {
-        testFunctionsArray[i]();
-    }
-
-}
-var name = "LPVector";
-function nameTheTest(_nameOfFunctionBeingTested) {
-    console.log(`${name} ${_nameOfFunctionBeingTested}():`);
-}
-
-function printTest(_areAlmostEqual) {
-    if (_areAlmostEqual) {
-        console.log(`Passed.`)
-    } else {
-        console.error(`Failed.`);
-    }
-}
-var areAlmostEqualScalar = (_a, _b) => {
-    console.log(`obtained: ${_a} actual: ${_b}`);
-    return Math.abs(_a - _b) <= 0.1;
-}
-
-var areAlmostEqualVector = (_a, _b) => {
-    console.log(`obtained: ${_a} actual: ${_b}`);
-    let condition1 = Math.abs(_a[0] - _b[0]) <= 0.1;
-    let condition2 = Math.abs(_a[1] - _b[1]) <= 0.1;
-    return condition1 && condition2;
-}
-
-var areAlmostEqualBoolean = (_a, _b) => {
-    console.log(`obtained: ${_a} actual: ${_b}`);
-    return _a == _b;
-}
 
 testFunctionsArray[0] = () => {
     nameTheTest(`dotProduct`);
@@ -47,7 +14,6 @@ testFunctionsArray[0] = () => {
     printTest(areAlmostEqualScalar(dotProduct([-3, 1], [-7, -22]), -1));
     printTest(areAlmostEqualScalar(dotProduct([4, 7], [10000, 0.779]), 40005.453));
     printTest(areAlmostEqualScalar(dotProduct([999, -999], [723, 421]), 301698));
-    //printtest for [1/2,3/7] and [0,0] for 0
     printTest(areAlmostEqualScalar(dotProduct([1 / 2, 3 / 7], [0, 0]), 0));
 }
 
@@ -82,7 +48,6 @@ testFunctionsArray[5] = () => {
     printTest(areAlmostEqualVector(findAverage([3, 5], [7, 8]), [5, 6.5]));
     printTest(areAlmostEqualVector(findAverage([0, 0], [0, 0]), [0, 0]));
     printTest(areAlmostEqualVector(findAverage([1, 0], [0, 1]), [0.5, 0.5]));
-    //print test with [3/7,-(4/13)] and [7/21,Math.PI/32] returns [0.38095,-0.10475]
     printTest(areAlmostEqualVector(findAverage([3 / 7, -(4 / 13)], [7 / 21, Math.PI / 32]), [0.38095, -0.10475]));
 }
 testFunctionsArray[6] = () => {
@@ -179,7 +144,6 @@ testFunctionsArray[14] = () => {
 testFunctionsArray[15] = () => {
     nameTheTest(`getUnitVector`);
 
-    //printtest for [-3,5] returns [-0.514496,0.857493]
     printTest(areAlmostEqualVector(getUnitVector([-3,5]),[-0.514496,0.857493]));
     printTest(areAlmostEqualVector(getUnitVector([0,0]),[0,0]));
     printTest(areAlmostEqualVector(
@@ -191,8 +155,12 @@ testFunctionsArray[16] = () => {
     nameTheTest(`transformVector`);
 
     printTest(areAlmostEqualVector(transformVector([1,0],-3,-5,90),[-3,-4]));
-    //printtest with input vector [Math.PI/Math.sqrt(371), Math.sin(320)/Math.atan(Math.PI)]
     printTest(areAlmostEqualVector(
         transformVector([Math.PI/Math.sqrt(371), Math.sin(320)/Math.atan(Math.PI)],-3,-5,-32),
         [-2.68609390347,-5.20749382626]));
 }
+
+export var LPVectorTest = new TEST();
+LPVectorTest.setName(name);
+LPVectorTest.setTestFunctionsArray(testFunctionsArray);
+

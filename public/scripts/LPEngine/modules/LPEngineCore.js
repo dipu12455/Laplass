@@ -6,7 +6,9 @@ import { LPEventsInit } from './LPEvents.js';
 import { INSTANCES, flushCollisions, getPrimitiveIndex, getPropertyIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
 import { collisionsInit, getCollisions } from './LPCollision.js';
 import { getProperty } from './LPProperties.js';
-import { runAllTests } from './LPTest.js';
+import { LPVectorTest } from './tests/LPVector.test.js';
+import { LPEventsTest } from './tests/LPEvents.test.js';
+import { runTest } from './LPTest.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -105,6 +107,16 @@ export function setUnitTest(_state) {
 export function isUnitTest() {
   return unitTestState;
 }
+//this function is where you add new tests to run
+function runAllTests(){
+  if (isUnitTest()){
+      console.log(`Running tests...`);
+     runTest(LPVectorTest);
+     runTest(LPEventsTest);
+     //runTest(...)
+  }
+}
+
 
 export function showScreenGrid() { screenGrid = true; }
 export function hideScreenGrid() { screenGrid = false; }
