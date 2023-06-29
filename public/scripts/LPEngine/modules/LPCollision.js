@@ -87,7 +87,7 @@ export function getCollisions() {
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
             unOverlapInstances(current, target, collision);
-            updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
+            //updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
         }
@@ -175,32 +175,30 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
 
   //iterate through the  normallist
   for (i = 0; i < normalList.getSize(); i += 1) {
-    //find coefficients of projection of vertices of first primitive on this axisVector
-    let pointList1 = getCoefficientsOfProjection(_primitive1, normalList.get(i));
-    //now find min and max value of the list of points
-    let min1 = findMin(pointList1); let max1 = findMax(pointList1);
-    //use the list of coeff of projections to find actual projection of each vertex on this axisVector
-    let projPointList1 = projectPrimitiveOntoAxis(_primitive1, normalList.get(i));
-    //the min and max value of pointList represent position of edge points of this primitive in the projPointList
-    //use them to find the center; the center is the average of the edge points
-    let center1 = findAverage(projPointList1.get(max1), projPointList1.get(min1));
+    var edgePointIndexes1 = findEdgePoints(_primitive1, normalList.get(i));
+    let min1 = edgePointIndexes1[0]; let max1 = edgePointIndexes1[1];
+    let prim1edgePoint1 = projOfuOnv(_primitive1.get(min1), normalList.get(i));
+    let prim1edgePoint2 = projOfuOnv(_primitive1.get(max1), normalList.get(i));
+    //let projPointList1 = projectPrimitiveOntoAxis(_primitive1, normalList.get(i));
+    let center1 = findAverage(prim1edgePoint1, prim1edgePoint2);
 
     //repeat the above for the second primitive
-    let pointList2 = getCoefficientsOfProjection(_primitive2, normalList.get(i));
-    let min2 = findMin(pointList2); let max2 = findMax(pointList2);
-    let projPointList2 = projectPrimitiveOntoAxis(_primitive2, normalList.get(i));
-    let center2 = findAverage(projPointList2.get(max2), projPointList2.get(min2));
+    var edgePointIndexes2 = findEdgePoints(_primitive2, normalList.get(i));
+    let min2 = edgePointIndexes2[0]; let max2 = edgePointIndexes2[1];
+    let prim2edgePoint1 = projOfuOnv(_primitive2.get(min2), normalList.get(i));
+    let prim2edgePoint2 = projOfuOnv(_primitive2.get(max2), normalList.get(i));
+    //let projPointList1 = projectPrimitiveOntoAxis(_primitive1, normalList.get(i));
+    let center2 = findAverage(prim2edgePoint1, prim2edgePoint2);
+
 
     let distanceBetweenCenters = 0;
     distanceBetweenCenters = getMag(v2Minusv1(center1, center2));
 
     let halfwidth1 = 0;
-    halfwidth1 = getMag(v2Minusv1(projPointList1.get(max1), center1));
+    halfwidth1 = getMag(v2Minusv1(prim1edgePoint1, center1));
 
     let halfwidth2 = 0;
-    halfwidth2 = getMag(v2Minusv1(projPointList2.get(max2), center2));
-
-    printFrame([-10+i*4,0], projPointList1, projPointList2, center1, center2, distanceBetweenCenters, halfwidth1, halfwidth2);
+    halfwidth2 = getMag(v2Minusv1(prim2edgePoint1, center2));
 
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
@@ -222,16 +220,16 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
 
 }
 
-function printFrame(_placePoint, projPointList1, projPointList2, center1, center2, distanceBetweenCenters, halfwidth1, halfwidth2){
-    drawListOfPoints(_placePoint, projPointList1, 0xff0000);
-    drawListOfPoints(_placePoint, projPointList2, 0x0000ff);
-    draw_anchor(v1Plusv2(_placePoint,center1), 0x00ff00);
-    draw_anchor(v1Plusv2(_placePoint,center2), 0x00ff00);
-    draw_line([-_placePoint[0],5],[-_placePoint[0]+distanceBetweenCenters,5],0xff0000);
-    draw_line([-_placePoint[0],6],[-_placePoint[0]+halfwidth1,6],0x0000ff);
-    draw_line([-_placePoint[0],7],[-_placePoint[0]+halfwidth2,7],0x0000ff);
+function printFrame(_placePoint, projPointList1, projPointList2, center1, center2, distanceBetweenCenters, halfwidth1, halfwidth2) {
+  drawListOfPoints(_placePoint, projPointList1, 0xff0000);
+  drawListOfPoints(_placePoint, projPointList2, 0x0000ff);
+  draw_anchor(v1Plusv2(_placePoint, center1), 0x00ff00);
+  draw_anchor(v1Plusv2(_placePoint, center2), 0x00ff00);
+  draw_line([-_placePoint[0], 5], [-_placePoint[0] + distanceBetweenCenters, 5], 0xff0000);
+  draw_line([-_placePoint[0], 6], [-_placePoint[0] + halfwidth1, 6], 0x0000ff);
+  draw_line([-_placePoint[0], 7], [-_placePoint[0] + halfwidth2, 7], 0x0000ff);
 
-    draw_line([-_placePoint[0],4],[-_placePoint[0]+(distanceBetweenCenters-halfwidth1-halfwidth2),4],0xff0000);
+  draw_line([-_placePoint[0], 4], [-_placePoint[0] + (distanceBetweenCenters - halfwidth1 - halfwidth2), 4], 0xff0000);
 }
 
 export function checkPointInsidePrimitive(_p, _primitive) {
@@ -425,7 +423,7 @@ function projOfuOnv(_u, _v) {
 
 function coeffOfProjuOnv(_u, _v) {
   const dotProd = dotProduct(_u, _v);
-  const coefficient = dotProd / sumOfSqr(_v[0],_v[1]) /* sqr(getMag(_v)) */;
+  const coefficient = dotProd / sumOfSqr(_v[0], _v[1]) /* sqr(getMag(_v)) */;
   return coefficient; //this is a scalar
 }
 
@@ -485,10 +483,10 @@ export function draw_plotVectorList(_vectorList, _min, _max) {
   } //draw each projected point (vectors) onto the axis
 }
 
-export function drawListOfPoints(_place,_pointList, _color){
+export function drawListOfPoints(_place, _pointList, _color) {
   let i = 0;
-  for (i = 0; i < _pointList.getSize(); i += 1){
+  for (i = 0; i < _pointList.getSize(); i += 1) {
     let p = _pointList.get(i);
-    draw_anchor(v1Plusv2(_place,p), _color);
+    draw_anchor(v1Plusv2(_place, p), _color);
   }
 }
