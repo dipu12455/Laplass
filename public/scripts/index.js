@@ -1,7 +1,7 @@
 import * as LP from './LPEngine/LPEngine.js';
 import * as Scene from './Scene.js';
 
-LP.setUnitTest(false);
+LP.setUnitTest(true);
 
 //these functions need to be run in this exact order
 

@@ -120,7 +120,6 @@ export { getCoefficientsOfProjection } from './modules/LPCollision.js';
 export { findMin } from './modules/LPCollision.js';
 export { findMax } from './modules/LPCollision.js';
 //draw functions
-export { draw_plotPointsXaxis } from './modules/LPCollision.js';
 export { draw_plotVectorList } from './modules/LPCollision.js';
 
 //LPPropertys

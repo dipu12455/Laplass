@@ -1,5 +1,5 @@
 import { isUnitTest } from "../LPEngineCore.js";
-import { degtorad, getMag, getTheta, radtodeg } from "../LPVector.js";
+import { degtorad, getMag, getTheta, radtodeg, rotateVector } from "../LPVector.js";
 
 export function runTest() {
     //execute the test functions, the test functions need to have similar name to original function, for readability
@@ -77,6 +77,7 @@ function getMag_test() {
 
 function rotateVector_test(){
     nameTheTest(`rotateVector`);
+
 
 
 }

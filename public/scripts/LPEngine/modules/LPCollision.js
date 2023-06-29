@@ -6,7 +6,6 @@ import { draw_anchor, draw_line, printConsole, setPrintConsole } from './LPEngin
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
-var gameStartUnoverlapRoutine = true; //place instances out of each others way, when program is initialized. Any further, the exchange momentum will take care of the rest.
 var collisionPerFrame = 0;
 var collisionPatternList = [];
 export function collisionsInit() { //call this after all instances are added to LPE, best call it after instancesInit()
@@ -40,8 +39,6 @@ function resetCollisionPatternList() {
 //function to analyze collisions between all registered instances of LPE.
 //if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
 export function getCollisions() {
-  collisionPerFrame = 0;
-
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     //checking collision of each instance with every other instances
@@ -79,7 +76,6 @@ export function getCollisions() {
         var collision = checkCollisionPrimitivesInstances(current, target);
         var angleOfContact = collision[1];
         if (collision[0] == 1) {
-          collisionPerFrame += 1;
           //save the instance index of target  and the angle of contact inside the current instance
           selectInstance(current);
           collisionListAdd([target, angleOfContact]); unSelectAll();
@@ -96,7 +92,6 @@ export function getCollisions() {
   }
   //reset the collisionPatternList
   resetCollisionPatternList();
-  if (collisionPerFrame == 0) gameStartUnoverlapRoutine = false; //once you detect no more collision happening, turn off unoverlap
 }
 
 //changes the velocity of both instances according to their mutual momentum transfer
@@ -104,46 +99,38 @@ function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
   printConsole(` entering updateAcchByExchangeOfMomenta() `);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
-  var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
   selectInstance(_instanceIndex2);
   var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
-  printConsole(` m1 = ${m1} m2 = ${m2} v1 = ${v1} v2 = ${v2} `);
 
   //calculate their respective momenta
   var p1 = scalarXvector(m1, v1);
   var p2 = scalarXvector(m2, v2);
-  printConsole(` p1 = ${p1} p2 = ${p2}`);
 
   //now p1dash (the new momentum) is equal to p2
   var p1dash = p2;
   /*mass stays constant, so the new momentum is compensated by change in velocity
   p1dash = m1 * v1dash => v1dash = p1dash / m1 */
   var v1dash = scalarXvector(1 / m1, p1dash);
-  printConsole(` p1dash = ${p1dash} v1dash = ${v1dash}`);
 
   //similarly for 2nd instance
   var p2dash = p1;
   var v2dash = scalarXvector(1 / m2, p2dash);
-  printConsole(` p2dash = ${p2dash} v2dash = ${v2dash}`);
 
   //now you have initial and final velocities of both instance
   //their difference yields the acceleration that would be be caused by their exchange of momentum
   var acc1 = v2Minusv1(v1, v1dash);
   var acc2 = v2Minusv1(v2, v2dash);
-  printConsole(` acc1 = ${acc1} acc2 = ${acc2}`);
 
   //now add these accelerations to each instance's previous acceleration
   selectInstance(_instanceIndex1);
   var acc1Prev = getAcceleration();
   setAcceleration(v1Plusv2(acc1Prev, acc1));
-  printConsole(` acc1Prev = ${acc1Prev} getAcceleration() after v1Plusv2 = ${getAcceleration()} `);
   unSelectAll();
 
   //likewise for 2nd instance
   selectInstance(_instanceIndex2);
   var acc2Prev = getAcceleration();
   setAcceleration(v1Plusv2(acc2Prev, acc2));
-  printConsole(` acc2Prev = ${acc2Prev} getAcceleration() after v1Plusv2 = ${getAcceleration()} `);
   unSelectAll();
 }
 //check collision between circles
@@ -163,7 +150,6 @@ export function checkCollisionCircles(_p1, _r1, _p2, _r2) {
 a physics object, or they could be primitives that represent the bounding box of a sprite.  Be sure to pass in primitives that have been transformed into their instance's (x,y,rot),
 then you have the accurate orientation of each primitive for this function. This function utilizes the SAT collision detection algorithm. */
 export function checkCollisionPrimitives(_primitive1, _primitive2) {
-  printConsole(`entering checkCollisionPrimitives() `);
   //first make a list of axisVectors which is a list of normals of both primitives. TODO: parallel normals need not be evaluated twice.
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
@@ -294,8 +280,6 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
   var center1 = findCenterOfInstancePrimitive(); unSelectAll();
   selectInstance(_instanceIndex2);
   var center2 = findCenterOfInstancePrimitive(); unSelectAll();
-  //nudge them a little if their centers are the same
-  if (center1 == center2) center1 += 0.01;
 
   var vectorBetweenCenters = v2Minusv1(center1, center2);
   //this is the direction of the vector to move them apart
@@ -450,35 +434,10 @@ function findEdgePoints(_primitive, _axisVector) {
 
 //put the draw functions in the draw function of the scene file
 
-//function to plot a list of points on xaxis
-export function draw_plotPointsXaxis(_pointsList, _scale, _min, _max) {
-  var i = 0;
-  for (i = 0; i < _pointsList.getSize(); i += 1) {
-    var p = _pointsList.get(i);
-    if (i == _min) {
-      draw_anchor([p * _scale, 0], 0xff0000); //if min, draw red
-      continue;
-    }
-    if (i == _max) {
-      draw_anchor([p * _scale, 0], 0x0000ff); //if max, draw green
-      continue;
-    }
-    draw_anchor([p * _scale, 0], 0x000000); //else draw black
-  }
-}
-
-export function draw_plotVectorList(_vectorList, _min, _max) {
+export function draw_plotVectorList(_vectorList) {
   var i = 0;
   for (i = 0; i < _vectorList.getSize(); i += 1) {
     var p = _vectorList.get(i);
-    if (i == _min) {
-      draw_anchor(p, 0xff0000); //if min, draw red
-      continue;
-    }
-    if (i == _max) {
-      draw_anchor(p, 0x0000ff); //if max, draw green
-      continue;
-    }
     draw_anchor(p, 0x000000); //else draw black
   } //draw each projected point (vectors) onto the axis
 }
