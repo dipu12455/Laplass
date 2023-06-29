@@ -8,7 +8,7 @@ export function getTheta(_v) {
   return radtodeg(Math.atan2(_v[1], _v[0]));
 }
 export function getMag(_v) {
-  return Math.sqrt(sqr(_v[0]) + sqr(_v[1]));
+  return Math.sqrt(sumOfSqr(_v[0],_v[1]));
 }
 
 export function rotateVector(_v, _theta) {
@@ -66,5 +66,9 @@ export function isVectorWithinRange(_v, low, high) {
 
 export function findAverage(_v1, _v2) {
   return [(_v1[0] + _v2[0]) / 2, (_v1[1] + _v2[1]) / 2];
+}
+
+export function sumOfSqr(_n1,_n2){
+  return (sqr(_n1)+sqr(_n2));
 }
 //unit tests

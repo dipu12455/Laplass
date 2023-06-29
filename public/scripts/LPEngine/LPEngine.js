@@ -12,6 +12,7 @@ export { v1Plusv2 } from './modules/LPVector.js';
 export { transformVector } from './modules/LPVector.js';
 export { isVectorWithinRange } from './modules/LPVector.js';
 export { findAverage } from './modules/LPVector.js';
+export { sumOfSqr } from './modules/LPVector.js';
 
 //LPList
 export { LPList } from './modules/LPList.js';

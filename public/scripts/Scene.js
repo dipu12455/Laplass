@@ -3,17 +3,28 @@ import { pDrawObject } from './properties/drawObject.js';
 import { pSquareManual } from './properties/pSquareManual.js';
 import { pTriangle } from './properties/pTriangle.js';
 
-var pmTriangle = LP.addPrimitive('pmTriangle');
+var pmSquare = LP.addPrimitive('pmSquare');
 
-var drawObject = LP.addInstance(-1,-1,pDrawObject);
+//loop to create 4 boxes
+/* let i = 0;
+for (i = 0; i < 10; i += 1){
+    var temp = LP.addInstance(pmSquare, -1, pSquareManual);
+    LP.selectInstance(temp);
+    LP.setPosition(getRandomInt(4),getRandomInt(4));
+    LP.unSelectAll();
+}
 
-export var triangle1 = LP.addInstance(pmTriangle, -1, pSquareManual);
-LP.selectInstance(triangle1);
-LP.setPosition(-9, -6);
-LP.setRot(-30);
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  } */
+
+//create two squares that move towards each other
+var sq1 = LP.addInstance(pmSquare, -1, pSquareManual);
+LP.selectInstance(sq1);
+LP.setPosition(-5, 0); 
 LP.unSelectAll();
 
-export var triangle2 = LP.addInstance(pmTriangle, -1, pSquareManual);
-LP.selectInstance(triangle2);
-LP.setPosition(-5, -6);
+var sq2 = LP.addInstance(pmSquare, -1, pSquareManual);
+LP.selectInstance(sq2);
+LP.setPosition(5, 0); 
 LP.unSelectAll();

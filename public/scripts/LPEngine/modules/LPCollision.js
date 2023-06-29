@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
+import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, sumOfSqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector, v1Plusv2 } from './LPVector.js';
 import { draw_anchor, draw_line, printConsole, setPrintConsole } from './LPEngineCore.js';
@@ -425,8 +425,29 @@ function projOfuOnv(_u, _v) {
 
 function coeffOfProjuOnv(_u, _v) {
   const dotProd = dotProduct(_u, _v);
-  const coefficient = dotProd / sqr(getMag(_v));
+  const coefficient = dotProd / sumOfSqr(_v[0],_v[1]) /* sqr(getMag(_v)) */;
   return coefficient; //this is a scalar
+}
+
+//function that returns the index of the min and max points of a primitive projected on an axis (edgepoints)
+function findEdgePoints(_primitive, _axisVector) {
+  var i = 0;
+  var min = dotProduct(_primitive.get(0), _axisVector);
+  var max = min;
+  var minIndex = 0; var maxIndex = 0;
+  for (i = 0; i < _primitive.getSize(); i += 1) {
+    var point = _primitive.get(i);
+    var value = dotProduct(point, _axisVector);
+    if (value < min) {
+      min = value;
+      minIndex = i;
+    }
+    if (value > max) {
+      max = value;
+      maxIndex = i;
+    }
+  }
+  return [minIndex, maxIndex];
 }
 
 //put the draw functions in the draw function of the scene file
