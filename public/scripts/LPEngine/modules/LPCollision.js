@@ -2,7 +2,7 @@ import { LPList } from "./LPList.js";
 import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector, v1Plusv2 } from './LPVector.js';
-import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
+import { draw_anchor, draw_line, printConsole, setPrintConsole } from './LPEngineCore.js';
 import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
@@ -86,8 +86,7 @@ export function getCollisions() {
           //here, check if these two instances are physical, and if so
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
-            printConsole(` passed overlap distance > OT `);
-            //unOverlapInstances(current, target, collision);
+            unOverlapInstances(current, target, collision);
             updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
@@ -176,7 +175,6 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
 
   //iterate through the  normallist
   for (i = 0; i < normalList.getSize(); i += 1) {
-    printConsole(` i = ${i} `);
     //find coefficients of projection of vertices of first primitive on this axisVector
     let pointList1 = getCoefficientsOfProjection(_primitive1, normalList.get(i));
     //now find min and max value of the list of points
@@ -202,12 +200,13 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     let halfwidth2 = 0;
     halfwidth2 = getMag(v2Minusv1(projPointList2.get(max2), center2));
 
+    printFrame([-10+i*4,0], projPointList1, projPointList2, center1, center2, distanceBetweenCenters, halfwidth1, halfwidth2);
+
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
-    distances.add(distance);
-    overlap = distance < 0;
+    overlap = distance < 0
 
-    printConsole(` distance = ${distance} `);
+    distances.add(Math.abs(distance)); //need the abs min value later
 
     if (overlap == false) break;
 
@@ -215,13 +214,24 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   if (overlap == true) {
     minOverlapAxis = normalList.get(findMin(distances));
     var vU_minOverlapAxis = getUnitVector(minOverlapAxis);
-    var minDistance = Math.abs(distances.get(findMin(distances)));
-    printConsole(` minDistance = ${minDistance}`);
-    printConsole(` vU_minOverlapAxis = ${vU_minOverlapAxis}`);
+    var minDistance = distances.get(findMin(distances));
     return [1, vU_minOverlapAxis[0], vU_minOverlapAxis[1], minDistance];
   } else {
     return [0, -1, -1, -1];
   }
+
+}
+
+function printFrame(_placePoint, projPointList1, projPointList2, center1, center2, distanceBetweenCenters, halfwidth1, halfwidth2){
+    drawListOfPoints(_placePoint, projPointList1, 0xff0000);
+    drawListOfPoints(_placePoint, projPointList2, 0x0000ff);
+    draw_anchor(v1Plusv2(_placePoint,center1), 0x00ff00);
+    draw_anchor(v1Plusv2(_placePoint,center2), 0x00ff00);
+    draw_line([-_placePoint[0],5],[-_placePoint[0]+distanceBetweenCenters,5],0xff0000);
+    draw_line([-_placePoint[0],6],[-_placePoint[0]+halfwidth1,6],0x0000ff);
+    draw_line([-_placePoint[0],7],[-_placePoint[0]+halfwidth2,7],0x0000ff);
+
+    draw_line([-_placePoint[0],4],[-_placePoint[0]+(distanceBetweenCenters-halfwidth1-halfwidth2),4],0xff0000);
 }
 
 export function checkPointInsidePrimitive(_p, _primitive) {
@@ -293,8 +303,11 @@ function unOverlapInstances(_instanceIndex1, _instanceIndex2, _collision) {
   //this is the direction of the vector to move them apart
   var vU_dirToMoveApart = getUnitVector(vectorBetweenCenters);
   //this is the magnitude by which to move each instance apart
-  var distToMoveApart = _collision[2] / 2; //should be half
+  var distToMoveApart = _collision[3] / 2; //should be half
 
+  //remember that MTV would work, but sometimes shapes pass through each other.
+  //this way of finding direction also works, using two centers and all
+  //just the mag is what you need
   selectInstance(_instanceIndex1);
   setPosition(getX() - vU_dirToMoveApart[0] * distToMoveApart,
     getY() - vU_dirToMoveApart[1] * distToMoveApart); unSelectAll();
@@ -449,4 +462,12 @@ export function draw_plotVectorList(_vectorList, _min, _max) {
     }
     draw_anchor(p, 0x000000); //else draw black
   } //draw each projected point (vectors) onto the axis
+}
+
+export function drawListOfPoints(_place,_pointList, _color){
+  let i = 0;
+  for (i = 0; i < _pointList.getSize(); i += 1){
+    let p = _pointList.get(i);
+    draw_anchor(v1Plusv2(_place,p), _color);
+  }
 }
