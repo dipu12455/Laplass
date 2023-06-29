@@ -1,5 +1,5 @@
 import { LPList } from "./LPList.js";
-import { findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
+import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, v2Minusv1 } from './LPVector.js';
 import { dotProduct } from './LPVector.js';
 import { scalarXvector, v1Plusv2 } from './LPVector.js';
 import { draw_anchor, printConsole, setPrintConsole } from './LPEngineCore.js';
@@ -181,28 +181,26 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
     let pointList1 = getCoefficientsOfProjection(_primitive1, normalList.get(i));
     //now find min and max value of the list of points
     let min1 = findMin(pointList1); let max1 = findMax(pointList1);
-    //find the average of the min and max value to obtain center of this primitive
-    let center1 = (pointList1.get(max1) + pointList1.get(min1)) / 2;
+    //use the list of coeff of projections to find actual projection of each vertex on this axisVector
+    let projPointList1 = projectPrimitiveOntoAxis(_primitive1, normalList.get(i));
+    //the min and max value of pointList represent position of edge points of this primitive in the projPointList
+    //use them to find the center; the center is the average of the edge points
+    let center1 = findAverage(projPointList1.get(max1), projPointList1.get(min1));
 
     //repeat the above for the second primitive
     let pointList2 = getCoefficientsOfProjection(_primitive2, normalList.get(i));
     let min2 = findMin(pointList2); let max2 = findMax(pointList2);
-    let center2 = (pointList2.get(max2) + pointList2.get(min2)) / 2;
+    let projPointList2 = projectPrimitiveOntoAxis(_primitive2, normalList.get(i));
+    let center2 = findAverage(projPointList2.get(max2), projPointList2.get(min2));
 
-    //think of all these values plotted on the x-axis (like a number line)
-
-    //find the distance between the centers, do (larger - smaller), imagine their larger and smaller values on the x-axis. the larger would be on the right and the smaller would be on the left.
-    //this is a way to make sure to always have shape1 on the left, and shape2 on the right.
     let distanceBetweenCenters = 0;
-    distanceBetweenCenters = Math.abs(center1 - center2);
+    distanceBetweenCenters = getMag(v2Minusv1(center1, center2));
 
-    //find halfwidth1, this is always the halfwidth of primitive that has smaller center value on the x-axis
     let halfwidth1 = 0;
-    halfwidth1 = Math.abs(pointList1.get(max1) - center1);
+    halfwidth1 = getMag(v2Minusv1(projPointList1.get(max1), center1));
 
-    //find halfwidth2, this is always the halfwidth of primitive that has larger center value on the x-axis
     let halfwidth2 = 0;
-    halfwidth2 = Math.abs(pointList2.get(max2) - center2);
+    halfwidth2 = getMag(v2Minusv1(projPointList2.get(max2), center2));
 
     //finally find overlap using the following formula
     var distance = distanceBetweenCenters - halfwidth1 - halfwidth2
@@ -216,13 +214,13 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   }
   if (overlap == true) {
     minOverlapAxis = normalList.get(findMin(distances));
-    //find perpendicular of minOverlapAxis, then find theta of that vector
-    var angleOfContact = getTheta(minOverlapAxis);
+    var vU_minOverlapAxis = getUnitVector(minOverlapAxis);
     var minDistance = Math.abs(distances.get(findMin(distances)));
     printConsole(` minDistance = ${minDistance}`);
-    return [1, angleOfContact, minDistance]; //the last element is the length of the overlap
+    printConsole(` vU_minOverlapAxis = ${vU_minOverlapAxis}`);
+    return [1, vU_minOverlapAxis[0], vU_minOverlapAxis[1], minDistance];
   } else {
-    return [0, -1, -1];
+    return [0, -1, -1, -1];
   }
 }
 

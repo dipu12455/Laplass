@@ -26,7 +26,7 @@ export function transformVector(_v, _x, _y, _theta) {
 //a unit vector is used to indicate direction
 export function getUnitVector(_v) {
   var mag = getMag(_v);
-  if(mag <= 0)return [0,0]; //avoid divide by 0
+  if (mag <= 0) return [0, 0]; //avoid divide by 0
   var i = _v[0] / mag;
   var j = _v[1] / mag;
   return [i, j];
@@ -59,8 +59,12 @@ export function findLeftPerpendicular(_v) {
 export function isVectorWithinRange(_v, low, high) {
   var mag = getMag(_v);
   if (mag >= low && mag <= high) {
-      return true;
+    return true;
   }
   return false;
+}
+
+export function findAverage(_v1, _v2) {
+  return [(_v1[0] + _v2[0]) / 2, (_v1[1] + _v2[1]) / 2];
 }
 //unit tests
