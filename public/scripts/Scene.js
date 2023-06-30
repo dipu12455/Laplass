@@ -1,30 +1,6 @@
 import * as LP from './LPEngine/LPEngine.js';
-import { pDrawObject } from './properties/drawObject.js';
-import { pSquareManual } from './properties/pSquareManual.js';
-import { pTriangle } from './properties/pTriangle.js';
+import { pPointForce } from './properties/pPointForce.js';
 
-var pmSquare = LP.addPrimitive('pmSquare');
+var pmRect = LP.addPrimitive('pmRectangle');
 
-//loop to create 4 boxes
-/* let i = 0;
-for (i = 0; i < 120; i += 1){
-    var temp = LP.addInstance(pmSquare, -1, pSquareManual);
-    LP.selectInstance(temp);
-    LP.setPosition(getRandomInt(4),getRandomInt(4));
-    LP.unSelectAll();
-}
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-  } */
-
-//create two squares that move towards each other
-var sq1 = LP.addInstance(pmSquare, -1, pSquareManual);
-LP.selectInstance(sq1);
-LP.setPosition(-5, 0); 
-LP.unSelectAll();
-
-var sq2 = LP.addInstance(pmSquare, -1, pSquareManual);
-LP.selectInstance(sq2);
-LP.setPosition(5, 0); 
-LP.unSelectAll();
+var rect1 = LP.addInstance(pmRect, -1, pPointForce); // just a way of giving name to a property that describes how to react with point forces resulting in linear and angular accelerations

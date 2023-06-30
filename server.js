@@ -32,6 +32,11 @@ app.get('/pmGround', (req, res) => {
   res.sendFile(__dirname + '/pmGround.pm');
 });
 
+app.get('/pmRectangle', (req, res) => {
+  res.sendFile(__dirname + '/pmRectangle.pm');
+});
+
+
 app.listen(port, () => {
   console.log(`Server running at port ${port}`);
 });
