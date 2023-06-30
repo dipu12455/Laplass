@@ -198,7 +198,7 @@ export function turnOffEvents() {
 
 //checks if a mouse click event occured within the provided bounding box
 //takes a BoundingBox object as input
-export function evMouseClickRegion(_boundingBox) {
+/* export function evMouseClickRegion(_boundingBox) {
     if (isEventFired(evMouseClick)) {
         var pos = getMousePosition(); //can't use mouseX/mouseY vars directly because boundingbox is in terms of LP coord
         var primbbox = transform_primitive(primFromBoundingBox(_boundingBox), getX(), getY(), getRot());
@@ -211,17 +211,22 @@ export function evMouseClickRegion(_boundingBox) {
             return false;
         }
     }
-}
+} */
 
-export function evMouseDownRegion(_boundingBox) {
-    if (isEventFired(evMouseDown)) {
+//use with evMouseClick or evMouseDown
+export function evMouseRegion(_boundingBox, _event){
+    function isWithinRegion(_boundingBox){
         var pos = getMousePosition();
-        var condition = checkPointInRegion(pos, _boundingBox);
-        if (condition) {
-            turnOffEvent(evMouseDown);
+        var primbbox = transform_primitive(primFromBoundingBox(_boundingBox), getX(), getY(), getRot());
+        var condition = checkPointInsidePrimitive(pos,primbbox);
+        return condition;
+    }
+    if (isEventFired(_event)){
+        if (isWithinRegion(_boundingBox)){
+            turnOffEvent(_event);
             return true;
         }
-        else {
+        else{
             return false;
         }
     }
