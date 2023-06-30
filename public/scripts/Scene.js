@@ -1,9 +1,6 @@
 import * as LP from './LPEngine/LPEngine.js';
-import { pDrawObject } from './properties/drawObject.js';
-import { pSquareManual } from './properties/pSquareManual.js';
-import { pTriangle } from './properties/pTriangle.js';
+import { pPointForce } from './properties/pPointForce.js';
 
-var pmSquare = LP.addPrimitive('pmSquare');
+var pmRect = LP.addPrimitive('pmRectangle');
 
-var sq1 = LP.addInstance(pmSquare, -1, pSquareManual);
-
+var rect1 = LP.addInstance(pmRect, -1, pPointForce); // just a way of giving name to a property that describes how to react with point forces resulting in linear and angular accelerations
