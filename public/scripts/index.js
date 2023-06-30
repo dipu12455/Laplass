@@ -1,8 +1,6 @@
 import * as LP from './LPEngine/LPEngine.js';
 import * as Scene from './Scene.js';
 
-LP.setUnitTest(true);
-
 //these functions need to be run in this exact order
 
 LP.showScreenGrid(); //display the screen grid
