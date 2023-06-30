@@ -6,6 +6,23 @@ import { transformVector } from "./LPVector.js";
 
 
 
+export class BoundingBox {
+  constructor(_p1, _p2) {
+      this.p1 = [0, 0];
+      this.p2 = [0, 0];
+  }
+  set(_p1, _p2) {
+      this.p1 = _p1;
+      this.p2 = _p2;
+  }
+  getP1() {
+      return this.p1;
+  }
+  getP2() {
+      return this.p2;
+  }
+}
+
 export class Primitive extends LPList {
   constructor() { //in this case the _primitivePath is the route to the server for the primitive text file
     super();
@@ -13,6 +30,7 @@ export class Primitive extends LPList {
     this.lineColor = 0x000000;
     this.fillColor = 0x000000;
     this.wireframe = true;
+    this.boundingBox = new BoundingBox([0, 0], [0, 0]);
   }
   getPrint() {
     var i = 0;
@@ -22,11 +40,12 @@ export class Primitive extends LPList {
     }
     return output;
   }
-  set(_origin, _lineColor, _fillColor, _wireframe) {
+  set(_origin, _lineColor, _fillColor, _wireframe, _boundingBox) {
     this.origin = _origin;
     this.lineColor = _lineColor;
     this.fillColor = _fillColor;
     this.wireframe = _wireframe;
+    this.boundingBox = _boundingBox;
   }
 }
 
@@ -64,15 +83,16 @@ export function loadPrimitive(_index, _primitivePath) {
 
 function addPrimitiveFromString(_index, _primString) {
   //parse the string and add the vertices to primitive
-  //the first five fields in the string file is xorigin, yorigin, lineColor, fillColor, and wireframe(T/F)
+  //the first five fields in the string file is xorigin, yorigin, lineColor, fillColor, wireframe(T/F), bboxp1x,bboxp1y,bboxp2x,bboxp2y
   let fields = _primString.split(',');
   setOrigin(_index, [parseFloat(fields[0]), parseFloat(fields[1])]);
   setLineColor(_index, fields[2]); //hex is considered string in javascript (apparently...), so with or without quotes, the hex still yields the correct color value
   setFillColor(_index, fields[3]);
   setWireframe(_index, stringToBool(fields[4]));
+  setBoundingBox(_index, [parseFloat(fields[5]), parseFloat(fields[6])], [parseFloat(fields[7]), parseFloat(fields[8])]);
 
-  let i = 5;
-  for (i = 5; i < fields.length; i += 2) {
+  let i = 9;
+  for (i = 9; i < fields.length; i += 2) {
     addPrimitiveVertex(_index, parseFloat(fields[i]), parseFloat(fields[i + 1]));
   }
 }
@@ -106,7 +126,8 @@ export function transform_primitive(_primitive, _x, _y, _rot) {
   output.set(_primitive.origin,
     _primitive.lineColor,
     _primitive.fillColor,
-    _primitive.wireframe);
+    _primitive.wireframe,
+    _primitive.boundingBox);
 
   for (i = 0; i < _primitive.getSize(); i += 1) {
     //get the vertex
@@ -150,6 +171,14 @@ export function getFillColor(_index, _fillColor) {
 }
 export function getWireframe(_index, _wireframe) {
   return PRIMITIVES.get(_index).wireframe;
+}
+
+export function setBoundingBox(_index, _p1, _p2) {
+  PRIMITIVES.get(_index).boundingBox.set(_p1, _p2);
+}
+
+export function getBoundingBox(_index) { //returns the BoundingBox object of the primitive _index
+  return PRIMITIVES.get(_index).boundingBox;
 }
 
 

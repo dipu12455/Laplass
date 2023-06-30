@@ -6,29 +6,11 @@ import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getCollisions } from "./LPCollision.js";
 import { isVectorWithinRange } from "./LPVector.js";
 
-export class BoundingBox {
-    constructor(_p1, _p2) {
-        this.p1 = [0, 0];
-        this.p2 = [0, 0];
-    }
-    set(_p1, _p2) {
-        this.p1 = _p1;
-        this.p2 = _p2;
-    }
-    getP1() {
-        return this.p1;
-    }
-    getP2() {
-        return this.p2;
-    }
-}
-
 export class LPInstance {
     constructor() {
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
         this.propertyIndex = -1;
-        this.boundingBox = new BoundingBox([0, 0], [0, 0]);
         // the following are all in LPE coordinate system
         this.hidden = false;
         this.freeze = false;
@@ -297,14 +279,6 @@ export function getVal(_variableIndex) {
 }
 export function setVal(_variableIndex, _value) {
     fetchInstance().vars.put(_value, _variableIndex);
-}
-
-export function setBoundingBox(_p1, _p2) {
-    fetchInstance().boundingBox.set(_p1, _p2);
-}
-
-export function getBoundingBox() { //returns the BoundingBox object of the primitive _index
-    return fetchInstance().boundingBox;
 }
 
 export function hide() {

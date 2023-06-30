@@ -64,9 +64,6 @@ export { getAcceleration } from './modules/LPInstances.js';
 export { makeVar } from './modules/LPInstances.js'
 export { getVal } from './modules/LPInstances.js'
 export { setVal } from './modules/LPInstances.js'
-export { BoundingBox } from './modules/LPInstances.js';
-export { setBoundingBox } from './modules/LPInstances.js';
-export { getBoundingBox } from './modules/LPInstances.js';
 export { hide } from './modules/LPInstances.js';
 export { unhide } from './modules/LPInstances.js';
 export { isHidden } from './modules/LPInstances.js';
@@ -90,6 +87,9 @@ export { getOrigin } from './modules/LPPrimitives.js';
 export { getLineColor } from './modules/LPPrimitives.js';
 export { getFillColor } from './modules/LPPrimitives.js';
 export { getWireframe } from './modules/LPPrimitives.js';
+export { BoundingBox } from './modules/LPPrimitives.js';
+export { setBoundingBox } from './modules/LPPrimitives.js';
+export { getBoundingBox } from './modules/LPPrimitives.js';
 
 
 //LPEngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app

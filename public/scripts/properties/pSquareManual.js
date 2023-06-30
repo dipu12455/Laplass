@@ -3,7 +3,6 @@ import { pGround } from './pGround.js';
 import { pPentagon } from './pPentagon.js';
 
 var init = () => {
-    LP.setBoundingBox([-1, 1], [1, -1]);
     LP.makeVar(0);//(0)forcex = 0
     LP.makeVar(0); //(1)forcey = 0
     LP.makeVar(0); //(2)selected = 0
@@ -37,7 +36,7 @@ var update = (_delta) => {
 
 function checkEvents() {
     //select this square if clicked on
-    if (LP.evMouseClickRegion(LP.getBoundingBox())) {
+    if (LP.evMouseClickRegion(LP.getBoundingBox(LP.getPrimitiveIndex()))) {
         LP.setVal(2, 1); //(2)selected=1
     }
     //press G to deselect

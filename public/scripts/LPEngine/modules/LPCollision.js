@@ -3,8 +3,8 @@ import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sq
 import { dotProduct } from './LPVector.js';
 import { scalarXvector, v1Plusv2 } from './LPVector.js';
 import { draw_anchor, draw_line, printConsole, setPrintConsole } from './LPEngineCore.js';
-import { Primitive, addPrimitiveVertex, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getBoundingBox, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
+import { Primitive, addPrimitiveVertex, getBoundingBox, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
+import { INSTANCES, collisionListAdd, findCenterOfInstancePrimitive, getAcceleration, getHSpeed, getMass, getPrimitiveIndex, getRot, getSelectedInstance, getVSpeed, getX, getY, isPhysical, selectInstance, setAcceleration, setHSpeed, setPosition, setVSpeed, unSelectAll } from "./LPInstances.js";
 
 var collisionPerFrame = 0;
 var collisionPatternList = [];
@@ -83,7 +83,7 @@ export function getCollisions() {
           //move them apart, then exchange their linear momentum
           if (C_isPhysical(current) && C_isPhysical(target)) {
             unOverlapInstances(current, target, collision);
-            //updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
+            updateAcchByExchangeOfMomenta(current, target); //this function has direct access to instances. it will directly add acch to those instances
           }
 
         }
@@ -99,6 +99,7 @@ function updateAcchByExchangeOfMomenta(_instanceIndex1, _instanceIndex2) {
   printConsole(` entering updateAcchByExchangeOfMomenta() `);
   //obtain mass and velocities of each instance
   selectInstance(_instanceIndex1);
+  var m1 = getMass(); var v1 = [getHSpeed(), getVSpeed()]; unSelectAll();
   selectInstance(_instanceIndex2);
   var m2 = getMass(); var v2 = [getHSpeed(), getVSpeed()]; unSelectAll();
 
@@ -310,14 +311,14 @@ function C_isPhysical(_instanceIndex) {
 function isOverlapBoundingBox(_instanceIndex1, _instanceIndex2) {
   //get boundingbox of instance1 and turn it into a primitive
   selectInstance(_instanceIndex1);
-  var bbox1 = getBoundingBox();
+  var bbox1 = getBoundingBox(getPrimitiveIndex());
   //now transform this bbox into prim then, to xyrot of instance
   var bbox1prim = transform_primitive(primFromBoundingBox(bbox1), getX(), getY(), getRot());
   unSelectAll();
 
   //get boundingbox of instance2 and turn it into a primitive
   selectInstance(_instanceIndex2);
-  var bbox2 = getBoundingBox();
+  var bbox2 = getBoundingBox(getPrimitiveIndex());
   //now transform this bbox into prim then, to xyrot of instance
   var bbox2prim = transform_primitive(primFromBoundingBox(bbox2), getX(), getY(), getRot());
   unSelectAll();
