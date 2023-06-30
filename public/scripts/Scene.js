@@ -1,5 +1,6 @@
 import * as LP from './LPEngine/LPEngine.js';
 import { pPointForce } from './properties/pPointForce.js';
+import { pSquareManual } from './properties/pSquareManual.js';
 
 var pmRect = LP.addPrimitive('pmRectangle');
 
