@@ -23,21 +23,29 @@ export function findAverage(_v1, _v2) {
   return [(_v1[0] + _v2[0]) / 2, (_v1[1] + _v2[1]) / 2];
 }
 
+export function sumAllVectors(_arrayOfVectors) {
+  var sum = [0, 0];
+  for (var i = 0; i < _arrayOfVectors.length; i++) {
+    sum = v1Plusv2(sum, _arrayOfVectors[i]);
+  }
+  return sum;
+}
+
 export function radtodeg(_radians) { return _radians * (180 / Math.PI); }
 
 export function degtorad(_degrees) { return _degrees * (Math.PI / 180); }
 
 export function sqr(_num) { return _num * _num; }
 
-export function sumOfSqr(_n1,_n2){
-  return (sqr(_n1)+sqr(_n2));
+export function sumOfSqr(_n1, _n2) {
+  return (sqr(_n1) + sqr(_n2));
 }
 
 export function getTheta(_v) {
   return radtodeg(Math.atan2(_v[1], _v[0]));
 }
 export function getMag(_v) {
-  return Math.sqrt(sumOfSqr(_v[0],_v[1]));
+  return Math.sqrt(sumOfSqr(_v[0], _v[1]));
 }
 
 export function getVectorRTHeta(_r, _theta) { //theta in degrees
