@@ -157,7 +157,7 @@ function factorVelocitiesAndPositions(_delta, _threshold) {
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         selectInstance(i);
         //get its hspeed and vspeed
-        var hspeed = getHSpeed();
+       /*  var hspeed = getHSpeed();
         var vspeed = getVSpeed();
 
         var acc = getAcceleration();
@@ -172,7 +172,7 @@ function factorVelocitiesAndPositions(_delta, _threshold) {
         }
 
         setHSpeed(hspeed);
-        setVSpeed(vspeed);
+        setVSpeed(vspeed); */
 
         //translate the instance according to their speed
         setX(getX() + getHSpeed() * _delta);
