@@ -4,7 +4,7 @@ import { isTimeRunning, printConsole, setPrintConsole } from "./LPEngineCore.js"
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getCollisions } from "./LPCollision.js";
-import { isVectorWithinRange } from "./LPVector.js";
+import { getMag, isVectorWithinRange } from "./LPVector.js";
 
 export class LPInstance {
     constructor() {
@@ -122,7 +122,7 @@ export function updateInstances(_delta) {
     if (isTimeRunning()) {
         runUpdateFunctions(_delta); //updates accelerations of all instances
         getCollisions(); //add any necessary acch to each instance to account for collisions
-        factorVelocitiesAndPositions(_delta, 0.009);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
+        factorVelocitiesAndPositions(_delta, 0.02);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
     }/* a key is pressed, a force is applied on an instance. That force application is recorded into its acceleration amount.
     Before letting the force affect the velocity of the object, the collision calculates of a possible collision,
     and given the instance's initial velocity, we know *what* it's final velocity *should* be. To reach *that* final velocity,
