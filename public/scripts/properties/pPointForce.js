@@ -10,7 +10,7 @@ var update = (_delta) => {
     checkEvents();
 
     var force = forceWithMouse();
-    var friction = getFrictionForce(0.005);
+    var friction = getFrictionForce(0.01); //0.005
 
     LP.setAcceleration(LP.sumAllVectors([force, friction]));
 
