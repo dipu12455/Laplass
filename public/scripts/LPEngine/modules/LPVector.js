@@ -30,6 +30,9 @@ export function sumAllVectors(_arrayOfVectors) {
   }
   return sum;
 }
+export function getRegularVector(_unitVector, _magnitude) {
+  return [_unitVector[0] * _magnitude, _unitVector[1] * _magnitude];
+}
 
 export function radtodeg(_radians) { return _radians * (180 / Math.PI); }
 
@@ -60,6 +63,12 @@ export function isVectorWithinRange(_v, low, high) {
   return false;
 }
 
+export function subtractMagnitudeFromVector(_vector, _magnitude) {
+  var unitVector = getUnitVector(_vector);
+  var mag = getMag(_vector) - _magnitude;
+  return getRegularVector(unitVector, mag);
+}
+
 export function rotateVector(_v, _theta) {
   var vmag = getMag(_v);
   var xdash = vmag * Math.cos(degtorad(_theta));
@@ -76,6 +85,7 @@ export function getUnitVector(_v) {
   return [i, j];
 }
 
+//this function only increments x and y, but doesnt increment theta
 export function transformVector(_v, _x, _y, _theta) {
   var v = rotateVector(_v, _theta); //first rotate
   return [v[0] + _x, v[1] + _y]; //then translate

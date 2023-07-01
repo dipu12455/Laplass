@@ -1,4 +1,5 @@
 //LPVector
+
 export { degtorad } from './modules/LPVector.js';
 export { radtodeg } from './modules/LPVector.js';
 export { sqr } from './modules/LPVector.js';
@@ -8,6 +9,8 @@ export { dotProduct } from './modules/LPVector.js';
 export { scalarXvector } from './modules/LPVector.js';
 export { v2Minusv1 } from './modules/LPVector.js';
 export { findLeftPerpendicular } from './modules/LPVector.js';
+export { getMag } from './modules/LPVector.js';
+export { getTheta } from './modules/LPVector.js';
 export { v1Plusv2 } from './modules/LPVector.js';
 export { transformVector } from './modules/LPVector.js';
 export { isVectorWithinRange } from './modules/LPVector.js';
@@ -15,7 +18,8 @@ export { findAverage } from './modules/LPVector.js';
 export { sumOfSqr } from './modules/LPVector.js';
 export { sumAllVectors } from './modules/LPVector.js';
 export { getUnitVector } from './modules/LPVector.js';
-
+export { getRegularVector } from './modules/LPVector.js';
+export { subtractMagnitudeFromVector } from './modules/LPVector.js';
 //LPList
 export { LPList } from './modules/LPList.js';
 

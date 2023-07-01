@@ -6,7 +6,7 @@ var pmRect = LP.addPrimitive('pmRectangle');
 
 var rect1 = LP.addInstance(pmRect, -1, pPointForce); // just a way of giving name to a property that describes how to react with point forces resulting in linear and angular accelerations
 LP.selectInstance(rect1);
-LP.setPosition(-5,5);
+LP.setPosition(0,0);
 LP.unSelectAll();
 
 var rect2 = LP.addInstance(pmRect, -1, pPointForce);

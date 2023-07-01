@@ -236,8 +236,8 @@ export function getY() {
     return fetchInstance().y;
 }
 export function getPosition() {
-    return new LPVector(fetchInstance().x,
-        fetchInstance().y);
+    return [fetchInstance().x,
+        fetchInstance().y];
 }
 export function getRot() {
     return fetchInstance().rot;
