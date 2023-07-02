@@ -115,7 +115,7 @@ var draw = () => {
         triRotatedZX.v3 = multiplyMatrixVector(triRotatedZ.v3, matRotX);
 
         var triTranslated = copyTriangle(triRotatedZX); //this copies the reference not the object, we need to make a new object here
-        var amount = 3;
+        var amount = 2;
         triTranslated.v1[2] = tri.v1[2] + amount;
         triTranslated.v2[2] = tri.v2[2] + amount;
         triTranslated.v3[2] = tri.v3[2] + amount;
@@ -129,17 +129,18 @@ var draw = () => {
         LP.printConsole(`triProjected.v1: ${triProjected.v1} triProjected.v2: ${triProjected.v2} triProjected.v3: ${triProjected.v3}`);
 
         //scale into view
-        triProjected.v1[0] += 1; triProjected.v1[1] += 1;
-        triProjected.v2[0] += 1; triProjected.v2[1] += 1;
-        triProjected.v3[0] += 1; triProjected.v3[1] += 1;
+        var scale = 0;
+        triProjected.v1[0] += scale; triProjected.v1[1] += scale;
+        triProjected.v2[0] += scale; triProjected.v2[1] += scale;
+        triProjected.v3[0] += scale; triProjected.v3[1] += scale;
 
         //denormalizing into screen width and height
-        triProjected.v1[0] *= 0.5 * screenWidth;
-        triProjected.v1[1] *= 0.5 * screenHeight;
-        triProjected.v2[0] *= 0.5 * screenWidth;
-        triProjected.v2[1] *= 0.5 * screenHeight;
-        triProjected.v3[0] *= 0.5 * screenWidth;
-        triProjected.v3[1] *= 0.5 * screenHeight;
+        triProjected.v1[0] *= screenWidth;
+        triProjected.v1[1] *= screenHeight;
+        triProjected.v2[0] *= screenWidth;
+        triProjected.v2[1] *= screenHeight;
+        triProjected.v3[0] *= screenWidth;
+        triProjected.v3[1] *= screenHeight;
 
 
         drawTriangle([triProjected.v1[0], triProjected.v1[1]],
