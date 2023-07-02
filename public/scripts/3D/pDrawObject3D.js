@@ -31,9 +31,13 @@ class Mesh {
 
 //variables needed throughout this file
 var cube;
-var matProj, matRotX, matRotZ;
+var matProj, matRotX, matRotZ, matRotY;
 var screenWidth;
 var screenHeight;
+
+var X = -1;
+var Y = 0;
+var Z = 0;
 
 var init = () => {
     LP.makeVar(0); //(0) elapsed = 0
@@ -66,6 +70,7 @@ var init = () => {
     //rotation matrices
     matRotZ = new mat4x4();
     matRotX = new mat4x4();
+    matRotY = new mat4x4();
 
 
 };
@@ -76,12 +81,13 @@ var update = (_delta) => {
 
     //rotation matrices
     var theta = elapsed * 0.5;
+    var theta2 = elapsed * 0.5;
 
     //rotation Z
-    matRotZ.m[0][0] = Math.cos(LP.degtorad(theta));
-    matRotZ.m[0][1] = Math.sin(LP.degtorad(theta));
-    matRotZ.m[1][0] = -Math.sin(LP.degtorad(theta));
-    matRotZ.m[1][1] = Math.cos(LP.degtorad(theta));
+    matRotZ.m[0][0] = Math.cos(LP.degtorad(theta2));
+    matRotZ.m[0][1] = Math.sin(LP.degtorad(theta2));
+    matRotZ.m[1][0] = -Math.sin(LP.degtorad(theta2));
+    matRotZ.m[1][1] = Math.cos(LP.degtorad(theta2));
     matRotZ.m[2][2] = 1;
     matRotZ.m[3][3] = 1;
 
@@ -93,9 +99,22 @@ var update = (_delta) => {
     matRotX.m[2][2] = Math.cos(LP.degtorad(theta * 0.5));
     matRotX.m[3][3] = 1;
 
+    //rotation Y
+    matRotY.m[0][0] = Math.cos(LP.degtorad(theta * 0.5));
+    matRotY.m[0][2] = Math.sin(LP.degtorad(theta * 0.5));
+    matRotY.m[2][0] = -Math.sin(LP.degtorad(theta * 0.5));
+    matRotY.m[1][1] = 1;
+    matRotY.m[2][2] = Math.cos(LP.degtorad(theta * 0.5));
+    matRotY.m[3][3] = 1;
+
+
+    //oscillate the Y
+    var animate = Math.sin(elapsed / 50.0);
+    //Y = Y + (animate * 0.01);
+    X = X + (animate * 0.01);
+    Z = Z + (animate * 0.01);
+
     LP.setVal(0, elapsed);
-
-
 };
 
 var draw = () => {
@@ -105,14 +124,14 @@ var draw = () => {
         var tri = cube.triangles[i];
 
         var triRotatedZ = copyTriangle(tri);
-        triRotatedZ.v1 = multiplyMatrixVector(tri.v1, matRotZ);
-        triRotatedZ.v2 = multiplyMatrixVector(tri.v2, matRotZ);
-        triRotatedZ.v3 = multiplyMatrixVector(tri.v3, matRotZ);
-
+        /* triRotatedZ.v1 = multiplyMatrixVector(tri.v1, matRotY);
+        triRotatedZ.v2 = multiplyMatrixVector(tri.v2, matRotY);
+        triRotatedZ.v3 = multiplyMatrixVector(tri.v3, matRotY); */
+        
         var triRotatedZX = copyTriangle(triRotatedZ);
-        triRotatedZX.v1 = multiplyMatrixVector(triRotatedZ.v1, matRotX);
+        /* triRotatedZX.v1 = multiplyMatrixVector(triRotatedZ.v1, matRotX);
         triRotatedZX.v2 = multiplyMatrixVector(triRotatedZ.v2, matRotX);
-        triRotatedZX.v3 = multiplyMatrixVector(triRotatedZ.v3, matRotX);
+        triRotatedZX.v3 = multiplyMatrixVector(triRotatedZ.v3, matRotX); */
 
         var triTranslated = copyTriangle(triRotatedZX); //this copies the reference not the object, we need to make a new object here
         var amount = 2;
@@ -120,13 +139,26 @@ var draw = () => {
         triTranslated.v2[2] = tri.v2[2] + amount;
         triTranslated.v3[2] = tri.v3[2] + amount;
 
+        //move them a little in the positive y
+        triTranslated.v1[1] += Y;
+        triTranslated.v2[1] += Y;
+        triTranslated.v3[1] += Y;
+
+        //move them in x axis
+        triTranslated.v1[0] += X;
+        triTranslated.v2[0] += X;
+        triTranslated.v3[0] += X;
+
+        //move them in z axis
+        triTranslated.v1[2] += Z;
+        triTranslated.v2[2] += Z;
+        triTranslated.v3[2] += Z;
+
         var triProjected = new Triangle([
             multiplyMatrixVector(triTranslated.v1, matProj), //these multiplications yield a 3D vector each
             multiplyMatrixVector(triTranslated.v2, matProj),
             multiplyMatrixVector(triTranslated.v3, matProj)
         ]);
-
-        LP.printConsole(`triProjected.v1: ${triProjected.v1} triProjected.v2: ${triProjected.v2} triProjected.v3: ${triProjected.v3}`);
 
         //scale into view
         var scale = 0;
@@ -135,11 +167,11 @@ var draw = () => {
         triProjected.v3[0] += scale; triProjected.v3[1] += scale;
 
         //denormalizing into screen width and height
-        triProjected.v1[0] *= screenWidth;
+        triProjected.v1[0] *= -screenWidth;
         triProjected.v1[1] *= screenHeight;
-        triProjected.v2[0] *= screenWidth;
+        triProjected.v2[0] *= -screenWidth;
         triProjected.v2[1] *= screenHeight;
-        triProjected.v3[0] *= screenWidth;
+        triProjected.v3[0] *= -screenWidth;
         triProjected.v3[1] *= screenHeight;
 
 
@@ -147,7 +179,6 @@ var draw = () => {
             [triProjected.v2[0], triProjected.v2[1]],
             [triProjected.v3[0], triProjected.v3[1]]);
     }
-    LP.setPrintConsole(false);
 }
 
 function drawTriangle(_v1, _v2, _v3) { //the inputs are 2D vectorsq
