@@ -35,7 +35,7 @@ var matProj, matRotX, matRotZ, matRotY;
 var screenWidth;
 var screenHeight;
 
-var X = -1;
+var X = 0;
 var Y = 0;
 var Z = 0;
 
@@ -84,19 +84,19 @@ var update = (_delta) => {
     var theta2 = elapsed * 0.5;
 
     //rotation Z
-    matRotZ.m[0][0] = Math.cos(LP.degtorad(theta2));
-    matRotZ.m[0][1] = Math.sin(LP.degtorad(theta2));
-    matRotZ.m[1][0] = -Math.sin(LP.degtorad(theta2));
-    matRotZ.m[1][1] = Math.cos(LP.degtorad(theta2));
+    matRotZ.m[0][0] = Math.cos(LP.degtorad(60));
+    matRotZ.m[0][1] = Math.sin(LP.degtorad(60));
+    matRotZ.m[1][0] = -Math.sin(LP.degtorad(60));
+    matRotZ.m[1][1] = Math.cos(LP.degtorad(60));
     matRotZ.m[2][2] = 1;
     matRotZ.m[3][3] = 1;
 
     //rotation X
     matRotX.m[0][0] = 1;
-    matRotX.m[1][1] = Math.cos(LP.degtorad(theta * 0.5));
-    matRotX.m[1][2] = Math.sin(LP.degtorad(theta * 0.5));
-    matRotX.m[2][1] = -Math.sin(LP.degtorad(theta * 0.5));
-    matRotX.m[2][2] = Math.cos(LP.degtorad(theta * 0.5));
+    matRotX.m[1][1] = Math.cos(LP.degtorad(theta * 0.2));
+    matRotX.m[1][2] = Math.sin(LP.degtorad(theta * 0.2));
+    matRotX.m[2][1] = -Math.sin(LP.degtorad(theta * 0.2));
+    matRotX.m[2][2] = Math.cos(LP.degtorad(theta * 0.2));
     matRotX.m[3][3] = 1;
 
     //rotation Y
@@ -111,8 +111,8 @@ var update = (_delta) => {
     //oscillate the Y
     var animate = Math.sin(elapsed / 50.0);
     //Y = Y + (animate * 0.01);
-    X = X + (animate * 0.01);
-    Z = Z + (animate * 0.01);
+    /* X = X + (animate * 0.01);
+    Z = Z + (animate * 0.01); */
 
     LP.setVal(0, elapsed);
 };
@@ -124,14 +124,14 @@ var draw = () => {
         var tri = cube.triangles[i];
 
         var triRotatedZ = copyTriangle(tri);
-        /* triRotatedZ.v1 = multiplyMatrixVector(tri.v1, matRotY);
-        triRotatedZ.v2 = multiplyMatrixVector(tri.v2, matRotY);
-        triRotatedZ.v3 = multiplyMatrixVector(tri.v3, matRotY); */
-        
+        triRotatedZ.v1 = multiplyMatrixVector(tri.v1, matRotZ);
+        triRotatedZ.v2 = multiplyMatrixVector(tri.v2, matRotZ);
+        triRotatedZ.v3 = multiplyMatrixVector(tri.v3, matRotZ);
+
         var triRotatedZX = copyTriangle(triRotatedZ);
-        /* triRotatedZX.v1 = multiplyMatrixVector(triRotatedZ.v1, matRotX);
+        triRotatedZX.v1 = multiplyMatrixVector(triRotatedZ.v1, matRotX);
         triRotatedZX.v2 = multiplyMatrixVector(triRotatedZ.v2, matRotX);
-        triRotatedZX.v3 = multiplyMatrixVector(triRotatedZ.v3, matRotX); */
+        triRotatedZX.v3 = multiplyMatrixVector(triRotatedZ.v3, matRotX);
 
         var triTranslated = copyTriangle(triRotatedZX); //this copies the reference not the object, we need to make a new object here
         var amount = 2;
