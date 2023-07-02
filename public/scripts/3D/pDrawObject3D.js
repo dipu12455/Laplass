@@ -47,7 +47,7 @@ var something = 0;
 //get the aspect ratio of the screen
 var screenWidth = 640;
 var screenHeight = 480;
-var aspectRatio = screenWidth / screenHeight;
+var aspectRatio = screenHeight / screenWidth;
 var fieldOfView = something;
 var zFar = something;
 var zNear = something;
