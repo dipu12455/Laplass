@@ -43,14 +43,14 @@ var triangleArray = [
     new Triangle([[1, 0, 1], [0, 0, 0], [1, 0, 0]])];
 
 var cube = new Mesh(triangleArray);
-var something = 0;
 //get the aspect ratio of the screen
 var screenWidth = 640;
 var screenHeight = 480;
 var aspectRatio = screenHeight / screenWidth;
-var fieldOfView = something;
-var zFar = something;
-var zNear = something;
+var fieldOfView = 90;
+var zNear = 0.1;
+var zFar = 1000;
+
 
 //function to transform vector into screen space, we are normalizing screen space
 /* after normalizing screenspace, -1 means left edge of screen, 1 means right edge of screen,
