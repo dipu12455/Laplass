@@ -30,5 +30,9 @@ export class LPList{
   getPrint(){
     return this.array;
   }
+  flush(){
+    this.array = [];
+    this.indexCounter = 0;
+  }
 }
 

@@ -1,4 +1,3 @@
-import { screenCoordtoWorldCoord } from "../LPEvents.js";
 import { TEST, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest, printTest } from "../LPTest.js";
 
 var testFunctionsArray = [];

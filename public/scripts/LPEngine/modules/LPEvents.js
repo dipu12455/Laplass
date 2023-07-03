@@ -1,5 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin, isUnitTest, setPrintConsole} from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole} from "./LPEngineCore.js";
 import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 
@@ -151,13 +151,6 @@ export function LPEventsInit(_window) {
             turnOffPEvent(evKeyD_p);
         }
     });
-}
-
-export function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
-    if (getWorldDelta() <= 0) console.error(`worldDelta cannot be zero`);
-    var xx = (_p[0] - getWorldOrigin()[0]) / getWorldDelta();
-    var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta(); //these are simply opposites of changing worldcoord into pixels
-    return [xx, yy];
 }
 
 //the mouse coord need to be translated from pixels to worldCoord
