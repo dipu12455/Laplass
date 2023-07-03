@@ -1,6 +1,6 @@
 import * as LP from '../LPEngine/LPEngine.js';
 
-export class objSpaceship extends LP.LPInstance{
+export class objSpaceship extends LP.LPGameObject{
     constructor() {
         super();
         this.elapsed = 0;

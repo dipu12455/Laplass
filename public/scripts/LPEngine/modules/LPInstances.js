@@ -1,16 +1,17 @@
 import { LPList } from "./LPList.js";
-import { getProperty } from "./LPProperties.js";
 import { isTimeRunning, printConsole, setPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getCollisions } from "./LPCollision.js";
-import { getMag, isVectorWithinRange } from "./LPVector.js";
+import { getMag, isVectorWithinRange, v1Plusv2 } from "./LPVector.js";
 
-export class LPInstance {
+export class LPGameObject {
     constructor() {
+        this.name = ""; //used to identify instances by their parent objects, for collision purposes
+        //instance ids are obtained from the instances array, need not be stored per instance
+        this.id = -1;
         this.primitiveIndex = -1;
         this.spriteIndex = -1;
-        this.propertyIndex = -1;
         // the following are all in LPE coordinate system
         this.hidden = false;
         this.freeze = false;
@@ -23,7 +24,6 @@ export class LPInstance {
         this.hspeed = 0;
         this.vspeed = 0;
         this.rspeed = 0;
-        this.vars = new LPList(); //list that stores custom variables
         this.collisionList = new LPList();
         this.physical = false;
         this.mass = 1; //1 is default, so it won't multiply anything
@@ -32,72 +32,177 @@ export class LPInstance {
         this.update = (_delta) => { };
         this.draw = () => { };
     }
-    newSetX(_x) {
+    getId() {
+        return this.id;
+    }
+    getPrimitiveIndex() {
+        return this.primitiveIndex;
+    }
+    setPrimitiveIndex(_primitiveIndex) {
+        this.primitiveIndex = _primitiveIndex;
+    }
+    getSpriteIndex() {
+        return this.spriteIndex;
+    }
+    setSpriteIndex(_spriteIndex) {
+        this.spriteIndex = _spriteIndex;
+    }
+    setX(_x) {
+        this.xprev = this.x;
         this.x = _x;
     }
-
-}
-
-class LPInstanceList extends LPList {
-    constructor() {
-        super();
-        this.NullList = []; //stores boolean true or false values
+    setY(_y) {
+        this.yprev = this.y;
+        this.y = _y;
     }
-    isNull(_index) {
-        return this.NullList[_index];
-    }
-    setNull(_index, _value) {
-        this.NullList[_index] = _value;
-    }
-    add(_item) {
-        // add the item
+    setPosition(_position) {
+        this.xprev = this.x;
+        this.yprev = this.y;
 
-        //first see if there is a null spot
+        this.x = _position[0];
+        this.y = _position[1];
+    }
+    setRot(_rot) {
+        this.rotprev = this.rot;
+        this.rot = _rot;
+    }
+    getX() {
+        return this.x;
+    }
+    getY() {
+        return this.y;
+    }
+    getPosition() {
+        return [this.x,
+        this.y];
+    }
+    getRot() {
+        return this.rot;
+    }
+    getXPrev() {
+        return this.xprev;
+    }
+    getYPrev() {
+        return this.yprev;
+    }
+    getRotPrev() {
+        return this.rotprev;
+    }
+
+    setHSpeed(_hspeed) {
+        this.hspeed = _hspeed;
+    }
+    setVSpeed(_vspeed) {
+        this.vspeed = _vspeed;
+    }
+    setRSpeed(_rspeed) {
+        this.rspeed = _rspeed;
+    }
+    getHSpeed() {
+        return this.hspeed;
+    }
+    getVSpeed() {
+        return this.vspeed;
+    }
+    getRSpeed() {
+        return this.rspeed;
+    }
+    hide() {
+        this.hidden = true;
+    }
+    unhide() {
+        this.hidden = false;
+    }
+    isHidden() {
+        return this.hidden;
+    }
+    freeze() {
+        this.freeze = true;
+    }
+    unfreeze() {
+        this.freeze = false;
+    }
+    isFrozen() {
+        return this.freeze;
+    }
+    collisionListAdd(_array) { //_array is [targetInstanceId, angleOfContact]
+        this.collisionList.add(_array);
+    }
+    setPhysical(_state) { //set it as true or false
+        this.physical = _state;
+    }
+
+    isPhysical() {
+        return this.physical;
+    }
+    setMass(_mass) {
+        this.mass = _mass;
+    }
+    getMass() {
+        return this.mass;
+    }
+    setAcceleration(_acc) {
+        this.acceleration = _acc;
+    }
+    getAcceleration() {
+        return this.acceleration;
+    }
+    setVelocity(_velocity) {
+        this.hspeed = _velocity[0];
+        this.vspeed = _velocity[1];
+    }
+    getVelocity() {
+        return [this.hspeed, this.vspeed];
+    }
+    //checks the collision list to see if this current instance has collision with the provided instance
+    //returns angle of contact if collision detected, else returns -1
+    collisionListExists(_targetName) { //change its name to collisionListExists(target.name), iterate through your list, see if any of those instances match the target name
         var i = 0;
-        for (i = 0; i < this.getSize(); i += 1) {
-            if (this.isNull(i)) {
-                this.setNull(i, false);
-                this.put(_item, i);
-                return i; //return the index
+        for (i = 0; i < this.collisionList.getSize(); i += 1) {
+            var targetInstanceIndex = this.collisionList.get(i)[0];
+
+            if (INSTANCES.get(targetInstanceIndex).name == _targetName) {
+
+                var angleOfContact = this.collisionList.get(i)[1];
+                return angleOfContact;
             }
         }
-        this.array[this.indexCounter] = _item;
-        this.indexCounter += 1;
-        return this.indexCounter - 1;
+        return -1;
     }
+    //this function obtains the instance's primitive, transforms it to the instance's
+    //orientation, then computes the center coordinate by averaging all the vertices
+    findCenterOfInstancePrimitive() {
+        var prim1 = getPrimitive(this.primitiveIndex);
+        var prim2 = transform_primitive(prim1, this.x, this.y, this.rot);
+        let i = 0;
+        var sumX = 0; var sumY = 0;
+        for (i = 0; i < prim2.getSize(); i += 1) {
+            sumX = sumX + prim2.get(i)[0];
+            sumY = sumY + prim2.get(i)[1];
+        }
+        return [sumX / prim2.getSize(), sumY / prim2.getSize()];
+
+    }
+
 }
 
+export var INSTANCES = new LPList(); //list of all instances in LPE
 
-
-export var INSTANCES = new LPInstanceList(); //list of all instances in LPE
-
-//use the LPObject class to make a child class that is the game 'object'. define attributes and behaviors for that object class.
+//use the LPGameObject class to make a child class that is the game 'object'. define attributes and behaviors for that object class.
 //then create an instance of that object class which is the 'instance', its this instance you add to the INSTANCES list.
 //if you make changes to x or y or even the spriteindex, you change one instance of that object, not all of them.
 //object files are part of game code, not LP code.
 
 //some functions to manipulate the INSTANCES list, to make it more readable.
 
-var selectedInstance = -1; //remembers which instance is being worked on, stores an instanceIndex, -1 means nothing is selected
-export function selectInstance(_index) {
-    selectedInstance = _index;
-}
-//returns the index that is currently selected
-export function getSelectedInstance() {
-    if (selectedInstance == -1) console.error(`No instance selected.`);
-    return selectedInstance;
-}
-function fetchInstance() {
-    //fetches the currently selected instance object
-    return INSTANCES.get(getSelectedInstance());
-}
-export function unSelectAll() {
-    selectedInstance = -1;
+//create an instance (new LP.LPGameObject), then returns its index for use in other functions
+export function addInstance(_instance) {
+    var index = INSTANCES.add(_instance);
+    INSTANCES.get(index).id = index;
 }
 
-//create an instance (new LP.LPInstance), then returns its index for use in other functions
-export function addInstance(_instance) {
-    let dummy = INSTANCES.add(_instance);
+export function destroyInstance(_index) {
+    INSTANCES.delete(_index);
 }
 
 export function initInstances() {
@@ -118,8 +223,8 @@ export function updateInstances(_delta) {
     this way, only the acch value goes through change throghout the frame, and velocity is updated only once.*/
     if (isTimeRunning()) {
         runUpdateFunctions(_delta); //updates accelerations of all instances
-        //getCollisions(); //add any necessary acch to each instance to account for collisions
-        factorVelocitiesAndPositions(_delta, 0.02);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
+        getCollisions(); //add any necessary acch to each instance to account for collisions
+        updateVelocitiesAndPositions(_delta, 0.02);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
     }/* a key is pressed, a force is applied on an instance. That force application is recorded into its acceleration amount.
     Before letting the force affect the velocity of the object, the collision calculates of a possible collision,
     and given the instance's initial velocity, we know *what* it's final velocity *should* be. To reach *that* final velocity,
@@ -144,231 +249,44 @@ function runUpdateFunctions(_delta) {
         INSTANCES.get(i).update(_delta);
     }
 }
-function factorVelocitiesAndPositions(_delta, _threshold) {
+function updateVelocitiesAndPositions(_delta, _threshold) {
     //loop through all instances to factor their velocities and positions according to their acchs.
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        
+
         //get the instance
         var current = INSTANCES.get(i);
 
         //get its hspeed and vspeed
-        var hspeed = current.hspeed;
-        var vspeed = current.vspeed;
+        var velocity = current.getVelocity();
 
-        var acc = current.acceleration;
+        var acc = current.getAcceleration();
 
-        hspeed += acc[0];
-        vspeed += acc[1];
+        velocity = v1Plusv2(velocity, acc);
 
         //if velocity is too small, make it equal to zero
-        if (isVectorWithinRange([hspeed, vspeed], 0, _threshold)) {
-            hspeed = 0;
-            vspeed = 0;
+        if (isVectorWithinRange(velocity, 0, _threshold)) {
+            velocity = [0, 0];
         }
 
-        current.hspeed;
-        current.vspeed;
+        current.setVelocity(velocity);
 
         //translate the instance according to their speed
-        current.x += current.hspeed * _delta;
-        current.y += current.vspeed * _delta;
-        current.rot += current.rspeed * _delta;
+
+        current.setPosition(
+            v1Plusv2(current.getPosition(),
+                current.getVelocity()));
+
+        current.setRot(current.getRot() + current.getRSpeed());
     }
-}
-
-//the instances are registered with game engine and they live in this file in the INSTANCES list. the following functions are used to access
-//and change attrs of instances
-
-export function getPrimitiveIndex() {
-    return fetchInstance().primitiveIndex;
-}
-export function setPrimitiveIndex(_primitiveIndex) {
-    fetchInstance().primitiveIndex = _primitiveIndex;
-}
-export function getSpriteIndex() {
-    return fetchInstance().spriteIndex;
-}
-export function setSpriteIndex(_spriteIndex) {
-    fetchInstance().spriteIndex = _spriteIndex;
-}
-export function getPropertyIndex() {
-    return fetchInstance().propertyIndex;
-}
-export function setPropertyIndex(_propertyIndex) {
-    fetchInstance().propertyIndex = _propertyIndex;
-}
-export function setX(_x) {
-    fetchInstance().xprev = fetchInstance().x;
-    fetchInstance().x = _x;
-}
-export function setY(_y) {
-    fetchInstance().yprev = fetchInstance().y;
-    fetchInstance().y = _y;
-}
-export function setPositionV(_p) { //takes in a point (vector) as argument
-    fetchInstance().xprev = fetchInstance().x;
-    fetchInstance().yprev = fetchInstance().y;
-
-    fetchInstance().x = _p.getX();
-    fetchInstance().y = _p.getY();
-}
-export function setPosition(_x, _y) {
-    fetchInstance().xprev = fetchInstance().x;
-    fetchInstance().yprev = fetchInstance().y;
-
-    fetchInstance().x = _x;
-    fetchInstance().y = _y;
-}
-export function setRot(_rot) {
-    fetchInstance().rotprev = fetchInstance().rot;
-    fetchInstance().rot = _rot;
-}
-export function getX() {
-    return fetchInstance().x;
-}
-export function getY() {
-    return fetchInstance().y;
-}
-export function getPosition() {
-    return [fetchInstance().x,
-    fetchInstance().y];
-}
-export function getRot() {
-    return fetchInstance().rot;
-}
-export function getXPrev() {
-    return fetchInstance().xprev;
-}
-export function getYPrev() {
-    return fetchInstance().yprev;
-}
-export function getRotPrev() {
-    return fetchInstance().rotprev;
-}
-
-export function setHSpeed(_hspeed) {
-    fetchInstance().hspeed = _hspeed;
-}
-export function setVSpeed(_vspeed) {
-    fetchInstance().vspeed = _vspeed;
-}
-export function setRSpeed(_rspeed) {
-    fetchInstance().rspeed = _rspeed;
-}
-export function getHSpeed() {
-    return fetchInstance().hspeed;
-}
-export function getVSpeed() {
-    return fetchInstance().vspeed;
-}
-export function getRSpeed() {
-    return fetchInstance().rspeed;
-}
-
-export function makeVar(_value) {
-    return fetchInstance().vars.add(_value);
-}
-export function getVal(_variableIndex) {
-    return fetchInstance().vars.get(_variableIndex);
-}
-export function setVal(_variableIndex, _value) {
-    fetchInstance().vars.put(_value, _variableIndex);
-}
-
-export function hide() {
-    fetchInstance().hidden = true;
-}
-export function unhide() {
-    fetchInstance().hidden = false;
-}
-export function isHidden() {
-    return fetchInstance().hidden;
-}
-export function freeze() {
-    fetchInstance().freeze = true;
-}
-export function unfreeze() {
-    fetchInstance().freeze = false;
-}
-export function isFrozen() {
-    return fetchInstance().freeze;
-}
-
-export function collisionListAdd(_array) {
-    fetchInstance().collisionList.add(_array);
-
-}
-
-export function setPhysical(_state) { //set it as true or false
-    fetchInstance().physical = _state;
-}
-
-export function isPhysical() {
-    return fetchInstance().physical;
-}
-export function setMass(_mass) {
-    fetchInstance().mass = _mass;
-}
-export function getMass() {
-    return fetchInstance().mass;
-}
-export function setVelocity(_v) {
-    setHSpeed(_v[0]);
-    setVSpeed(_v[1]);
-}
-export function getVelocity() {
-    return [getHSpeed(), getVSpeed()];
-}
-export function setAcceleration(_acc) {
-    fetchInstance().acceleration = _acc;
-}
-export function getAcceleration() {
-    return fetchInstance().acceleration;
-}
-//this function obtains the instance's primitive, transforms it to the instance's
-//orientation, then computes the center coordinate by averaging all the vertices
-export function findCenterOfInstancePrimitive() {
-    var prim1 = getPrimitive(getPrimitiveIndex());
-    var prim2 = transform_primitive(prim1, getX(), getY(), getRot());
-    let i = 0;
-    var sumX = 0; var sumY = 0;
-    for (i = 0; i < prim2.getSize(); i += 1) {
-        sumX = sumX + prim2.get(i)[0];
-        sumY = sumY + prim2.get(i)[1];
-    }
-    return [sumX / prim2.getSize(), sumY / prim2.getSize()];
-
-}
-
-//checks the collision list to see if this current instance has collision with the provided instance
-//returns angle of contact if collision detected, else returns -1
-export function checkCollision(_propertyIndex) {
-    var i = 0;
-    for (i = 0; i < fetchInstance().collisionList.getSize(); i += 1) {
-        var targetInstanceIndex = fetchInstance().collisionList.get(i)[0];
-        //START: get the target property index------
-        var saved = getSelectedInstance(); //save current selection
-        selectInstance(targetInstanceIndex);
-        var targetPropertyIndex = getPropertyIndex();
-        unSelectAll();
-        selectInstance(saved);
-        //END: get the target property index---------
-
-        if (targetPropertyIndex == _propertyIndex) {
-
-            var angleOfContact = fetchInstance().collisionList.get(i)[1];
-            return angleOfContact;
-        }
-    }
-    return -1;
 }
 
 export function flushCollisions() {
     var i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        selectInstance(i);
-        fetchInstance().collisionList = new LPList();
-        unSelectAll();
+        INSTANCES.get(i).collisionList = new LPList();
     }
 }
+
+
+

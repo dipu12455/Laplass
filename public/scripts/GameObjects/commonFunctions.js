@@ -1,18 +1,17 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { getMag } from '../LPEngine/modules/LPVector.js';
 
 export function moveWASD(_moveAmount) {
     if (LP.isPEventFired(LP.evKeyW_p)) {
-        LP.setVal(1, _moveAmount);
+        //LP.setVal(1, _moveAmount);
     }
     if (LP.isPEventFired(LP.evKeyS_p)) {
-        LP.setVal(1, -_moveAmount);
+        //LP.setVal(1, -_moveAmount);
     }
     if (LP.isPEventFired(LP.evKeyA_p)) {
-        LP.setVal(0, -_moveAmount);
+        //LP.setVal(0, -_moveAmount);
     }
     if (LP.isPEventFired(LP.evKeyD_p)) {
-        LP.setVal(0, _moveAmount);
+        //LP.setVal(0, _moveAmount);
     }
 }
 

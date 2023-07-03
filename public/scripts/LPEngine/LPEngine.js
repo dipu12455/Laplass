@@ -24,59 +24,10 @@ export { subtractMagnitudeFromVector } from './modules/LPVector.js';
 export { LPList } from './modules/LPList.js';
 
 //LPInstances
-export { LPInstance } from './modules/LPInstances.js';
+export { LPGameObject } from './modules/LPInstances.js';
 export { INSTANCES } from './modules/LPInstances.js';
 export { addInstance } from './modules/LPInstances.js';
-export { selectInstance } from './modules/LPInstances.js';
-export { getSelectedInstance } from './modules/LPInstances.js';
-export { unSelectAll } from './modules/LPInstances.js';
-export { initInstances } from './modules/LPInstances.js';
-export { updateInstances } from './modules/LPInstances.js';
-export { getPrimitiveIndex } from './modules/LPInstances.js';
-export { setPrimitiveIndex } from './modules/LPInstances.js';
-export { getPropertyIndex } from './modules/LPInstances.js';
-export { setPropertyIndex } from './modules/LPInstances.js';
-export { getSpriteIndex } from './modules/LPInstances.js';
-export { setSpriteIndex } from './modules/LPInstances.js';
-export { setX } from './modules/LPInstances.js';
-export { setY } from './modules/LPInstances.js';
-export { setPositionV } from './modules/LPInstances.js';
-export { setPosition } from './modules/LPInstances.js';
-export { setRot } from './modules/LPInstances.js';
-export { getX } from './modules/LPInstances.js';
-export { getY } from './modules/LPInstances.js';
-export { getPosition } from './modules/LPInstances.js';
-export { getRot } from './modules/LPInstances.js';
-export { getXPrev } from './modules/LPInstances.js';
-export { getYPrev } from './modules/LPInstances.js';
-export { getRotPrev } from './modules/LPInstances.js';
-export { setHSpeed } from './modules/LPInstances.js';
-export { setVSpeed } from './modules/LPInstances.js';
-export { setRSpeed } from './modules/LPInstances.js';
-export { getHSpeed } from './modules/LPInstances.js';
-export { getVSpeed } from './modules/LPInstances.js';
-export { getRSpeed } from './modules/LPInstances.js';
-export { setPhysical } from './modules/LPInstances.js';
-export { isPhysical } from './modules/LPInstances.js';
-export { findCenterOfInstancePrimitive } from './modules/LPInstances.js';
-export { setMass } from './modules/LPInstances.js';
-export { getMass } from './modules/LPInstances.js';
-export { setVelocity } from './modules/LPInstances.js';
-export { getVelocity } from './modules/LPInstances.js';
-export { setAcceleration } from './modules/LPInstances.js';
-export { getAcceleration } from './modules/LPInstances.js';
-
-
-export { makeVar } from './modules/LPInstances.js'
-export { getVal } from './modules/LPInstances.js'
-export { setVal } from './modules/LPInstances.js'
-export { hide } from './modules/LPInstances.js';
-export { unhide } from './modules/LPInstances.js';
-export { isHidden } from './modules/LPInstances.js';
-export { freeze } from './modules/LPInstances.js';
-export { unfreeze } from './modules/LPInstances.js';
-export { isFrozen } from './modules/LPInstances.js';
-export { checkCollision } from './modules/LPInstances.js';
+export { destroyInstance } from './modules/LPInstances.js';
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
@@ -127,11 +78,6 @@ export { findMin } from './modules/LPCollision.js';
 export { findMax } from './modules/LPCollision.js';
 //draw functions
 export { draw_plotVectorList } from './modules/LPCollision.js';
-
-//LPPropertys
-export { Property } from './modules/LPProperties.js';
-export { addProperty } from './modules/LPProperties.js';
-export { getProperty } from './modules/LPProperties.js';
 
 //LPEvents
 export { evMouseClick } from './modules/LPEvents.js';

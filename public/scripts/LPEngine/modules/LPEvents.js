@@ -1,6 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
 import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole, timePause, timeResume} from "./LPEngineCore.js";
-import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 
 var mouseX = 0, mouseY = 0;
@@ -89,7 +88,7 @@ export function LPEventsInit(_window) {
             if (isUnitTest()) console.log(`JS: Keydown KeyG`);
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
-            //setPrintConsole(false);
+            setPrintConsole(false);
             timeResume();
         }
         if (keyCode == 'KeyS') {
@@ -209,10 +208,10 @@ export function turnOffEvents() {
 } */
 
 //use with evMouseClick or evMouseDown
-export function evMouseRegion(_boundingBox, _event){
+export function evMouseRegion(_boundingBox, _event, _instanceX, _instanceY, _instanceRot) {
     function isWithinRegion(_boundingBox){
         var pos = getMousePosition();
-        var primbbox = transform_primitive(primFromBoundingBox(_boundingBox), getX(), getY(), getRot());
+        var primbbox = transform_primitive(primFromBoundingBox(_boundingBox), _instanceX, _instanceY, _instanceRot);
         var condition = checkPointInsidePrimitive(pos,primbbox);
         return condition;
     }

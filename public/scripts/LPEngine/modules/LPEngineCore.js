@@ -3,13 +3,12 @@
 import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, flushCollisions, getPrimitiveIndex, getPropertyIndex, getRot, getX, getY, initInstances, isHidden, selectInstance, unSelectAll, updateInstances } from './LPInstances.js';
-import { collisionsInit, getCollisions } from './LPCollision.js';
-import { getProperty } from './LPProperties.js';
+import { INSTANCES, flushCollisions, initInstances, updateInstances } from './LPInstances.js';
+import { collisionsInit } from './LPCollision.js';
 import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './LPTest.js';
-import { PIXITEXTSLIST, initTexts, resetTexts } from './LPTexts.js';
+import { initTexts, resetTexts } from './LPTexts.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -44,7 +43,6 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   runAllTests();
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
-
     //text test end
     updateInstances(delta);
 
@@ -201,14 +199,16 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
 function draw_instances() { //works on the instance currently selected
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
-    /* if (!isHidden()) {
-      if (getPrimitiveIndex() != -1) {
-        var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
-          getX(), getY(), getRot());
+    var current = INSTANCES.get(i);
+    if (!current.isHidden()) { //if not hidden and has a primitive, then draw the primtive
+      if (current.getPrimitiveIndex() != -1) {
+        var trans = transform_primitive(getPrimitive(current.getPrimitiveIndex()),
+          current.getX(), current.getY(), current.getRot());
         draw_primitive(trans);
-      } */
-
-        INSTANCES.get(i).draw(); //run the draw function of this instance
+      }
+    }
+    //afer that run the draw event of this instance
+    current.draw(); //run the draw function of this instance
   }
 }
 
