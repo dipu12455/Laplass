@@ -201,22 +201,14 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
 function draw_instances() { //works on the instance currently selected
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
-    selectInstance(i);
-    if (!isHidden()) {
+    /* if (!isHidden()) {
       if (getPrimitiveIndex() != -1) {
         var trans = transform_primitive(getPrimitive(getPrimitiveIndex()),
           getX(), getY(), getRot());
         draw_primitive(trans);
-      }
+      } */
 
-      //carry out draw operation of that instance after its primitive is drawn
-      var propertyIndex = getPropertyIndex();
-      if (propertyIndex != -1) {
-        var drawFunction = getProperty(propertyIndex).getDrawFunction();
-        drawFunction();
-      }
-    }
-    unSelectAll();
+        INSTANCES.get(i).draw(); //run the draw function of this instance
   }
 }
 

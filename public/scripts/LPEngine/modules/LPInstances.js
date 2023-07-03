@@ -28,7 +28,14 @@ export class LPInstance {
         this.physical = false;
         this.mass = 1; //1 is default, so it won't multiply anything
         this.acceleration = [0, 0];
+        this.init = () => { };
+        this.update = (_delta) => { };
+        this.draw = () => { };
     }
+    newSetX(_x) {
+        this.x = _x;
+    }
+
 }
 
 class LPInstanceList extends LPList {
@@ -89,28 +96,18 @@ export function unSelectAll() {
 }
 
 //create an instance (new LP.LPInstance), then returns its index for use in other functions
-export function addInstance(_primitiveIndex, _spriteIndex, _propertyIndex) {
-    let ind = INSTANCES.add(new LPInstance());
-    selectInstance(ind);
-    setPrimitiveIndex(_primitiveIndex);
-    setSpriteIndex(_spriteIndex);
-    setPropertyIndex(_propertyIndex);
-    unSelectAll();
-    return ind;
+export function addInstance(_instance) {
+    let dummy = INSTANCES.add(_instance);
 }
 
 export function initInstances() {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        selectInstance(i);
-        var propertyIndex = getPropertyIndex();
-        if (propertyIndex != -1) { //if index is -1, then there is no Property for this instance
-            var initFunction = getProperty(propertyIndex).getInitFunction();
-            initFunction();
-        }
-        unSelectAll();
+        //run the init function of this instance
+        INSTANCES.get(i).init();
     }
 }
+
 
 export function updateInstances(_delta) {
     /* changed the order of things happening just like in bounce equation.
@@ -121,7 +118,7 @@ export function updateInstances(_delta) {
     this way, only the acch value goes through change throghout the frame, and velocity is updated only once.*/
     if (isTimeRunning()) {
         runUpdateFunctions(_delta); //updates accelerations of all instances
-        getCollisions(); //add any necessary acch to each instance to account for collisions
+        //getCollisions(); //add any necessary acch to each instance to account for collisions
         factorVelocitiesAndPositions(_delta, 0.02);//def-0.009factor the acch of all instances into their respective velocities, and trajectories
     }/* a key is pressed, a force is applied on an instance. That force application is recorded into its acceleration amount.
     Before letting the force affect the velocity of the object, the collision calculates of a possible collision,
@@ -142,25 +139,24 @@ export function updateInstances(_delta) {
 function runUpdateFunctions(_delta) {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        selectInstance(i);
-        var propertyIndex = getPropertyIndex();
-        if (propertyIndex != -1 && !isFrozen()) { //if index is -1, then there is no Property for this instance
-            var updateFunction = getProperty(propertyIndex).getUpdateFunction();
-            updateFunction(_delta); //only the accs of instances are updated
-        }
-        unSelectAll();
+        //if (!isFrozen())
+        //run the update function of this instance
+        INSTANCES.get(i).update(_delta);
     }
 }
 function factorVelocitiesAndPositions(_delta, _threshold) {
     //loop through all instances to factor their velocities and positions according to their acchs.
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        selectInstance(i);
-        //get its hspeed and vspeed
-        var hspeed = getHSpeed();
-        var vspeed = getVSpeed();
+        
+        //get the instance
+        var current = INSTANCES.get(i);
 
-        var acc = getAcceleration();
+        //get its hspeed and vspeed
+        var hspeed = current.hspeed;
+        var vspeed = current.vspeed;
+
+        var acc = current.acceleration;
 
         hspeed += acc[0];
         vspeed += acc[1];
@@ -171,14 +167,13 @@ function factorVelocitiesAndPositions(_delta, _threshold) {
             vspeed = 0;
         }
 
-        setHSpeed(hspeed);
-        setVSpeed(vspeed);
+        current.hspeed;
+        current.vspeed;
 
         //translate the instance according to their speed
-        setX(getX() + getHSpeed() * _delta);
-        setY(getY() + getVSpeed() * _delta);
-        setRot(getRot() + getRSpeed() * _delta);
-        unSelectAll(); //don't forget to unselect
+        current.x += current.hspeed * _delta;
+        current.y += current.vspeed * _delta;
+        current.rot += current.rspeed * _delta;
     }
 }
 
@@ -237,7 +232,7 @@ export function getY() {
 }
 export function getPosition() {
     return [fetchInstance().x,
-        fetchInstance().y];
+    fetchInstance().y];
 }
 export function getRot() {
     return fetchInstance().rot;
