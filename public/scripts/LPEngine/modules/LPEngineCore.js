@@ -9,6 +9,7 @@ import { getProperty } from './LPProperties.js';
 import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './LPTest.js';
+import { PIXITEXTSLIST, initTexts, resetTexts } from './LPTexts.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -19,8 +20,6 @@ var screenGrid = false;
 var timeRun = true;
 var printConsoleState = false;
 var unitTestState = false;
-
-var LPDraw; //variable to hold the user coded draw function
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
@@ -39,25 +38,34 @@ export function runEngine(_window, _width, _height, _LPDraw) {
 
   //loop through the instances to execute their init functions
   initInstances();
+  initTexts();
   collisionsInit();
   //run test if toggled
   runAllTests();
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
+
+    //text test end
     updateInstances(delta);
 
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
-    drawObject.clear(); //clear drawing of last calls
+    drawObject.clear();
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
 
     //draw all the instances, here the drawings from the client app would be drawn over the instances
     draw_instances();
+
+    resetTexts();
+
   });
 
 }
 
+export function getApp() {
+  return app;
+}
 export function getWorldOrigin() {
   return [worldOriginX, worldOriginY];
 }
@@ -70,14 +78,17 @@ export function setWorldDelta(_worldDelta) {
   worldDelta = _worldDelta;
 }
 
-function moveToScreenCoord(_p) { //change from LP's coordinate system to screen coords, coordinates are converted to pixel positions on screen
+export function moveToScreenCoord(_p) { //change from LP's coordinate system to screen coords, coordinates are converted to pixel positions on screen
   var xx = worldOriginX + (_p[0] * worldDelta);
   var yy = worldOriginY - (_p[1] * worldDelta);
   return [xx, yy];
 }
 
-export function runTicker() {
-
+export function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
+  if (getWorldDelta() <= 0) console.error(`worldDelta cannot be zero`);
+  var xx = (_p[0] - getWorldOrigin()[0]) / getWorldDelta();
+  var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta(); //these are simply opposites of changing worldcoord into pixels
+  return [xx, yy];
 }
 
 export function timePause() {
@@ -107,15 +118,14 @@ export function isUnitTest() {
   return unitTestState;
 }
 //this function is where you add new tests to run
-function runAllTests(){
-  if (isUnitTest()){
-      console.log(`Running tests...`);
-     runTest(LPVectorTest);
-     runTest(LPEventsTest);
-     //runTest(...)
+function runAllTests() {
+  if (isUnitTest()) {
+    console.log(`Running tests...`);
+    runTest(LPVectorTest);
+    runTest(LPEventsTest);
+    //runTest(...)
   }
 }
-
 
 export function showScreenGrid() { screenGrid = true; }
 export function hideScreenGrid() { screenGrid = false; }

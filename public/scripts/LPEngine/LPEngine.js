@@ -154,3 +154,6 @@ export { evMouseRegion } from './modules/LPEvents.js';
 export { isEventFired } from './modules/LPEvents.js';
 export { turnOffEvent } from './modules/LPEvents.js';
 export { isPEventFired } from './modules/LPEvents.js';
+
+//LPTexts
+export { draw_text } from './modules/LPTexts.js';
