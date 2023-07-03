@@ -1,5 +1,5 @@
 import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole} from "./LPEngineCore.js";
+import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole, timePause, timeResume} from "./LPEngineCore.js";
 import { getRot, getX, getY } from "./LPInstances.js";
 import { transform_primitive } from "./LPPrimitives.js";
 
@@ -90,6 +90,7 @@ export function LPEventsInit(_window) {
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
             //setPrintConsole(false);
+            timeResume();
         }
         if (keyCode == 'KeyS') {
             if (isUnitTest()) console.log(`JS: Keydown KeyS`);
@@ -101,6 +102,7 @@ export function LPEventsInit(_window) {
             fireEvent(evKeyP);
             firePEvent(evKeyP_p);
             //setPrintConsole(true);
+            timePause();
         }
         if (keyCode == 'KeyW') {
             if (isUnitTest()) console.log(`JS: Keydown KeyW`);

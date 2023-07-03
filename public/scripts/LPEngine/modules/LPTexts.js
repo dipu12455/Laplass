@@ -62,6 +62,4 @@ export function resetTexts() {
             updated[i] = false;
         }
     }
-    printConsole(`texts reset at end of frame`);
-    printConsole(`PIXITEXTSLIST.getSize() = ${PIXITEXTSLIST.getSize()}`);
 }
