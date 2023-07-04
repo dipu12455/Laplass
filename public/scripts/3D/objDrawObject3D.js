@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { screenCoordtoWorldCoord } from '../LPEngine/modules/LPEngineCore.js'; //directly importing because this function isnt meant to be used by client app
 import { cube } from './cubeMesh.js';
-import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, mat4x4, multiplyMatrixVector, multiplyTriangleWithMatrix, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
+import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, multiplyMatrixVector, multiplyTriangleWithMatrix, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
 import { plane } from './planeMesh.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
@@ -26,7 +26,7 @@ export class objDrawObject3D extends LP.LPGameObject {
         this.Z = 0;
         this.elapsed = 0;
 
-        this.vCamera = [0,0,0];
+        this.vCamera = [0, 0, 0];
 
         this.init = () => {
         };
@@ -49,6 +49,7 @@ export class objDrawObject3D extends LP.LPGameObject {
 
         this.draw = () => {
             LP.draw_text(`elapsed: ${this.elapsed}`, [-13, 10], 0.5, 0x0000ff);
+            var printed = false;
             var x = this.X;
             var y = this.Y;
             var z = this.Z;
@@ -73,7 +74,17 @@ export class objDrawObject3D extends LP.LPGameObject {
 
                 //only draw triangle if it is unobstructed
                 //if (normal[2] < 0) {
-                    if (dotProduct < 0) {
+                if (dotProduct < 0) {
+                    //illumination (of course, only if you can see it)
+                    const light_direction = [0, 0, -1];
+                    const vU_light_direction = getUnitVector_3D(light_direction);
+
+                    //see how similar the normal is to the light direction
+                    var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
+                    //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
+                    //use this dotproduct2 value to input rbg between 0-1
+                    var color = LP.rgbToHex(0, dotProduct2, 0); //just green
+
                     //get the projection matrix
                     var matProj = this.getProjectionMatrix();
                     var triProjected = multiplyTriangleWithMatrix(triTranslated, matProj);
@@ -82,7 +93,7 @@ export class objDrawObject3D extends LP.LPGameObject {
 
                     fillTriangle([triProjected.v1[0], triProjected.v1[1]],
                         [triProjected.v2[0], triProjected.v2[1]],
-                        [triProjected.v3[0], triProjected.v3[1]], 0x000000);
+                        [triProjected.v3[0], triProjected.v3[1]], color);
                 };
             }
 

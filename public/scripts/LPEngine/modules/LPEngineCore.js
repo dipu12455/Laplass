@@ -125,6 +125,9 @@ function runAllTests() {
   }
 }
 
+export function rgbToHex(_r, _g, _b) { //rgb value provide in 0-1 range
+  return PIXI.utils.rgb2hex([_r, _g, _b]);
+}
 export function showScreenGrid() { screenGrid = true; }
 export function hideScreenGrid() { screenGrid = false; }
 

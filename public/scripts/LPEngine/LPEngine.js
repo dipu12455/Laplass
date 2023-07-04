@@ -59,6 +59,7 @@ export { setUnitTest } from './modules/LPEngineCore.js';
 export { isUnitTest } from './modules/LPEngineCore.js';
 export { getWorldDelta } from './modules/LPEngineCore.js';
 export { setWorldDelta } from './modules/LPEngineCore.js';
+export { rgbToHex } from './modules/LPEngineCore.js';
 export { showScreenGrid } from './modules/LPEngineCore.js';
 export { hideScreenGrid } from './modules/LPEngineCore.js';
 export { draw_line } from './modules/LPEngineCore.js';
