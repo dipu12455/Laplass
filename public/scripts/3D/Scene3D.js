@@ -1,4 +1,8 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { pDrawObject3D } from './pDrawObject3D.js';
+import { objDrawObject3D } from './objDrawObject3D.js';
 
-var drawObject = LP.addInstance(-1,-1,pDrawObject3D);
+LP.setPrintConsole(true);
+
+var insDrawObject3D = new objDrawObject3D();
+LP.addInstance(insDrawObject3D);
+

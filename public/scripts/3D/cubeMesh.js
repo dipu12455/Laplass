@@ -1,7 +1,7 @@
 import { Mesh, Triangle } from "./3DFunctionsAndClasses.js";
 
 //now we are describing the mesh of a cube
-var triangleArray = [
+const triangleArray = [
     //south face
     new Triangle([[0, 0, 0], [0, 1, 0], [1, 1, 0]]),
     new Triangle([[0, 0, 0], [1, 1, 0], [1, 0, 0]]),
@@ -26,4 +26,4 @@ var triangleArray = [
     new Triangle([[1, 0, 1], [0, 0, 1], [0, 0, 0]]),
     new Triangle([[1, 0, 1], [0, 0, 0], [1, 0, 0]])];
 
-export var cube = new Mesh(triangleArray);
+export const cube = new Mesh(triangleArray);

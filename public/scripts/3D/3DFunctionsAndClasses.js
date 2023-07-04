@@ -8,6 +8,7 @@ export function returnZeroMat4x4() {
     [0, 0, 0, 0],
     [0, 0, 0, 0]];
 }
+
 export class mat4x4 {
     constructor() {
         this.m = returnZeroMat4x4();
@@ -39,6 +40,58 @@ export function copyTriangle(_triangle) {
         [_triangle.v1[0], _triangle.v1[1], _triangle.v1[2]],
         [_triangle.v2[0], _triangle.v2[1], _triangle.v2[2]],
         [_triangle.v3[0], _triangle.v3[1], _triangle.v3[2]]]);
+}
+
+export function multiplyTriangleWithMatrix(_triangle, _matrix) {
+    var triange = new Triangle([
+        multiplyMatrixVector(_triangle.v1, _matrix),
+        multiplyMatrixVector(_triangle.v2, _matrix),
+        multiplyMatrixVector(_triangle.v3, _matrix)]);
+    return triange;
+}
+
+export function translateTriangle(_triangle, _translation) {
+    var triangle = new Triangle([
+        [_triangle.v1[0] + _translation[0], _triangle.v1[1] + _translation[1], _triangle.v1[2] + _translation[2]],
+        [_triangle.v2[0] + _translation[0], _triangle.v2[1] + _translation[1], _triangle.v2[2] + _translation[2]],
+        [_triangle.v3[0] + _translation[0], _triangle.v3[1] + _translation[1], _triangle.v3[2] + _translation[2]]]);
+    return triangle;
+}
+
+export function getTriangleNormal(_triangle) {
+    var normal, line1, line2;
+    line1 = v2Minusv1_3D(_triangle.v1, _triangle.v2);
+    line2 = v2Minusv1_3D(_triangle.v1, _triangle.v3);
+    normal = crossProduct(line1, line2);
+    
+    //normalize the normal
+    normal = getUnitVector_3D(normal);
+
+    return normal;
+}
+
+export function dotProduct_3D(_v1, _v2) {
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    return _v1[x] * _v2[x] + _v1[y] * _v2[y] + _v1[z] * _v2[z];
+}
+
+export function crossProduct(_v1,_v2){ //these are 3D vectors for input
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    return [_v1[y]*_v2[z] - _v1[z]*_v2[y], 
+    _v1[z]*_v2[x] - _v1[x]*_v2[z], 
+    _v1[x]*_v2[y] - _v1[y]*_v2[x]];
+}
+
+export function v2Minusv1_3D(_v1, _v2) {
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    return [_v2[x] - _v1[x], _v2[y] - _v1[y], _v2[z] - _v1[z]];
+}
+
+export function getUnitVector_3D(_v) {
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    var length = Math.sqrt(_v[x] * _v[x] + _v[y] * _v[y] + _v[z] * _v[z]);
+    if (length <= 0) { return [0, 0, 0]; }
+    return [_v[x] / length, _v[y] / length, _v[z] / length];
 }
 
 //multiply a 3d vector by a matrix 4x4, and reurns a new 3D vector
