@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { screenCoordtoWorldCoord } from '../LPEngine/modules/LPEngineCore.js'; //directly importing because this function isnt meant to be used by client app
 import { cube } from './cubeMesh.js';
-import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, multiplyMatrixVector, multiplyTriangleWithMatrix, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
+import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, mesh, multiplyMatrixVector, multiplyTriangleWithMatrix, printMesh, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
 import { plane } from './planeMesh.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
@@ -29,6 +29,7 @@ export class objDrawObject3D extends LP.LPGameObject {
         this.vCamera = [0, 0, 0];
 
         this.init = () => {
+            //printMesh(mesh);
         };
 
         this.update = (_delta) => {
@@ -42,9 +43,9 @@ export class objDrawObject3D extends LP.LPGameObject {
 
             //oscillate the Y
             var animate = Math.sin(this.elapsed / 50.0);
-            this.Y = this.Y + (animate * 0.01);
-            this.X = this.X + (animate * 0.01);
-            this.Z = this.Z + (animate * 0.01);
+            //this.Y = this.Y + (animate * 0.01);
+            //this.X = this.X + (animate * 0.01);
+            //this.Z = this.Z + (animate * 0.01);
         };
 
         this.draw = () => {
@@ -55,14 +56,15 @@ export class objDrawObject3D extends LP.LPGameObject {
             var z = this.Z;
 
             let i = 0;
-            var selectedMesh = cube;
+            //try block because mesh might not have loaded yet, so it will just fail but program will continue
+            var selectedMesh = mesh;
             for (i = 0; i < selectedMesh.triangles.length; i += 1) {
                 const tri = selectedMesh.triangles[i];
 
                 var triRotatedZ = multiplyTriangleWithMatrix(tri, this.matRotZ);
                 var triRotatedZX = multiplyTriangleWithMatrix(triRotatedZ, this.matRotX);
 
-                var amount = 3;
+                var amount = 5;
                 var triTranslated = translateTriangle(triRotatedZX, [0, 0, amount]); //just to put it a certain distance away from the camera
 
                 triTranslated = translateTriangle(triTranslated, [x, y, z]); //after its placed a certain distance away, just move it around that place
@@ -96,7 +98,6 @@ export class objDrawObject3D extends LP.LPGameObject {
                         [triProjected.v3[0], triProjected.v3[1]], color);
                 };
             }
-
         }
     }
     updateRotationMatrixX(_theta) {

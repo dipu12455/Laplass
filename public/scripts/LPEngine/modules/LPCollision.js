@@ -120,8 +120,6 @@ function updateAcchByExchangeOfMomenta(_instance1, _instance2) {
   //likewise for 2nd instance
   var acc2Prev = _instance2.getAcceleration();
   _instance2.setAcceleration(v1Plusv2(acc2Prev, acc2));
-
-  setPrintConsole(false);
 }
 //check collision between circles
 export function checkCollisionCircles(_p1, _r1, _p2, _r2) {

@@ -17,7 +17,7 @@ var drawObject;
 var worldOriginX, worldOriginY, worldDelta;
 var screenGrid = false;
 var timeRun = true;
-var printConsoleState = false;
+var printConsoleState = true;
 var unitTestState = false;
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
