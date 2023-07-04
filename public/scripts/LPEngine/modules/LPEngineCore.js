@@ -160,6 +160,28 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor) {
   draw_anchor(_v, _anchorColor);
 }
 
+export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
+  var i = 0;
+  var j = 0;
+  var path = [];
+
+  for (i = 0; i < _vertexList.getSize(); i += 1) {
+    var vertex = _vertexList.get(i);
+    var vertex2 = moveToScreenCoord(vertex);
+    path[j] = vertex2[0];
+    path[j + 1] = vertex2[1];
+    j = j + 2;
+  }
+  if (_wireframe == true) {
+    drawObject.lineStyle(1, _lineColor, 1);
+    drawObject.drawPolygon(path);
+  } else {
+    drawObject.lineStyle(0);
+    drawObject.beginFill(_fillColor, 1);
+    drawObject.drawPolygon(path);
+    drawObject.endFill();
+  }
+} //the functions draw_polygon and draw_primitive are copy pasting code, fix it later
 export function draw_primitive(_primitive) {
   var lineColor = _primitive.lineColor; //not using getLineColor() because inside LPE, we don't work with indices, just the object directly
   var fillColor = _primitive.fillColor;

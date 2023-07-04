@@ -29,10 +29,19 @@ export class Mesh {
     }
 }
 
-export function drawTriangle(_v1, _v2, _v3) { //the inputs are 2D vectorsq
+export function drawTriangle(_v1, _v2, _v3) { //the inputs are 2D vectors
     LP.draw_line(_v1, _v2, 0x00ff00);
     LP.draw_line(_v2, _v3, 0x00ff00);
     LP.draw_line(_v3, _v1, 0x00ff00);
+}
+
+export function fillTriangle(_v1, _v2, _v3, _color) { //the inputs are 2D vectors
+    const vertexList = new LP.LPList();
+    vertexList.add(_v1);
+    vertexList.add(_v2);
+    vertexList.add(_v3);
+
+    LP.draw_polygon(vertexList, 0x000000, false, _color);
 }
 
 export function copyTriangle(_triangle) {
@@ -63,7 +72,7 @@ export function getTriangleNormal(_triangle) {
     line1 = v2Minusv1_3D(_triangle.v1, _triangle.v2);
     line2 = v2Minusv1_3D(_triangle.v1, _triangle.v3);
     normal = crossProduct(line1, line2);
-    
+
     //normalize the normal
     normal = getUnitVector_3D(normal);
 
@@ -75,11 +84,11 @@ export function dotProduct_3D(_v1, _v2) {
     return _v1[x] * _v2[x] + _v1[y] * _v2[y] + _v1[z] * _v2[z];
 }
 
-export function crossProduct(_v1,_v2){ //these are 3D vectors for input
+export function crossProduct(_v1, _v2) { //these are 3D vectors for input
     var x = 0, y = 1, z = 2; //just to make it more readable
-    return [_v1[y]*_v2[z] - _v1[z]*_v2[y], 
-    _v1[z]*_v2[x] - _v1[x]*_v2[z], 
-    _v1[x]*_v2[y] - _v1[y]*_v2[x]];
+    return [_v1[y] * _v2[z] - _v1[z] * _v2[y],
+    _v1[z] * _v2[x] - _v1[x] * _v2[z],
+    _v1[x] * _v2[y] - _v1[y] * _v2[x]];
 }
 
 export function v2Minusv1_3D(_v1, _v2) {

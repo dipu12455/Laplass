@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { screenCoordtoWorldCoord } from '../LPEngine/modules/LPEngineCore.js'; //directly importing because this function isnt meant to be used by client app
 import { cube } from './cubeMesh.js';
-import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, getTriangleNormal, mat4x4, multiplyMatrixVector, multiplyTriangleWithMatrix, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
+import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, mat4x4, multiplyMatrixVector, multiplyTriangleWithMatrix, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
 import { plane } from './planeMesh.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
@@ -80,9 +80,9 @@ export class objDrawObject3D extends LP.LPGameObject {
 
                     triProjected = this.moveTriangleToScreen(triProjected, 0);
 
-                    drawTriangle([triProjected.v1[0], triProjected.v1[1]],
+                    fillTriangle([triProjected.v1[0], triProjected.v1[1]],
                         [triProjected.v2[0], triProjected.v2[1]],
-                        [triProjected.v3[0], triProjected.v3[1]]);
+                        [triProjected.v3[0], triProjected.v3[1]], 0x000000);
                 };
             }
 
