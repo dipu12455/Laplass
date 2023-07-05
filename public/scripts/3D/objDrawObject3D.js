@@ -1,8 +1,9 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { fillTriangle, getTriangleNormal, multiplyTriangleWithMatrix, sortTrianglesByDepth, translateTriangle } from './modules/LPDraw3D.js';
-import { mat4x4 } from './modules/LPMatrix4x4.js';
+import { getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, mat4x4 } from './modules/LPMatrix4x4.js';
 import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D } from './modules/LPVector3D.js';
 import { mesh } from './3DmodelResource.js';
+import { moveTriangleToScreen } from './modules/LPDraw3D.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
     constructor() {
@@ -17,6 +18,10 @@ export class objDrawObject3D extends LP.LPGameObject {
         //hardcoding this because these screenCoordtoWorldCoord functions is running before LPE initializes
         this.screenWidth = (640 - 640 / 2) / 20;
         this.screenHeight = (480 / 2 - 480) / 20;
+        this.aspectRatio = this.screenHeight / this.screenWidth;
+        this.fieldOfView = 90;
+        this.zNear = 0.1;
+        this.zFar = 1000;
 
         this.matRotX = new mat4x4();
         this.matRotY = new mat4x4();
@@ -37,9 +42,9 @@ export class objDrawObject3D extends LP.LPGameObject {
 
             //update theta
             var theta = this.elapsed * 0.5;
-            this.updateRotationMatrixX(theta);
-            //this.updateRotationMatrixY(theta);
-            this.updateRotationMatrixZ(theta);
+            this.matRotX = getRotationMatrixX(180);
+            this.matRotY = getRotationMatrixY(theta);
+            this.matRotZ = getRotationMatrixZ(0);
 
             //oscillate the Y
             var animate = Math.sin(this.elapsed / 50.0);
@@ -63,11 +68,12 @@ export class objDrawObject3D extends LP.LPGameObject {
             for (i = 0; i < selectedMesh.triangles.length; i += 1) {
                 const tri = selectedMesh.triangles[i];
 
-                var triRotatedZ = multiplyTriangleWithMatrix(tri, this.matRotZ);
-                var triRotatedZX = multiplyTriangleWithMatrix(triRotatedZ, this.matRotX);
+                var triRotatedX = multiplyTriangleWithMatrix(tri, this.matRotX);
+                var triRotatedXY = multiplyTriangleWithMatrix(triRotatedX, this.matRotY);
+                var triRotatedXYZ = multiplyTriangleWithMatrix(triRotatedXY, this.matRotZ);
 
                 var amount = 150;
-                var triTranslated = translateTriangle(triRotatedZX, [0, 0, amount]); //just to put it a certain distance away from the camera
+                var triTranslated = translateTriangle(triRotatedXYZ, [0, 0, amount]); //just to put it a certain distance away from the camera
 
                 triTranslated = translateTriangle(triTranslated, [x, y, z]); //after its placed a certain distance away, just move it around that place
 
@@ -90,10 +96,10 @@ export class objDrawObject3D extends LP.LPGameObject {
                     var color = LP.rgbToHex(0, dotProduct2, dotProduct2); //just green
 
                     //get the projection matrix
-                    var matProj = this.getProjectionMatrix();
+                    var matProj = getProjectionMatrix(this.aspectRatio, this.fieldOfView, this.zNear, this.zFar);
                     var triProjected = multiplyTriangleWithMatrix(triTranslated, matProj);
 
-                    triProjected = this.moveTriangleToScreen(triProjected, 0);
+                    triProjected = moveTriangleToScreen(triProjected, 0, this.screenWidth, this.screenHeight);
 
                     //store this finished triangle into the unsorted list, collect all triangles from this draw frame
                     triProjected.color = color;
@@ -114,73 +120,5 @@ export class objDrawObject3D extends LP.LPGameObject {
 
 
         }
-    }
-    updateRotationMatrixX(_theta) {
-        //rotation X
-        this.matRotX.m[0][0] = 1;
-        this.matRotX.m[1][1] = Math.cos(LP.degtorad(_theta * 0.5));
-        this.matRotX.m[1][2] = Math.sin(LP.degtorad(_theta * 0.5));
-        this.matRotX.m[2][1] = -Math.sin(LP.degtorad(_theta * 0.5));
-        this.matRotX.m[2][2] = Math.cos(LP.degtorad(_theta * 0.5));
-        this.matRotX.m[3][3] = 1;
-    }
-    updateRotationMatrixY(_theta) {
-        //rotation Y
-        this.matRotY.m[0][0] = Math.cos(LP.degtorad(_theta * 0.5));
-        this.matRotY.m[0][2] = Math.sin(LP.degtorad(_theta * 0.5));
-        this.matRotY.m[2][0] = -Math.sin(LP.degtorad(_theta * 0.5));
-        this.matRotY.m[1][1] = 1;
-        this.matRotY.m[2][2] = Math.cos(LP.degtorad(_theta * 0.5));
-        this.matRotY.m[3][3] = 1;
-    }
-    updateRotationMatrixZ(_theta) {
-        this.matRotZ.m[0][0] = Math.cos(LP.degtorad(_theta));
-        this.matRotZ.m[0][1] = Math.sin(LP.degtorad(_theta));
-        this.matRotZ.m[1][0] = -Math.sin(LP.degtorad(_theta));
-        this.matRotZ.m[1][1] = Math.cos(LP.degtorad(_theta));
-        this.matRotZ.m[2][2] = 1;
-        this.matRotZ.m[3][3] = 1;
-    }
-    getProjectionMatrix() {
-        //projection matrix
-        var aspectRatio = this.screenHeight / this.screenWidth;
-        var fieldOfView = 90;
-        var zNear = 0.1;
-        var zFar = 1000;
-        var F = 1 / Math.tan(LP.degtorad(fieldOfView * 0.5));
-        var q = zFar / (zFar - zNear);
-
-        var matProj = new mat4x4();
-        matProj.m[0][0] = aspectRatio * F;
-        matProj.m[1][1] = F;
-        matProj.m[2][2] = q;
-        matProj.m[3][2] = -q * zNear;
-        matProj.m[2][3] = 1;
-        matProj.m[3][3] = 0;
-
-        return matProj;
-    }
-    moveTriangleToScreen(_triangle, _scale) {
-
-        //scale into view, still normalized, scale = 0
-        _triangle.v1[0] += _scale;
-        _triangle.v1[1] += _scale;
-        _triangle.v1[2] += _scale;
-        _triangle.v2[0] += _scale;
-        _triangle.v2[1] += _scale;
-        _triangle.v2[2] += _scale;
-        _triangle.v3[0] += _scale;
-        _triangle.v3[1] += _scale;
-        _triangle.v3[2] += _scale;
-
-        //here we are denormalizing into screen width and height
-        _triangle.v1[0] *= -this.screenWidth;
-        _triangle.v1[1] *= this.screenHeight;
-        _triangle.v2[0] *= -this.screenWidth;
-        _triangle.v2[1] *= this.screenHeight;
-        _triangle.v3[0] *= -this.screenWidth;
-        _triangle.v3[1] *= this.screenHeight;
-
-        return _triangle;
     }
 }

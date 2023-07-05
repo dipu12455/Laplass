@@ -25,6 +25,30 @@ export function copyTriangle(_triangle) {
         [_triangle.v3[0], _triangle.v3[1], _triangle.v3[2]]]);
 }
 
+export function moveTriangleToScreen(_triangle, _scale, _screenWidth, _screenHeight) {
+
+    //scale into view, still normalized, scale = 0
+    _triangle.v1[0] += _scale;
+    _triangle.v1[1] += _scale;
+    _triangle.v1[2] += _scale;
+    _triangle.v2[0] += _scale;
+    _triangle.v2[1] += _scale;
+    _triangle.v2[2] += _scale;
+    _triangle.v3[0] += _scale;
+    _triangle.v3[1] += _scale;
+    _triangle.v3[2] += _scale;
+
+    //here we are denormalizing into screen width and height
+    _triangle.v1[0] *= -_screenWidth;
+    _triangle.v1[1] *= _screenHeight;
+    _triangle.v2[0] *= -_screenWidth;
+    _triangle.v2[1] *= _screenHeight;
+    _triangle.v3[0] *= -_screenWidth;
+    _triangle.v3[1] *= _screenHeight;
+
+    return _triangle;
+}
+
 export function multiplyTriangleWithMatrix(_triangle, _matrix) {
     var triange = new Triangle([
         multiplyMatrixVector(_triangle.v1, _matrix),
