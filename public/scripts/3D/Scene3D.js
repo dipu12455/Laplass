@@ -1,5 +1,4 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { getMeshFromObj, printMesh } from './3DFunctionsAndClasses.js';
 import { objDrawObject3D } from './objDrawObject3D.js';
 
 

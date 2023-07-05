@@ -1,8 +1,8 @@
 import * as LP from '../LPEngine/LPEngine.js';
-import { screenCoordtoWorldCoord } from '../LPEngine/modules/LPEngineCore.js'; //directly importing because this function isnt meant to be used by client app
-import { cube } from './cubeMesh.js';
-import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, mesh, multiplyMatrixVector, multiplyTriangleWithMatrix, printMesh, sortTrianglesByDepth, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
-import { plane } from './planeMesh.js';
+import { fillTriangle, getTriangleNormal, multiplyTriangleWithMatrix, sortTrianglesByDepth, translateTriangle } from './modules/LPDraw3D.js';
+import { mat4x4 } from './modules/LPMatrix4x4.js';
+import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D } from './modules/LPVector3D.js';
+import { mesh } from './3DmodelResource.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
     constructor() {
