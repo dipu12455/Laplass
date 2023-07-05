@@ -32,7 +32,7 @@ export function multiplyMatrixVector(_v, _m) {
     return [xdash, ydash, zdash];
 }
 
-export function multiplyMatrixVectorNew(_v,_m){
+export function multiplyMatrixVectorNew(_v, _m) {
     var x = _v[0];
     var y = _v[1];
     var z = _v[2];
@@ -45,7 +45,7 @@ export function multiplyMatrixVectorNew(_v,_m){
     return [xdash, ydash, zdash, wdash];
 }
 
-export function makeIdentityMatrix(){
+export function makeIdentityMatrix() {
     var matrix = new mat4x4();
     matrix.m[0][0] = 1;
     matrix.m[1][1] = 1;
@@ -73,7 +73,7 @@ export function getTranslationMatrix(_x, _y, _z) {
     var matrix = new mat4x4();
     matrix.m[0][0] = 1;
     matrix.m[1][1] = 1;
-    matrix.m[2][2] = 1; 
+    matrix.m[2][2] = 1;
     matrix.m[3][3] = 1;
     matrix.m[3][0] = _x;
     matrix.m[3][1] = _y;
@@ -112,5 +112,19 @@ export function getRotationMatrixZ(_theta) {
     matrix.m[1][1] = Math.cos(LP.degtorad(_theta));
     matrix.m[2][2] = 1;
     matrix.m[3][3] = 1;
+    return matrix;
+}
+
+//Credit: javidx9
+export function matrixMultiMatrix(_m1, _m2) {
+    var matrix = new mat4x4();
+    for (var c = 0; c < 4; c += 1) {
+        for (var r = 0; r < 4; r += 1) {
+            matrix.m[r][c] = _m1.m[r][0] * _m2.m[0][c] + 
+            _m1.m[r][1] * _m2.m[1][c] + 
+            _m1.m[r][2] * _m2.m[2][c] + 
+            _m1.m[r][3] * _m2.m[3][c];
+        }
+    }
     return matrix;
 }
