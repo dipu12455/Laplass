@@ -22,6 +22,7 @@ export class Triangle {
         this.v1 = _vertices[0];
         this.v2 = _vertices[1];
         this.v3 = _vertices[2];
+        this.color = 0x000000;
     }
 }
 
@@ -205,3 +206,38 @@ export function printMesh(_mesh){
         console.log(`triangle ${i}: v1 = ${_mesh.triangles[i].v1}, v2 = ${_mesh.triangles[i].v2}, v3 = ${_mesh.triangles[i].v3}`);
     }
 }
+
+export function sortTrianglesByDepth(_trianglesList){ //the input is an LPList
+    /* LP.printConsole(`Triangle list before sorting...`);
+    var m = 0;
+    for(m = 0; m < _trianglesList.getSize(); m += 1){
+        var midZ = (_trianglesList.get(m).v1[2] + _trianglesList.get(m).v2[2] + _trianglesList.get(m).v3[2]) / 3;
+        LP.printConsole(`Triangle ${m}: midZ = ${midZ}`);
+    } */
+
+
+    var i = 0;
+    for(i = 0; i < _trianglesList.getSize(); i += 1){
+        var j = 0;
+        for(j = 0; j < _trianglesList.getSize(); j += 1){
+            var midZ1 = (_trianglesList.get(i).v1[2] + _trianglesList.get(i).v2[2] + _trianglesList.get(i).v3[2]) / 3;
+            var midZ2 = (_trianglesList.get(j).v1[2] + _trianglesList.get(j).v2[2] + _trianglesList.get(j).v3[2]) / 3;
+            if(midZ1 > midZ2){
+                var temp = _trianglesList.get(i);
+                _trianglesList.put(_trianglesList.get(j),i);
+                _trianglesList.put(temp,j);
+            }
+        }
+    }
+
+    /* LP.printConsole(`Triangle list after sorting...`);
+    var m = 0;
+    for(m = 0; m < _trianglesList.getSize(); m += 1){
+        var midZ = (_trianglesList.get(m).v1[2] + _trianglesList.get(m).v2[2] + _trianglesList.get(m).v3[2]) / 3;
+        LP.printConsole(`Triangle ${m}: midZ = ${midZ}`);
+    } */
+
+    LP.setPrintConsole(false);
+    return _trianglesList;
+}
+

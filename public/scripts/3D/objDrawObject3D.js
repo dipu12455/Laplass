@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { screenCoordtoWorldCoord } from '../LPEngine/modules/LPEngineCore.js'; //directly importing because this function isnt meant to be used by client app
 import { cube } from './cubeMesh.js';
-import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, mesh, multiplyMatrixVector, multiplyTriangleWithMatrix, printMesh, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
+import { Mesh, Triangle, copyTriangle, dotProduct_3D, drawTriangle, fillTriangle, getTriangleNormal, getUnitVector_3D, mat4x4, mesh, multiplyMatrixVector, multiplyTriangleWithMatrix, printMesh, sortTrianglesByDepth, translateTriangle, v2Minusv1_3D } from './3DFunctionsAndClasses.js';
 import { plane } from './planeMesh.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
@@ -55,6 +55,8 @@ export class objDrawObject3D extends LP.LPGameObject {
             var y = this.Y;
             var z = this.Z;
 
+            var unsortedTrianglesList = new LP.LPList();
+
             let i = 0;
             //try block because mesh might not have loaded yet, so it will just fail but program will continue
             var selectedMesh = mesh;
@@ -64,7 +66,7 @@ export class objDrawObject3D extends LP.LPGameObject {
                 var triRotatedZ = multiplyTriangleWithMatrix(tri, this.matRotZ);
                 var triRotatedZX = multiplyTriangleWithMatrix(triRotatedZ, this.matRotX);
 
-                var amount = 5;
+                var amount = 150;
                 var triTranslated = translateTriangle(triRotatedZX, [0, 0, amount]); //just to put it a certain distance away from the camera
 
                 triTranslated = translateTriangle(triTranslated, [x, y, z]); //after its placed a certain distance away, just move it around that place
@@ -85,7 +87,7 @@ export class objDrawObject3D extends LP.LPGameObject {
                     var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
                     //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
                     //use this dotproduct2 value to input rbg between 0-1
-                    var color = LP.rgbToHex(0, dotProduct2, 0); //just green
+                    var color = LP.rgbToHex(0, dotProduct2, dotProduct2); //just green
 
                     //get the projection matrix
                     var matProj = this.getProjectionMatrix();
@@ -93,11 +95,24 @@ export class objDrawObject3D extends LP.LPGameObject {
 
                     triProjected = this.moveTriangleToScreen(triProjected, 0);
 
-                    fillTriangle([triProjected.v1[0], triProjected.v1[1]],
-                        [triProjected.v2[0], triProjected.v2[1]],
-                        [triProjected.v3[0], triProjected.v3[1]], color);
+                    //store this finished triangle into the unsorted list, collect all triangles from this draw frame
+                    triProjected.color = color;
+                    unsortedTrianglesList.add(triProjected);
                 };
             }
+
+            //sort triangles here by depth, then draw them. This is the painter's algorithm
+            //sorting them back to front, so the back triangles get drawn first
+            var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
+            i = 0;
+            for (i = 0; i < sortedTrianglesList.getSize(); i += 1) {
+                var tri = sortedTrianglesList.get(i);
+                fillTriangle([tri.v1[0], tri.v1[1]],
+                    [tri.v2[0], tri.v2[1]],
+                    [tri.v3[0], tri.v3[1]], tri.color);
+            }
+
+
         }
     }
     updateRotationMatrixX(_theta) {
