@@ -1,5 +1,5 @@
 import * as LP from '../../LPEngine/LPEngine.js';
-import { multiplyMatrixVector, multiplyMatrixVectorNew } from './LPMatrix4x4.js';
+import { multiplyMatrixVector } from './LPMatrix4x4.js';
 import { Triangle } from './LPModels3D.js';
 import { v2Minusv1_3D, crossProduct, getUnitVector_3D } from './LPVector3D.js';
 
@@ -52,27 +52,6 @@ export function multiplyTriangleWithMatrix(_triangle, _matrix) {
         multiplyMatrixVector(_triangle.v2, _matrix),
         multiplyMatrixVector(_triangle.v3, _matrix)]);
     return triange;
-}
-
-export function multiplyTriangleWithMatrixNew(_triangle, _matrix) {
-    var triange = new Triangle([
-        multiplyMatrixVectorNew(_triangle.v1, _matrix),
-        multiplyMatrixVectorNew(_triangle.v2, _matrix),
-        multiplyMatrixVectorNew(_triangle.v3, _matrix)]);
-    return triange;
-}
-
-export function translateTriangle(_triangle, _translation) {
-    var triangle = new Triangle([
-        [_triangle.v1[0] + _translation[0], _triangle.v1[1] + _translation[1], _triangle.v1[2] + _translation[2]],
-        [_triangle.v2[0] + _translation[0], _triangle.v2[1] + _translation[1], _triangle.v2[2] + _translation[2]],
-        [_triangle.v3[0] + _translation[0], _triangle.v3[1] + _translation[1], _triangle.v3[2] + _translation[2]]]);
-    return triangle;
-}
-
-export function translateTriangleNew(_triangle, _matrix) {
-    var triangle = multiplyTriangleWithMatrixNew(_triangle, _matrix);
-    return triangle;
 }
 
 export function getTriangleNormal(_triangle) {
