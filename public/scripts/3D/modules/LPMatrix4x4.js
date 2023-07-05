@@ -32,9 +32,29 @@ export function multiplyMatrixVector(_v, _m) {
     return [xdash, ydash, zdash];
 }
 
-export function getProjectionMatrix(_aspectRatio, _fieldOfView, _zNear, _zFar) {
-   
+export function multiplyMatrixVectorNew(_v,_m){
+    var x = _v[0];
+    var y = _v[1];
+    var z = _v[2];
+    var w = _v[3];
+    var xdash = x * _m.m[0][0] + y * _m.m[1][0] + z * _m.m[2][0] + w * _m.m[3][0];
+    var ydash = x * _m.m[0][1] + y * _m.m[1][1] + z * _m.m[2][1] + w * _m.m[3][1];
+    var zdash = x * _m.m[0][2] + y * _m.m[1][2] + z * _m.m[2][2] + w * _m.m[3][2];
+    var wdash = x * _m.m[0][3] + y * _m.m[1][3] + z * _m.m[2][3] + w * _m.m[3][3];
 
+    return [xdash, ydash, zdash, wdash];
+}
+
+export function makeIdentityMatrix(){
+    var matrix = new mat4x4();
+    matrix.m[0][0] = 1;
+    matrix.m[1][1] = 1;
+    matrix.m[2][2] = 1;
+    matrix.m[3][3] = 1;
+    return matrix;
+}
+
+export function getProjectionMatrix(_aspectRatio, _fieldOfView, _zNear, _zFar) {
     var F = 1 / Math.tan(LP.degtorad(_fieldOfView * 0.5));
     var q = _zFar / (_zFar - _zNear);
 
@@ -47,6 +67,18 @@ export function getProjectionMatrix(_aspectRatio, _fieldOfView, _zNear, _zFar) {
     matProj.m[3][3] = 0;
 
     return matProj;
+}
+
+export function getTranslationMatrix(_x, _y, _z) {
+    var matrix = new mat4x4();
+    matrix.m[0][0] = 1;
+    matrix.m[1][1] = 1;
+    matrix.m[2][2] = 1; 
+    matrix.m[3][3] = 1;
+    matrix.m[3][0] = _x;
+    matrix.m[3][1] = _y;
+    matrix.m[3][2] = _z;
+    return matrix;
 }
 
 export function getRotationMatrixX(_theta) {
