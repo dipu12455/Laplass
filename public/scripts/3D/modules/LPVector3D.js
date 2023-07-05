@@ -21,3 +21,8 @@ export function getUnitVector_3D(_v) {
     if (length <= 0) { return [0, 0, 0]; }
     return [_v[x] / length, _v[y] / length, _v[z] / length];
 }
+
+export function vDivScalar_3D(_v, _scalar) {
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    return [_v[x] / _scalar, _v[y] / _scalar, _v[z] / _scalar];
+}

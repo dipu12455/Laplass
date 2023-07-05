@@ -7,6 +7,9 @@ export class Triangle {
         this.v3 = _vertices[2];
         this.color = 0x000000;
     }
+    getString(){
+        return "v1: " + this.v1 + "\nv2: " + this.v2 + "\nv3: " + this.v3;
+    }
 }
 
 export class Mesh {
@@ -46,7 +49,7 @@ export function meshFromStringObj(_string) {
             continue; //skip unneeded lines of obj file, we are only taking vertices 'v' and faces 'f'
         }
         if (words[0] === "v") {
-            var vertex = [parseFloat(words[1]), parseFloat(words[2]), parseFloat(words[3])];
+            var vertex = [parseFloat(words[1]), parseFloat(words[2]), parseFloat(words[3]), 1];
             vertexList.add(vertex);
         }
         if (words[0] === "f") {
