@@ -41,20 +41,21 @@ export class objDrawObject3D extends LP.LPGameObject {
         };
 
         this.update = (_delta) => {
+            this.checkEvents();
             this.elapsed += _delta;
 
             //update theta
             var theta = this.elapsed * 0.5;
-            var matRotX = getRotationMatrixX(180);
-            var matRotY = getRotationMatrixY(180);
+            var matRotX = getRotationMatrixX(0);
+            var matRotY = getRotationMatrixY(theta);
             var matRotZ = getRotationMatrixZ(0);
 
             //oscillate the Y
             var animate = Math.sin(this.elapsed / 50.0);
-            this.X = animate * 0.01;
-            this.Y = animate * 0.01;
-            this.Z = animate * 0.01;
-            var matTrans = getTranslationMatrix(this.X, this.Y, 150 + this.Z); //moving the mesh a little into the distance
+            this.X = 0;
+            this.Y = 0;
+            this.Z = 0;
+            var matTrans = getTranslationMatrix(this.X, this.Y, 5 + this.Z); //moving the mesh a little into the distance
 
             this.matWorld = makeIdentityMatrix();
             this.matWorld = matrixMultiMatrix(matRotX, matRotY);
@@ -133,6 +134,26 @@ export class objDrawObject3D extends LP.LPGameObject {
                     [tri.v3[0], tri.v3[1]], tri.color);
             }
             LP.setPrintConsole(false);
+        }
+    }
+    checkEvents(){
+        if (LP.isPEventFired(LP.evKeyW_p)) {
+            this.vCamera[2] += 0.1;
+        }
+        if (LP.isPEventFired(LP.evKeyS_p)) {
+            this.vCamera[2] -= 0.1;
+        }
+        if (LP.isPEventFired(LP.evKeyA_p)) {
+            this.vCamera[0] -= 0.1;
+        }
+        if (LP.isPEventFired(LP.evKeyD_p)) {
+            this.vCamera[0] += 0.1;
+        }
+        if (LP.isPEventFired(LP.evArrowUp_p)){
+            this.vCamera[1] += 0.1;
+        }
+        if (LP.isPEventFired(LP.evArrowDown_p)){
+            this.vCamera[1] -= 0.1;
         }
     }
 }

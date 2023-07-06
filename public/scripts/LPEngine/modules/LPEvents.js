@@ -14,6 +14,8 @@ export const evKeyP = 5;
 export const evKeyW = 6;
 export const evKeyA = 7;
 export const evKeyD = 8;
+export const evArrowUp = 9;
+export const evArrowDown = 10;
 
 var eventArray = [];
 eventArray[evMouseClick] = false; //evMouseClick
@@ -22,9 +24,11 @@ eventArray[evMouseUp] = false; //evMouseUp
 eventArray[evKeyG] = false; //KeyG non-sensitive to capital
 eventArray[evKeyS] = false; //KeyS non-sensitive to capital
 eventArray[evKeyP] = false; //KeyP non-sensitive to capital
-eventArray[evKeyW] = false; //KeyG non-sensitive to capital
-eventArray[evKeyA] = false; //KeyS non-sensitive to capital
-eventArray[evKeyD] = false; //KeyP non-sensitive to capital
+eventArray[evKeyW] = false; //KeyW non-sensitive to capital
+eventArray[evKeyA] = false; //KeyA non-sensitive to capital
+eventArray[evKeyD] = false; //KeyD non-sensitive to capital
+eventArray[evArrowUp] = false; 
+eventArray[evArrowDown] = false; 
 
 //persistent event codes
 export const evKeyG_p = 0;
@@ -33,6 +37,8 @@ export const evKeyP_p = 2;
 export const evKeyW_p = 3;
 export const evKeyA_p = 4;
 export const evKeyD_p = 5;
+export const evArrowUp_p = 6;
+export const evArrowDown_p = 7;
 
 var eventArray_p = [];
 eventArray_p[evKeyG_p] = false;
@@ -41,6 +47,8 @@ eventArray_p[evKeyP_p] = false;
 eventArray_p[evKeyW_p] = false;
 eventArray_p[evKeyA_p] = false;
 eventArray_p[evKeyD_p] = false;
+eventArray_p[evArrowUp_p] = false;
+eventArray_p[evArrowDown_p] = false;
 
 //all functions in this module are exported for testing purposes, and for usage inside the LPE.
 //the functions that are not allowed to be used by the client app are not included in LPEngine.js
@@ -118,6 +126,16 @@ export function LPEventsInit(_window) {
             fireEvent(evKeyD);
             firePEvent(evKeyD_p);
         }
+        if (keyCode == 'ArrowUp') {
+            if (isUnitTest()) console.log(`JS: Keydown ArrowUp`);
+            fireEvent(evArrowUp);
+            firePEvent(evArrowUp_p);
+        }
+        if (keyCode == 'ArrowDown') {
+            if (isUnitTest()) console.log(`JS: Keydown ArrowDown`);
+            fireEvent(evArrowDown);
+            firePEvent(evArrowDown_p);
+        }
     });
     /*keyboard events are different. If you want to move a player when the key is pressed,
     the event needs to stay fired (true) until the key is released. THat's when the keyup
@@ -150,6 +168,14 @@ export function LPEventsInit(_window) {
         if (keyCode == 'KeyD') {
             if (isUnitTest()) console.log(`JS: Keyup KeyD`);
             turnOffPEvent(evKeyD_p);
+        }
+        if (keyCode == 'ArrowUp') {
+            if (isUnitTest()) console.log(`JS: Keyup ArrowUp`);
+            turnOffPEvent(evArrowUp_p);
+        }
+        if (keyCode == 'ArrowDown') {
+            if (isUnitTest()) console.log(`JS: Keyup ArrowDown`);
+            turnOffPEvent(evArrowDown_p);
         }
     });
 }
