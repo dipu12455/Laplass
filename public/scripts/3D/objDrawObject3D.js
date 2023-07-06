@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { fillTriangle, getTriangleNormal, multiplyTriangleWithMatrix, sortTrianglesByDepth } from './modules/LPDraw3D.js';
-import { getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, mat4x4, matrixMultiMatrix } from './modules/LPMatrix4x4.js';
-import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D, vDivScalar_3D } from './modules/LPVector3D.js';
+import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from './modules/LPMatrix4x4.js';
+import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D, vDivScalar_3D, v1Plusv2_3D } from './modules/LPVector3D.js';
 import { mesh } from './3DmodelResource.js';
 import { moveTriangleToScreen } from './modules/LPDraw3D.js';
 
@@ -16,6 +16,14 @@ export class objDrawObject3D extends LP.LPGameObject {
         this.screenWidth = this.screenDimensions[0]; */
 
         //hardcoding this because these screenCoordtoWorldCoord functions is running before LPE initializes
+        this.elapsed = 0;
+        this.X = 0;
+        this.Y = 0;
+        this.Z = 0;
+        this.matWorld = new mat4x4();
+
+        this.matView = new mat4x4();
+
         this.screenWidth = (640 - 640 / 2) / 20;
         this.screenHeight = (480 / 2 - 480) / 20;
         this.aspectRatio = this.screenHeight / this.screenWidth;
@@ -23,13 +31,9 @@ export class objDrawObject3D extends LP.LPGameObject {
         this.zNear = 0.1;
         this.zFar = 1000;
         this.matProj = new mat4x4();
-        this.matWorld = new mat4x4();
-        this.X = 0;
-        this.Y = 0;
-        this.Z = 0;
-        this.elapsed = 0;
 
         this.vCamera = [0, 0, 0];
+        this.vLookDir = [0, 0, 1];
 
         this.init = () => {
             this.matProj = getProjectionMatrix(this.aspectRatio, this.fieldOfView, this.zNear, this.zFar);
@@ -42,7 +46,7 @@ export class objDrawObject3D extends LP.LPGameObject {
             //update theta
             var theta = this.elapsed * 0.5;
             var matRotX = getRotationMatrixX(180);
-            var matRotY = getRotationMatrixY(theta);
+            var matRotY = getRotationMatrixY(180);
             var matRotZ = getRotationMatrixZ(0);
 
             //oscillate the Y
@@ -52,17 +56,20 @@ export class objDrawObject3D extends LP.LPGameObject {
             this.Z = animate * 0.01;
             var matTrans = getTranslationMatrix(this.X, this.Y, 150 + this.Z); //moving the mesh a little into the distance
 
+            this.matWorld = makeIdentityMatrix();
             this.matWorld = matrixMultiMatrix(matRotX, matRotY);
             this.matWorld = matrixMultiMatrix(this.matWorld, matRotZ);
             this.matWorld = matrixMultiMatrix(this.matWorld, matTrans);
+
+            var vUp = [0, 1, 0];
+            var vTarget = v1Plusv2_3D(this.vCamera, this.vLookDir);
+            var matCamera = getPointAtMatrix(this.vCamera, vTarget, vUp);
+            //now make the view matrix from camera
+            this.matView = getMatrixQuickInverse(matCamera);
         };
 
         this.draw = () => {
             LP.draw_text(`elapsed: ${this.elapsed}`, [-13, 10], 0.5, 0x0000ff);
-            var printed = false;
-            var x = this.X;
-            var y = this.Y;
-            var z = this.Z;
 
             var unsortedTrianglesList = new LP.LPList();
 
@@ -82,34 +89,36 @@ export class objDrawObject3D extends LP.LPGameObject {
 
                 //only draw triangle if it is facing towards the camera
                 if (dotProduct < 0) {
-                //illumination (of course, only if you can see it)
-                const light_direction = [0, 0, -1];
-                const vU_light_direction = getUnitVector_3D(light_direction);
+                    //illumination (of course, only if you can see it)
+                    const light_direction = [0, 0, -1];
+                    const vU_light_direction = getUnitVector_3D(light_direction);
 
-                //see how similar the normal is to the light direction
-                var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
-                //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
-                //use this dotproduct2 value to input rbg between 0-1
-                var color = LP.rgbToHex(0, dotProduct2, dotProduct2); //just green
-                
-                //project the triangle into a 2D plane
-                var triProjected = multiplyTriangleWithMatrix(triTransformed, this.matProj);
+                    //see how similar the normal is to the light direction
+                    var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
+                    //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
+                    //use this dotproduct2 value to input rbg between 0-1
+                    var color = LP.rgbToHex(0, dotProduct2, dotProduct2); //just green
 
-                //this new way of multiplying triangles with matrices don't normalize the vectors of the triangles anymore,
-                //which is why projection takes up the whole screen. normalize them manually below
-                //divide each of the vertices by their corresponding w value
-                triProjected.v1 = vDivScalar_3D(triProjected.v1, triProjected.v1[3]);
-                triProjected.v2 = vDivScalar_3D(triProjected.v2, triProjected.v2[3]);
-                triProjected.v3 = vDivScalar_3D(triProjected.v3, triProjected.v3[3]);
+                    var triViewed = multiplyTriangleWithMatrix(triTransformed, this.matView);
 
-                //the div vector function returns a 3d vector from what was a 4-tuple vector
-                //and here onwards there is now w tuple. FYI
+                    //project the triangle into a 2D plane
+                    var triProjected = multiplyTriangleWithMatrix(triViewed, this.matProj);
 
-                triProjected = moveTriangleToScreen(triProjected, 0, this.screenWidth, this.screenHeight);
+                    //this new way of multiplying triangles with matrices don't normalize the vectors of the triangles anymore,
+                    //which is why projection takes up the whole screen. normalize them manually below
+                    //divide each of the vertices by their corresponding w value
+                    triProjected.v1 = vDivScalar_3D(triProjected.v1, triProjected.v1[3]);
+                    triProjected.v2 = vDivScalar_3D(triProjected.v2, triProjected.v2[3]);
+                    triProjected.v3 = vDivScalar_3D(triProjected.v3, triProjected.v3[3]);
 
-                //store this finished triangle into the unsorted list, collect all triangles from this draw frame
-                triProjected.color = color;
-                unsortedTrianglesList.add(triProjected);
+                    //the div vector function returns a 3d vector from what was a 4-tuple vector
+                    //and here onwards there is now w tuple. FYI
+
+                    triProjected = moveTriangleToScreen(triProjected, 0, this.screenWidth, this.screenHeight);
+
+                    //store this finished triangle into the unsorted list, collect all triangles from this draw frame
+                    triProjected.color = color;
+                    unsortedTrianglesList.add(triProjected);
                 };
             }
 
