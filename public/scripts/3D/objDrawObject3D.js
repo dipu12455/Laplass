@@ -1,7 +1,7 @@
 import * as LP from '../LPEngine/LPEngine.js';
 import { fillTriangle, getTriangleNormal, multiplyTriangleWithMatrix, sortTrianglesByDepth } from './modules/LPDraw3D.js';
-import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from './modules/LPMatrix4x4.js';
-import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D, vDivScalar_3D, v1Plusv2_3D } from './modules/LPVector3D.js';
+import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from './modules/LPMatrix4x4.js';
+import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D, vDivScalar_3D, v1Plusv2_3D, scalarXVector_3D } from './modules/LPVector3D.js';
 import { mesh } from './3DmodelResource.js';
 import { moveTriangleToScreen } from './modules/LPDraw3D.js';
 
@@ -32,8 +32,10 @@ export class objDrawObject3D extends LP.LPGameObject {
         this.zFar = 1000;
         this.matProj = new mat4x4();
 
-        this.vCamera = [0, 0, 0];
-        this.vLookDir = [0, 0, 1];
+        this.vCamera = [0, 0, 0, 1];
+        this.vLookDir = [0, 0, 1, 1];
+
+        this.yaw = 0;
 
         this.init = () => {
             this.matProj = getProjectionMatrix(this.aspectRatio, this.fieldOfView, this.zNear, this.zFar);
@@ -62,7 +64,11 @@ export class objDrawObject3D extends LP.LPGameObject {
             this.matWorld = matrixMultiMatrix(this.matWorld, matRotZ);
             this.matWorld = matrixMultiMatrix(this.matWorld, matTrans);
 
-            var vUp = [0, 1, 0];
+            var vUp = [0, 1, 0, 1];
+            var vTarget = [0, 0, 1, 1];
+            var matCameraRot = getRotationMatrixY(this.yaw);
+            this.vLookDir = multiplyMatrixVector(vTarget, matCameraRot);
+
             var vTarget = v1Plusv2_3D(this.vCamera, this.vLookDir);
             var matCamera = getPointAtMatrix(this.vCamera, vTarget, vUp);
             //now make the view matrix from camera
@@ -71,6 +77,7 @@ export class objDrawObject3D extends LP.LPGameObject {
 
         this.draw = () => {
             LP.draw_text(`elapsed: ${this.elapsed}`, [-13, 10], 0.5, 0x0000ff);
+            LP.draw_text(`yaw: ${this.yaw}`, [-13, 9], 0.5, 0x0000ff);
 
             var unsortedTrianglesList = new LP.LPList();
 
@@ -100,6 +107,7 @@ export class objDrawObject3D extends LP.LPGameObject {
                     //use this dotproduct2 value to input rbg between 0-1
                     var color = LP.rgbToHex(0, dotProduct2, dotProduct2); //just green
 
+                    //move triangle into view space
                     var triViewed = multiplyTriangleWithMatrix(triTransformed, this.matView);
 
                     //project the triangle into a 2D plane
@@ -136,23 +144,25 @@ export class objDrawObject3D extends LP.LPGameObject {
             LP.setPrintConsole(false);
         }
     }
-    checkEvents(){
+    checkEvents() {
         if (LP.isPEventFired(LP.evKeyW_p)) {
-            this.vCamera[2] += 0.1;
+            var vMovingForward = scalarXVector_3D(0.1, this.vLookDir);
+            this.vCamera = v1Plusv2_3D(this.vCamera, vMovingForward);
         }
         if (LP.isPEventFired(LP.evKeyS_p)) {
-            this.vCamera[2] -= 0.1;
+            var vMovingForward = scalarXVector_3D(0.1, this.vLookDir);
+            this.vCamera = v2Minusv1_3D(vMovingForward, this.vCamera);
         }
         if (LP.isPEventFired(LP.evKeyA_p)) {
-            this.vCamera[0] -= 0.1;
+            this.yaw += 1;
         }
         if (LP.isPEventFired(LP.evKeyD_p)) {
-            this.vCamera[0] += 0.1;
+            this.yaw -= 1;
         }
-        if (LP.isPEventFired(LP.evArrowUp_p)){
+        if (LP.isPEventFired(LP.evArrowUp_p)) {
             this.vCamera[1] += 0.1;
         }
-        if (LP.isPEventFired(LP.evArrowDown_p)){
+        if (LP.isPEventFired(LP.evArrowDown_p)) {
             this.vCamera[1] -= 0.1;
         }
     }

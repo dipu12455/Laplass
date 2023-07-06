@@ -70,21 +70,21 @@ export function getRotationMatrixX(_theta) {
     //rotation X
     var matrix = new mat4x4();
     matrix.m[0][0] = 1;
-    matrix.m[1][1] = Math.cos(LP.degtorad(_theta * 0.5));
-    matrix.m[1][2] = Math.sin(LP.degtorad(_theta * 0.5));
-    matrix.m[2][1] = -Math.sin(LP.degtorad(_theta * 0.5));
-    matrix.m[2][2] = Math.cos(LP.degtorad(_theta * 0.5));
+    matrix.m[1][1] = Math.cos(LP.degtorad(_theta));
+    matrix.m[1][2] = Math.sin(LP.degtorad(_theta));
+    matrix.m[2][1] = -Math.sin(LP.degtorad(_theta));
+    matrix.m[2][2] = Math.cos(LP.degtorad(_theta));
     matrix.m[3][3] = 1;
     return matrix;
 }
 export function getRotationMatrixY(_theta) {
     //rotation Y
     var matrix = new mat4x4();
-    matrix.m[0][0] = Math.cos(LP.degtorad(_theta * 0.5));
-    matrix.m[0][2] = Math.sin(LP.degtorad(_theta * 0.5));
-    matrix.m[2][0] = -Math.sin(LP.degtorad(_theta * 0.5));
+    matrix.m[0][0] = Math.cos(LP.degtorad(_theta));
+    matrix.m[0][2] = Math.sin(LP.degtorad(_theta));
+    matrix.m[2][0] = -Math.sin(LP.degtorad(_theta));
     matrix.m[1][1] = 1;
-    matrix.m[2][2] = Math.cos(LP.degtorad(_theta * 0.5));
+    matrix.m[2][2] = Math.cos(LP.degtorad(_theta));
     matrix.m[3][3] = 1;
     return matrix;
 }
