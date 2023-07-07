@@ -47,6 +47,13 @@ export class Primitive extends LPList {
     this.wireframe = _wireframe;
     this.boundingBox = _boundingBox;
   }
+  copyAttributes (_primitive) { //doesn't copy the vertices, just the primitive data
+    this.origin = _primitive.origin;
+    this.lineColor = _primitive.lineColor;
+    this.fillColor = _primitive.fillColor;
+    this.wireframe = _primitive.wireframe;
+    this.boundingBox = _primitive.boundingBox;
+  }56
 }
 
 var PRIMITIVES = new LPList(); //list of all primitives in LPE
@@ -185,5 +192,20 @@ export function getBoundingBox(_index) { //returns the BoundingBox object of the
 function stringToBool(_string) {
   if (_string == '1') return true;
   if (_string == '0') return false;
+}
+
+export function copyPrimitive(_primitive){
+  var newPrim =  new Primitive();
+  newPrim.set(_primitive.origin,
+    _primitive.lineColor,
+    _primitive.fillColor,
+    _primitive.wireframe,
+    _primitive.boundingBox);
+
+  var i = 0;
+  for (i = 0; i < _primitive.getSize(); i += 1) {
+    newPrim.add(_primitive.get(i));
+  }
+  return newPrim;
 }
 

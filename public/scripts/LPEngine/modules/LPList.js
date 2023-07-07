@@ -45,4 +45,12 @@ export class LPList {
     }
     this.array = newArray;
   }
+  exists(_item){ //dont use for objects, only primitive data types
+    var i = 0;
+    for (i = 0; i < this.getSize(); i += 1) {
+      if (this.get(i) == _item) {
+        return true;
+      }
+    }
+  }
 }

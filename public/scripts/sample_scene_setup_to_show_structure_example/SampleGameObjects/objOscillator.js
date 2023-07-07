@@ -1,6 +1,8 @@
-import * as LP from '../LPEngine/LPEngine.js';
+//makes an instance oscillate using the sine and cosine functions
 
-export class objPentagon extends LP.LPGameObject {
+import * as LP from '../LPEngine/LPEngine.js'; //refactor the path as needed
+
+export class objOscillator extends LP.LPGameObject {
     constructor() {
         super();
         this.elapsed = 0;

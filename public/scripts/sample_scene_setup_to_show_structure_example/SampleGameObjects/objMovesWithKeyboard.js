@@ -1,18 +1,17 @@
-import * as LP from '../LPEngine/LPEngine.js';
+//demostrates how to use the keyboard to move a 'physical' object around using forces. Also can be used for non-physical objects. the events and codes are the same
 
-export class objSquare extends LP.LPGameObject {
+import * as LP from '../LPEngine/LPEngine.js'; //refactor the path as needed
+
+export class objMovesWithKeyboard extends LP.LPGameObject {
     constructor() {
         super();
         this.forcex = 0;
         this.forcey = 0;
-        this.selected = false;
-        this.direction = 0; //if 1, then right, if -1, then left. set this value at start of instance creation
+        this.selected = 0;
 
         this.init = () => {
-            this.setPhysical(true);
-            if (this.getX() < 0) this.direction = 1;
-            if (this.getX() > 0) this.direction = -1;
-        };
+            LP.setPhysical(true); //this turns the instance that embues this property into a 'physical' object that the physics engine will interact with
+        }
 
         this.update = (_delta) => {
             this.checkEvents();
@@ -32,13 +31,7 @@ export class objSquare extends LP.LPGameObject {
             var ax = force[0] + friction[0];
             var ay = force[1] + friction[1];
 
-            if (this.direction == 1) {
-                ax += force2;
-            }
-            if (this.direction == -1) {
-                ax -= force2;
-            }
-
+            //reset forces after velocities have been updated for this frame
             this.resetForces();
 
             this.setAcceleration([ax, ay]);
@@ -46,20 +39,19 @@ export class objSquare extends LP.LPGameObject {
 
         this.draw = () => {
             LP.draw_anchor(this.findCenterOfInstancePrimitive(), 0xff0000);
-        };
-    };
-
+        }
+    }
+    //the rest of this file will look like pSquareManual.js
     checkEvents() {
-        //select this square if clicked on
         if (LP.evMouseClickRegion(LP.getBoundingBox(this.getPrimitiveIndex()))) {
-            this.selected = true;
+            this.selected = 1;
         }
         //press G to deselect
         if (LP.isEventFired(LP.evKeyG)) {
-            this.selected = false;
+            this.selected = 0;
         }
         var moveAmount = 0.01;
-        if (this.selected == true) {
+        if (this.selected == 1) {
             if (LP.isPEventFired(LP.evKeyW_p)) {
                 this.forcey = moveAmount;
             }
@@ -74,7 +66,6 @@ export class objSquare extends LP.LPGameObject {
             }
         }
     }
-
     resetForces() {
         this.forcex = 0;
         this.forcey = 0;

@@ -163,6 +163,8 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor) {
   draw_anchor(_v, _anchorColor);
 }
 
+/*this function is used when a polygon is only required for one frame, if you want persistent polygons,
+define a primitive then use the draw_primitive function*/
 export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
   var i = 0;
   var j = 0;
@@ -184,7 +186,13 @@ export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
     drawObject.drawPolygon(path);
     drawObject.endFill();
   }
-} //the functions draw_polygon and draw_primitive are copy pasting code, fix it later
+}
+
+/*remember this function flat-out draws a primitive.
+if you want a primitive to follow an instance for example,
+transform the primitive to the objects position and orientation
+before you draw it*/
+
 export function draw_primitive(_primitive) {
   var lineColor = _primitive.lineColor; //not using getLineColor() because inside LPE, we don't work with indices, just the object directly
   var fillColor = _primitive.fillColor;

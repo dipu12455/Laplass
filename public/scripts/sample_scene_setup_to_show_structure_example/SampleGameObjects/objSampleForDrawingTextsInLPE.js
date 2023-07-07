@@ -1,6 +1,8 @@
-import * as LP from '../LPEngine/LPEngine.js';
+//code that demonstrates how to draw text in LPE
 
-export class objTextDrawObjectSample extends LP.LPGameObject{
+import * as LP from '../../LPEngine/LPEngine.js';//refactor the path as needed
+
+export class objSampleForDrawingTextsInLPE extends LP.LPGameObject{
     constructor() {
         super();
         this.elapsed = 0;

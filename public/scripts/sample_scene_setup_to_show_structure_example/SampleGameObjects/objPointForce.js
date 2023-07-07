@@ -1,4 +1,6 @@
-import * as LP from '../LPEngine/LPEngine.js';
+//code that shows how to use pointForces and react with both linear and angular accelerations
+
+import * as LP from '../LPEngine/LPEngine.js';//refactor the path as needed
 
 export class objPointForce extends LP.LPGameObject {
     constructor() {

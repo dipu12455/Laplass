@@ -90,3 +90,7 @@ export function transformVector(_v, _x, _y, _theta) {
   var v = rotateVector(_v, _theta); //first rotate
   return [v[0] + _x, v[1] + _y]; //then translate
 }
+
+export function flipVector(_v) {
+  return [-_v[0], -_v[1]];
+}

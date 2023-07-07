@@ -20,6 +20,7 @@ export { sumAllVectors } from './modules/LPVector.js';
 export { getUnitVector } from './modules/LPVector.js';
 export { getRegularVector } from './modules/LPVector.js';
 export { subtractMagnitudeFromVector } from './modules/LPVector.js';
+export {flipVector} from './modules/LPVector.js';
 //LPList
 export { LPList } from './modules/LPList.js';
 
@@ -47,6 +48,7 @@ export { getWireframe } from './modules/LPPrimitives.js';
 export { BoundingBox } from './modules/LPPrimitives.js';
 export { setBoundingBox } from './modules/LPPrimitives.js';
 export { getBoundingBox } from './modules/LPPrimitives.js';
+export { copyPrimitive } from './modules/LPPrimitives.js';
 
 
 //LPEngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app
