@@ -53,7 +53,7 @@ export class Primitive extends LPList {
     this.fillColor = _primitive.fillColor;
     this.wireframe = _primitive.wireframe;
     this.boundingBox = _primitive.boundingBox;
-  }56
+  }
 }
 
 var PRIMITIVES = new LPList(); //list of all primitives in LPE

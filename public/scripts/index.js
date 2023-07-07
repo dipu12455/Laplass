@@ -4,7 +4,7 @@ import * as LP from './LPEngine/LPEngine.js';
 different application, so using this scene file and its accompanying property def files 
 to experiment with 3D*/
 
-import * as Scene from './Scene_2D_animated_clipping_tri_into_quads/Scene2DACTIQ.js';
+import * as Scene from './3D/Scene3D.js';
 
 //these functions need to be run in this exact order
 

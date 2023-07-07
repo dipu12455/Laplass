@@ -1,4 +1,4 @@
-import * as LP from '../LPEngine/LPEngine.js';
+import * as LP from '../../LPEngine/LPEngine.js';
 
 export class objDrawObject_2DACTIQ extends LP.LPGameObject {
     constructor() {

@@ -1,4 +1,4 @@
-import * as LP from '../LPEngine/LPEngine.js';
+import * as LP from '../../LPEngine/LPEngine.js';
 import { objDrawObject_2DACTIQ } from './objDrawObject_2DACTIQ.js';
 import { objStationaryPolygon } from './objStationaryPolygon.js';
 

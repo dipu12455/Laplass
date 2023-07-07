@@ -1,4 +1,4 @@
-import * as LP from '../LPEngine/LPEngine.js';
+import * as LP from '../../LPEngine/LPEngine.js';
 
 /*this quad stays stationary at the center of the screen. It will have a scalable square surrounding it, which will demo the clipping in an animated way.
 there will also be a single line segment (defined by a 2d normal and a point that passes through it), that can be moved around in the screen in any orientation,
@@ -31,6 +31,26 @@ export class objStationaryPolygon extends LP.LPGameObject {
 
             this.setPosition([-5, 0]);
 
+            //define clip lines
+            this.clipLine1 = {
+                point: [5, 5],
+                normal: LP.getUnitVector([-1, -1])
+            }
+
+            this.clipLine2 = {
+                point: [-5, 5],
+                normal: LP.getUnitVector([1, -1])
+            }
+
+            this.clipLine3 = {
+                point: [-5, -5],
+                normal: LP.getUnitVector([1, 1])
+            }
+            this.clipLine4 = {
+                point: [5, -5],
+                normal: LP.getUnitVector([-1, 1])
+            }
+
         };
         this.update = (_delta) => {
             this.checkEvents();
@@ -47,17 +67,15 @@ export class objStationaryPolygon extends LP.LPGameObject {
 
             //this primitive is checked against clipping lines, and if so updated into a clipped
             //polygon accordingly
-            /* var lineNormal = LP.getUnitVector([-1, -1]); //vector -1,-1 but normalized
-            var linePoint = [5, 5]; */
-            var lineNormal = LP.getUnitVector([1, -1]);
-            var linePoint = [0, 0];
-            //visualize the clipping line
-            drawClipLine(linePoint, lineNormal);
-            var value = clipPolygon(primitive, linePoint, lineNormal); //gives you the indices of the points that are inside the line
-            if (value.clipped !== `full`) {
-                LP.draw_primitive(value.primitive);
-            }
-        };
+            var listOfClipLines = [this.clipLine1, this.clipLine2, this.clipLine3, this.clipLine4];
+            drawClipLines(listOfClipLines);
+            /* var clip = clipPolygonWithClipLines(primitive, listOfClipLines);
+            if (clip.fullClipped == false) {
+                LP.draw_primitive(clip.primitive);
+            } */
+            LP.draw_primitive(clipPolygonWithClipLines(primitive, listOfClipLines));
+        }
+
     }
     drawInfo() {
         LP.draw_text("Click and drag the n-gon. any point inside the clipping line will show red", [-15, 10], 0.5, 0x000000);
@@ -78,11 +96,26 @@ export class objStationaryPolygon extends LP.LPGameObject {
         }
     }
 }
+function clipPolygonWithClipLines(_primitive, _listOfClipLines) {
+    var i = 0;
+    var fullClipped = false;
+    var currentPrimitive = _primitive;
+    for (i = 0; i < _listOfClipLines.length; i += 1) {
+        var clip = clipPolygon(currentPrimitive, _listOfClipLines[i]);
+        /* if (clip.clipped === `full`) {
+            fullClipped = true;
+            break;
+        } else { */
+            currentPrimitive = clip.primitive;
+        //}
+    }
+    //return { fullClipped: fullClipped, primitive: currentPrimitive };
+    return currentPrimitive;
+};
 
 //takes a primitive, and a clipping line. returns a new primitive that is clipped by the clipping line
 function clipPolygon(_primitive,
-    _pointOnLine,
-    _lineNormal //the normal represents the 'outside' part of the line, any point of primitive that is inside, is clipped
+    _clipLine //the normal represents the 'outside' part of the line, any point of primitive that is inside, is clipped
 ) {
     var returnValue = {
         clipped: `none`,
@@ -97,9 +130,9 @@ function clipPolygon(_primitive,
     for (i = 0; i < _primitive.getSize(); i += 1) {
         var point = _primitive.get(i);
         //draw a vector from the pointOnLine to this primitive point
-        var vector = LP.v2Minusv1(_pointOnLine, point);
+        var vector = LP.v2Minusv1(_clipLine.point, point);
         //check if this vector is pointing in the same direction as the normal of the line
-        var dotProduct = LP.dotProduct(vector, _lineNormal);
+        var dotProduct = LP.dotProduct(vector, _clipLine.normal);
         if (dotProduct < 0) {
             //this point is inside the line
             insidePoints.push(i); //record the index of this point
@@ -147,7 +180,7 @@ function clipPolygon(_primitive,
     //draw the line points
     LP.draw_anchor(linepoint1, 0xff0000);
     LP.draw_anchor(linepoint2, 0x00ff00);
-    var pointIntersection1 = findPointOfIntersectionOfTwoLines2(_pointOnLine, _lineNormal, linepoint1, linepoint2);
+    var pointIntersection1 = findPointOfIntersectionOfTwoLines2(_clipLine.point, _clipLine.normal, linepoint1, linepoint2);
     LP.draw_anchor(pointIntersection1, 0x000000);
     LP.draw_text("I1", pointIntersection1, 0.5, 0x000000);
 
@@ -161,7 +194,7 @@ function clipPolygon(_primitive,
     }
     //to recap, linepoint1 is the last insidePoint going in anticlockwise order, and linepoint2 is the point after that
 
-    var pointIntersection2 = findPointOfIntersectionOfTwoLines2(_pointOnLine, _lineNormal, linepoint1, linepoint2);
+    var pointIntersection2 = findPointOfIntersectionOfTwoLines2(_clipLine.point, _clipLine.normal, linepoint1, linepoint2);
 
     //create a new primitive to replace all insidePoints with these two points of intersection instead
 
@@ -209,10 +242,14 @@ function findPointOfIntersectionOfTwoLines2(_line1Point, _line1Normal, _line2Sta
 
 }
 
-function drawClipLine(_linePoint, _lineNormal) {
-    var p1 = LP.findLeftPerpendicular(LP.scalarXvector(5, _lineNormal));
-    var p2 = LP.flipVector(p1);
-    p1 = LP.v1Plusv2(_linePoint, p1);
-    p2 = LP.v1Plusv2(_linePoint, p2);
-    LP.draw_line(p1, p2, 0x000000);
+function drawClipLines(_listOfClipLines) {
+    var i = 0;
+    for (i = 0; i < _listOfClipLines.length; i += 1) {
+        var line = _listOfClipLines[i];
+        var p1 = LP.findLeftPerpendicular(LP.scalarXvector(5, line.normal));
+        var p2 = LP.flipVector(p1);
+        p1 = LP.v1Plusv2(line.point, p1);
+        p2 = LP.v1Plusv2(line.point, p2);
+        LP.draw_line(p1, p2, 0x000000);
+    }
 }
