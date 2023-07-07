@@ -4,6 +4,7 @@ import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotati
 import { v2Minusv1_3D, dotProduct_3D, getUnitVector_3D, vDivScalar_3D, v1Plusv2_3D, scalarXVector_3D } from './modules/LPVector3D.js';
 import { mesh } from './3DmodelResource.js';
 import { moveTriangleToScreen } from './modules/LPDraw3D.js';
+import { checkEvents } from './objDrawObjectFunctions.js';
 
 export class objDrawObject3D extends LP.LPGameObject {
     constructor() {
@@ -43,7 +44,7 @@ export class objDrawObject3D extends LP.LPGameObject {
         };
 
         this.update = (_delta) => {
-            this.checkEvents();
+            checkEvents(this); //this is a seperated function into another file, moves the camera with WASD and Up/Down
             this.elapsed += _delta;
 
             //update theta
@@ -144,26 +145,5 @@ export class objDrawObject3D extends LP.LPGameObject {
             LP.setPrintConsole(false);
         }
     }
-    checkEvents() {
-        if (LP.isPEventFired(LP.evKeyW_p)) {
-            var vMovingForward = scalarXVector_3D(0.1, this.vLookDir);
-            this.vCamera = v1Plusv2_3D(this.vCamera, vMovingForward);
-        }
-        if (LP.isPEventFired(LP.evKeyS_p)) {
-            var vMovingForward = scalarXVector_3D(0.1, this.vLookDir);
-            this.vCamera = v2Minusv1_3D(vMovingForward, this.vCamera);
-        }
-        if (LP.isPEventFired(LP.evKeyA_p)) {
-            this.yaw += 1;
-        }
-        if (LP.isPEventFired(LP.evKeyD_p)) {
-            this.yaw -= 1;
-        }
-        if (LP.isPEventFired(LP.evArrowUp_p)) {
-            this.vCamera[1] += 0.1;
-        }
-        if (LP.isPEventFired(LP.evArrowDown_p)) {
-            this.vCamera[1] -= 0.1;
-        }
-    }
+    
 }
