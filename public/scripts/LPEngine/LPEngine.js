@@ -20,7 +20,7 @@ export { sumAllVectors } from './modules/LPVector.js';
 export { getUnitVector } from './modules/LPVector.js';
 export { getRegularVector } from './modules/LPVector.js';
 export { subtractMagnitudeFromVector } from './modules/LPVector.js';
-export {flipVector} from './modules/LPVector.js';
+export { flipVector } from './modules/LPVector.js';
 //LPList
 export { LPList } from './modules/LPList.js';
 export { Queue } from './modules/LPList.js';
@@ -30,6 +30,7 @@ export { LPGameObject } from './modules/LPInstances.js';
 export { INSTANCES } from './modules/LPInstances.js';
 export { addInstance } from './modules/LPInstances.js';
 export { destroyInstance } from './modules/LPInstances.js';
+export { LPGameObject_3D } from './modules/LPInstances.js';
 
 //LPPrimitives
 export { Primitive } from './modules/LPPrimitives.js';
@@ -120,3 +121,20 @@ export { isPEventFired } from './modules/LPEvents.js';
 
 //LPTexts
 export { draw_text } from './modules/LPTexts.js';
+
+//LPDraw3D
+export { getLookDir } from './modules/3D/LPDraw3D.js';
+export { setCamera } from './modules/3D/LPDraw3D.js';
+export { getCamera } from './modules/3D/LPDraw3D.js';
+export { setCameraYaw } from './modules/3D/LPDraw3D.js';
+export { getCameraYaw } from './modules/3D/LPDraw3D.js';
+
+//LPVector3D
+export { dotProduct_3D } from './modules/3D/LPVector3D.js';
+export { crossProduct } from './modules/3D/LPVector3D.js';
+export { v1Plusv2_3D } from './modules/3D/LPVector3D.js';
+export { v2Minusv1_3D } from './modules/3D/LPVector3D.js';
+export { getUnitVector_3D } from './modules/3D/LPVector3D.js';
+export { vDivScalar_3D } from './modules/3D/LPVector3D.js';
+export { scalarXVector_3D } from './modules/3D/LPVector3D.js';
+

@@ -1,9 +1,10 @@
 import { LPList } from "./LPList.js";
-import { isTimeRunning, printConsole, setPrintConsole } from "./LPEngineCore.js";
+import { isTimeRunning, printConsole, set3DMode, setPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getCollisions } from "./LPCollision.js";
 import { getMag, isVectorWithinRange, v1Plusv2 } from "./LPVector.js";
+import { getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from "./3D/LPMatrix4x4.js";
 
 export class LPGameObject {
     constructor() {
@@ -28,6 +29,12 @@ export class LPGameObject {
         this.physical = false;
         this.mass = 1; //1 is default, so it won't multiply anything
         this.acceleration = [0, 0];
+        this.is3D = false;
+        /*the LPGameObject_3D class is a child of this class, when an instance of that
+        class is created, it will set this.is3D to true. In order for main game loop to
+        seamlessly classify between drawing 2D and 3D object. there is 3D switch in LPE.
+        once LPE detects an instance of LPGameObject_3D, it will switch to 3D mode.
+        otherwise all 3D functions will be disabled.*/
         this.init = () => { };
         this.update = (_delta) => { };
         this.draw = () => { };
@@ -245,6 +252,10 @@ function runUpdateFunctions(_delta) {
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         //if (!isFrozen())
+        /*turn on 3D mode if a 3D instance found,
+        this function is placed here because this is the very beginning of the program loop*/
+        if (INSTANCES.get(i).is3D) { set3DMode(true); }
+
         //run the update function of this instance
         INSTANCES.get(i).update(_delta);
     }
@@ -286,6 +297,44 @@ export function flushCollisions() {
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         INSTANCES.get(i).collisionList = new LPList();
     }
+}
+
+
+//LPGameObject_3D functions and variables-------------------------------------------------------------
+
+export class LPGameObject_3D extends LPGameObject {
+    constructor(_mesh) {
+        super();
+        this.is3D = true; //this is switched true, to tell engine to turn on 3D mode
+        this.mesh = _mesh; //this is meant to be set in instance
+        this.z = 0; //move it furhter into the screen, meant to be set in instance
+        this.rotX = 0;
+        this.rotY = 0;
+        this.rotZ = 0;
+        this.zprev = 0;
+        this.rotXprev = 0;
+        this.rotYprev = 0;
+        this.rotZprev = 0;
+        this.dspeed = 0; //like hspeed and vspeed, this stands for depth speed. Positive means into the screen
+        this.rXspeed = 0; //speed of rotation in the X axis
+        this.rYspeed = 0; //speed of rotation in the Y axis
+        this.rZspeed = 0; //speed of rotation in the Z axis
+        this.acceleration = [0, 0, 0, 0]; //this is now a 4-tuple vector
+
+        this.matWorld = new mat4x4(); //matWorld is local to each object, says how to transform this object into a place in the world
+    }
+}
+
+export function updateWorldMatrixForInstance(_instance) {
+    var matRotX = getRotationMatrixX(_instance.rotX);
+    var matRotY = getRotationMatrixY(_instance.rotY);
+    var matRotZ = getRotationMatrixZ(_instance.rotZ);
+    var matTrans = getTranslationMatrix(_instance.x, _instance.y, _instance.z); //moving the mesh a little into the distance
+
+    _instance.matWorld = makeIdentityMatrix();
+    _instance.matWorld = matrixMultiMatrix(matRotX, matRotY);
+    _instance.matWorld = matrixMultiMatrix(_instance.matWorld, matRotZ);
+    _instance.matWorld = matrixMultiMatrix(_instance.matWorld, matTrans);
 }
 
 

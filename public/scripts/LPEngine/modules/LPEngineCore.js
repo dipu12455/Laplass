@@ -3,12 +3,14 @@
 import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
 import { v1Plusv2 } from './LPVector.js';
 import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, flushCollisions, initInstances, updateInstances } from './LPInstances.js';
+import { INSTANCES, flushCollisions, initInstances, updateInstances, updateWorldMatrixForInstance } from './LPInstances.js';
 import { collisionsInit } from './LPCollision.js';
 import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './LPTest.js';
 import { initTexts, resetTexts } from './LPTexts.js';
+import { updateCamera } from './3D/LPDraw3D.js';
+import { drawMesh } from './3D/LPModels3D.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -19,6 +21,8 @@ var screenGrid = false;
 var timeRun = true;
 var printConsoleState = false;
 var unitTestState = false;
+
+var ThreeDMode = false;
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
@@ -49,6 +53,9 @@ export function runEngine(_window, _width, _height, _LPDraw) {
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
+    if (ThreeDMode) {
+      updateCamera(); //update camera before any mesh drawing function
+    }
     drawObject.clear();
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
 
@@ -125,6 +132,10 @@ function runAllTests() {
   }
 }
 
+export function set3DMode(_state) {
+  ThreeDMode = _state;
+}
+
 export function rgbToHex(_r, _g, _b) { //rgb value provide in 0-1 range
   return PIXI.utils.rgb2hex([_r, _g, _b]);
 }
@@ -165,7 +176,7 @@ export function draw_vector_origin(_v, _lineColor, _anchorColor) {
 
 /*this function is used when a polygon is only required for one frame, if you want persistent polygons,
 define a primitive then use the draw_primitive function*/
-export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
+export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor, _shaded) {
   var i = 0;
   var j = 0;
   var path = [];
@@ -177,14 +188,16 @@ export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
     path[j + 1] = vertex2[1];
     j = j + 2;
   }
-  
+
+  if (_shaded == true) {
     drawObject.lineStyle(0);
     drawObject.beginFill(_fillColor, 1);
     drawObject.drawPolygon(path);
     drawObject.endFill();
-    if (_wireframe == true) {
-      drawObject.lineStyle(1, _lineColor, 1);
-      drawObject.drawPolygon(path);
+  }
+  if (_wireframe == true) {
+    drawObject.lineStyle(1, _lineColor, 1);
+    drawObject.drawPolygon(path);
   }
 }
 
@@ -233,13 +246,24 @@ function draw_instances() { //works on the instance currently selected
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     var current = INSTANCES.get(i);
-    if (!current.isHidden()) { //if not hidden and has a primitive, then draw the primtive
+    if (!current.isHidden() && !current.is3D) { //if not hidden and has a primitive, then draw the primtive
       if (current.getPrimitiveIndex() != -1) {
         var trans = transform_primitive(getPrimitive(current.getPrimitiveIndex()),
           current.getX(), current.getY(), current.getRot());
         draw_primitive(trans);
       }
     }
+
+    //if instance is 3D, then draw the 3D primitive
+    if (!current.isHidden() && current.is3D) {
+      /*this can work in draw function because it doesn't need delta, 
+      also it is technically a draw function*/
+      updateWorldMatrixForInstance(current);
+      //draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
+      drawMesh(current.mesh, current.matWorld);
+
+    }
+
     //afer that run the draw event of this instance
     current.draw(); //run the draw function of this instance
   }

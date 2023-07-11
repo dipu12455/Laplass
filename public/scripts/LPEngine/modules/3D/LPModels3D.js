@@ -1,4 +1,5 @@
 import { LPList } from "../LPList.js";
+import { fillTriangle, moveTrianglesToScreenSpace, sortTrianglesByDepth } from "./LPDraw3D.js";
 
 export class Triangle {
     constructor(_vertices) { //the vertices is an array of vectors, and each vector is an array of three tuples [x,y,z]
@@ -13,12 +14,13 @@ export class Triangle {
 }
 
 export class Mesh {
-    constructor(_triangles) { //the input is an array of the instance of the class Triangle
+    constructor(_triangles, _normalFlipped) { //the input is an array of the instance of the class Triangle
         this.triangles = _triangles;
+        this.normalFlipped = _normalFlipped;
     }
 }
 
-export function meshFromStringObj(_string) {
+export function meshFromStringObj(_string, _normalFlipped) {
     var vertexList = new LPList();
     var facesList = new LPList();
 
@@ -56,7 +58,7 @@ export function meshFromStringObj(_string) {
             var quadFace = false;
             if (words.length === 5) { quadFace = true; }
 
-            if (quadFace == false){
+            if (quadFace == false) {
                 var temp = [words[1], words[2], words[3]];
                 const v1Ind = parseInt(temp[0].split("/")[0]);
                 const v2Ind = parseInt(temp[1].split("/")[0]);
@@ -64,7 +66,7 @@ export function meshFromStringObj(_string) {
                 var face = [v1Ind, v2Ind, v3Ind];
 
                 facesList.add(face);
-            }else{
+            } else {
                 var temp = [words[1], words[2], words[3], words[4]];
                 const v1Ind = parseInt(temp[0].split("/")[0]);
                 const v2Ind = parseInt(temp[1].split("/")[0]);
@@ -90,14 +92,14 @@ export function meshFromStringObj(_string) {
         triangleArray.push(new Triangle(vertexArray));
     }
 
-    return new Mesh(triangleArray);
+    return new Mesh(triangleArray, _normalFlipped);
 }
 
-export async function getMeshFromObj(_serverRoute) {
+export async function getMeshFromObj(_serverRoute, _normalFlipped) {
     try {
         const response = await fetch(_serverRoute);
         const data = await response.text();
-        return meshFromStringObj(data);
+        return meshFromStringObj(data, _normalFlipped);
 
     } catch (error) {
         console.log(error);
@@ -110,5 +112,28 @@ export function printMesh(_mesh) {
     var i = 0;
     for (i = 0; i < _mesh.triangles.length; i += 1) {
         console.log(`triangle ${i}: v1 = ${_mesh.triangles[i].v1}, v2 = ${_mesh.triangles[i].v2}, v3 = ${_mesh.triangles[i].v3}`);
+    }
+}
+
+//draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
+export function drawMesh(_mesh, _matWorld) {
+    if (_mesh !== null) { //objects can be defined with null mesh
+        //takes a mesh, returns with a list of triangles ready to be drawn on screen using 2D draw functions
+        var unsortedTrianglesList = moveTrianglesToScreenSpace(_mesh, _matWorld);
+
+        //triangles from all meshes need to be collected into a list, depth sorted, then drawn onto the screen
+
+        //sort triangles here by depth, then draw them.
+        //sorting them back to front, so the back triangles get drawn first
+        var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
+
+        //loop through the list to draw each triangle
+        var k = 0;
+        for (k = 0; k < sortedTrianglesList.length; k += 1) {
+            var tri = sortedTrianglesList[k];
+            fillTriangle([tri.v1[0], tri.v1[1]],
+                [tri.v2[0], tri.v2[1]],
+                [tri.v3[0], tri.v3[1]], tri.color);
+        }
     }
 }

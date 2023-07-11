@@ -1,8 +1,12 @@
-import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D } from "./LPVector3D.js";
-import { draw_line, draw_polygon, printConsole } from "../LPEngineCore.js";
+import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./LPVector3D.js";
+import { draw_line, draw_polygon, printConsole, rgbToHex } from "../LPEngineCore.js";
 import { LPList, Queue } from "../LPList.js";
 import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./LPMatrix4x4.js";
 import { Triangle } from "./LPModels3D.js";
+
+//Render options, change it for debugging purposes
+var shaded = true;
+var wireframe = true;
 
 export class Plane {
     constructor(_point, _normal) {
@@ -76,7 +80,7 @@ export function fillTriangle(_v1, _v2, _v3, _color) {
     vertexList.add(_v2);
     vertexList.add(_v3);
 
-    draw_polygon(vertexList, 0x000000, true, _color);
+    draw_polygon(vertexList, 0x000000, wireframe, _color, shaded);
 }
 
 export function moveTriangleToScreen(_triangle, _scale, _screenWidth, _screenHeight) {
@@ -336,4 +340,84 @@ function getIntersectionPoint_LineWithPlane_3D(_lineStartPoint, _lineEndPoint, _
     var lineStartToEnd = v2Minusv1_3D(_lineStartPoint, _lineEndPoint);
     var lineToIntersect = scalarXVector_3D(t, lineStartToEnd);
     return v1Plusv2_3D(_lineStartPoint, lineToIntersect);
+}
+
+/*processes the triangles of a mesh to be drawn on the screen, returns a list of unsorted triangles, to be sorted by depth order
+Chronologically, this function 
+-> obtains a mesh 
+-> iterates through each triangle 
+-> moves every triangle to the current instance's world space 
+-> moves them to view space 
+-> clips them to get more triangles 
+-> projects them into 2D plane and adjusts their 2D coord for screen space 
+-> determines their color based on lighting 
+-> returns a list of unsorted triangles*/
+export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
+    var unsortedTrianglesList = [];
+    var i = 0;
+    for (i = 0; i < _mesh.triangles.length; i += 1) {
+        const tri = _mesh.triangles[i];
+
+        //move triangle to world space
+        var triTransformed = multiplyTriangleWithMatrix(tri, _matWorld);
+
+        //only draw triangle if it is facing towards the camera
+        if (isTriangleFacingCamera(triTransformed, _mesh.normalFlipped)) {
+            //move triangle into view space
+            var triViewed = multiplyTriangleWithMatrix(triTransformed, matView);
+
+            //clip the triangles with the given clipping planes, this will return a list of possible sub-triangles
+            var clippedTriangles = clipTrianglesWithPlanes([triViewed], [screenBottomPlane,
+                screenTopPlane,
+                screenLeftPlane,
+                screenRightPlane,
+                zNearPlane]);
+
+            //this loop to iterate through the list of clipped triangles
+            var j = 0;
+            for (j = 0; j < clippedTriangles.length; j += 1) {
+                var color = getTriangleColorFromLighting(clippedTriangles[j], _mesh.normalFlipped); /*call this function here,
+                lighting is calculated in this exact stage of transformation, after view space and before projection space*/
+
+                //move triangle to projection space
+                var triProjected = multiplyTriangleWithMatrix(clippedTriangles[j], matProj);
+
+                //normalize each vertex of triangle by dividing by w
+                triProjected.v1 = vDivScalar_3D(triProjected.v1, triProjected.v1[3]);
+                triProjected.v2 = vDivScalar_3D(triProjected.v2, triProjected.v2[3]);
+                triProjected.v3 = vDivScalar_3D(triProjected.v3, triProjected.v3[3]);
+
+                //denormalize the triangle to screen space
+                triProjected = moveTriangleToScreen(triProjected, 0, screenWidth, screenHeight);
+
+                //store this finished triangle into the unsorted list
+                triProjected.color = color;
+                unsortedTrianglesList.push(triProjected);
+            }
+
+        }
+    }
+    return unsortedTrianglesList;
+}
+
+function isTriangleFacingCamera(_triangle, _normalFlipped) {
+    var normal = getTriangleNormal(_triangle, _normalFlipped);
+    var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
+    var dotProduct = dotProduct_3D(normal, vector1);
+    return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
+}
+//returns how much to shade this tri. lighting and shading color is fixed for now
+function getTriangleColorFromLighting(_triangle, _normalFlipped) {
+    //illumination (of course, only if you can see it)
+    const light_direction = [0, 0, -1];
+    const vU_light_direction = getUnitVector_3D(light_direction);
+
+    //get normal of triangle
+    var normal = getTriangleNormal(_triangle, _normalFlipped);
+
+    //see how similar the normal is to the light direction
+    var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
+    //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
+    //use this dotproduct2 value to input rbg between 0-1
+    return rgbToHex(0, dotProduct2, dotProduct2); //just green
 }
