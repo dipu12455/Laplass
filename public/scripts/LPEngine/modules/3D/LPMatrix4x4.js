@@ -1,5 +1,6 @@
-import * as LP from '../../LPEngine/LPEngine.js';
-import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v2Minusv1_3D } from './LPVector3D.js';
+import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v2Minusv1_3D } from "./LPVector3D.js";
+import { degtorad } from "../LPVector.js";
+
 // the vectors will be of form [x,y,z], represented as arrays
 
 export function returnZeroMat4x4() {
@@ -40,7 +41,7 @@ export function makeIdentityMatrix() {
 }
 
 export function getProjectionMatrix(_aspectRatio, _fieldOfView, _zNear, _zFar) {
-    var F = 1 / Math.tan(LP.degtorad(_fieldOfView * 0.5));
+    var F = 1 / Math.tan(degtorad(_fieldOfView * 0.5));
     var q = _zFar / (_zFar - _zNear);
 
     var matProj = new mat4x4();
@@ -70,31 +71,31 @@ export function getRotationMatrixX(_theta) {
     //rotation X
     var matrix = new mat4x4();
     matrix.m[0][0] = 1;
-    matrix.m[1][1] = Math.cos(LP.degtorad(_theta));
-    matrix.m[1][2] = Math.sin(LP.degtorad(_theta));
-    matrix.m[2][1] = -Math.sin(LP.degtorad(_theta));
-    matrix.m[2][2] = Math.cos(LP.degtorad(_theta));
+    matrix.m[1][1] = Math.cos(degtorad(_theta));
+    matrix.m[1][2] = Math.sin(degtorad(_theta));
+    matrix.m[2][1] = -Math.sin(degtorad(_theta));
+    matrix.m[2][2] = Math.cos(degtorad(_theta));
     matrix.m[3][3] = 1;
     return matrix;
 }
 export function getRotationMatrixY(_theta) {
     //rotation Y
     var matrix = new mat4x4();
-    matrix.m[0][0] = Math.cos(LP.degtorad(_theta));
-    matrix.m[0][2] = Math.sin(LP.degtorad(_theta));
-    matrix.m[2][0] = -Math.sin(LP.degtorad(_theta));
+    matrix.m[0][0] = Math.cos(degtorad(_theta));
+    matrix.m[0][2] = Math.sin(degtorad(_theta));
+    matrix.m[2][0] = -Math.sin(degtorad(_theta));
     matrix.m[1][1] = 1;
-    matrix.m[2][2] = Math.cos(LP.degtorad(_theta));
+    matrix.m[2][2] = Math.cos(degtorad(_theta));
     matrix.m[3][3] = 1;
     return matrix;
 }
 export function getRotationMatrixZ(_theta) {
     //rotation Z
     var matrix = new mat4x4();
-    matrix.m[0][0] = Math.cos(LP.degtorad(_theta));
-    matrix.m[0][1] = Math.sin(LP.degtorad(_theta));
-    matrix.m[1][0] = -Math.sin(LP.degtorad(_theta));
-    matrix.m[1][1] = Math.cos(LP.degtorad(_theta));
+    matrix.m[0][0] = Math.cos(degtorad(_theta));
+    matrix.m[0][1] = Math.sin(degtorad(_theta));
+    matrix.m[1][0] = -Math.sin(degtorad(_theta));
+    matrix.m[1][1] = Math.cos(degtorad(_theta));
     matrix.m[2][2] = 1;
     matrix.m[3][3] = 1;
     return matrix;

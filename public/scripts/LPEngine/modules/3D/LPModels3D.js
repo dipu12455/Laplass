@@ -1,4 +1,4 @@
-import * as LP from '../../LPEngine/LPEngine.js';
+import { LPList } from "../LPList.js";
 
 export class Triangle {
     constructor(_vertices) { //the vertices is an array of vectors, and each vector is an array of three tuples [x,y,z]
@@ -7,7 +7,7 @@ export class Triangle {
         this.v3 = _vertices[2];
         this.color = 0x000000;
     }
-    getString(){
+    getString() {
         return "v1: " + this.v1 + "\nv2: " + this.v2 + "\nv3: " + this.v3;
     }
 }
@@ -19,8 +19,8 @@ export class Mesh {
 }
 
 export function meshFromStringObj(_string) {
-    var vertexList = new LP.LPList();
-    var facesList = new LP.LPList();
+    var vertexList = new LPList();
+    var facesList = new LPList();
 
     const lines = _string.split("\n");
 
@@ -35,8 +35,8 @@ export function meshFromStringObj(_string) {
         for (f = 0; f < wordsRaw.length; f += 1) {
             if (wordsRaw[f] === "" ||
                 wordsRaw[f] === " ") {
-                    continue;
-                }
+                continue;
+            }
             words.push(wordsRaw[f]);
         }
 
@@ -53,13 +53,29 @@ export function meshFromStringObj(_string) {
             vertexList.add(vertex);
         }
         if (words[0] === "f") {
-            var temp = [words[1], words[2], words[3]];
-            const v1Ind = parseInt(temp[0].split("/")[0]);
-            const v2Ind = parseInt(temp[1].split("/")[0]);
-            const v3Ind = parseInt(temp[2].split("/")[0]);
-            var face = [v1Ind, v2Ind, v3Ind];
+            var quadFace = false;
+            if (words.length === 5) { quadFace = true; }
 
-            facesList.add(face);
+            if (quadFace == false){
+                var temp = [words[1], words[2], words[3]];
+                const v1Ind = parseInt(temp[0].split("/")[0]);
+                const v2Ind = parseInt(temp[1].split("/")[0]);
+                const v3Ind = parseInt(temp[2].split("/")[0]);
+                var face = [v1Ind, v2Ind, v3Ind];
+
+                facesList.add(face);
+            }else{
+                var temp = [words[1], words[2], words[3], words[4]];
+                const v1Ind = parseInt(temp[0].split("/")[0]);
+                const v2Ind = parseInt(temp[1].split("/")[0]);
+                const v3Ind = parseInt(temp[2].split("/")[0]);
+                const v4Ind = parseInt(temp[3].split("/")[0]);
+                var face1 = [v1Ind, v2Ind, v3Ind];
+                var face2 = [v1Ind, v3Ind, v4Ind];
+
+                facesList.add(face1);
+                facesList.add(face2);
+            }
         }
     }
 
@@ -68,9 +84,9 @@ export function meshFromStringObj(_string) {
     i = 0;
     for (i = 0; i < facesList.getSize(); i += 1) {
         var face = facesList.get(i);
-        var vertexArray = [vertexList.get(face[0]-1),
-        vertexList.get(face[1]-1), 
-        vertexList.get(face[2]-1)];
+        var vertexArray = [vertexList.get(face[0] - 1),
+        vertexList.get(face[1] - 1),
+        vertexList.get(face[2] - 1)];
         triangleArray.push(new Triangle(vertexArray));
     }
 
@@ -90,9 +106,9 @@ export async function getMeshFromObj(_serverRoute) {
 }
 
 
-export function printMesh(_mesh){
+export function printMesh(_mesh) {
     var i = 0;
-    for(i = 0; i < _mesh.triangles.length; i += 1){
+    for (i = 0; i < _mesh.triangles.length; i += 1) {
         console.log(`triangle ${i}: v1 = ${_mesh.triangles[i].v1}, v2 = ${_mesh.triangles[i].v2}, v3 = ${_mesh.triangles[i].v3}`);
     }
 }

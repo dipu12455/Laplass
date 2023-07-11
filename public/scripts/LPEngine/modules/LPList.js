@@ -54,3 +54,46 @@ export class LPList {
     }
   }
 }
+
+export class Queue {
+  constructor() {
+      this.items = [];
+  }
+
+  push(element) {
+      this.items.push(element);
+  }
+
+  pushList(_list) { //the list is the an array, iterate through the list and push them one by one onto queue
+      let i = 0;
+      for (i = 0; i < _list.length; i += 1) {
+          this.push(_list[i]);
+      }
+  }
+
+  pop() { //pop it off the top, returns it then removes it
+      if (this.isEmpty()) {
+          return "Queue is empty";
+      }
+      return this.items.shift();
+  }
+
+  isEmpty() {
+      return this.items.length === 0;
+  }
+
+  size() {
+      return this.items.length;
+  }
+
+  front() {
+      if (this.isEmpty()) {
+          return "Queue is empty";
+      }
+      return this.items[0];
+  }
+
+  print() {
+      console.log(this.items); //might not work if objects are stored
+  }
+}

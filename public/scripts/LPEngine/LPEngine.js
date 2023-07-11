@@ -23,6 +23,7 @@ export { subtractMagnitudeFromVector } from './modules/LPVector.js';
 export {flipVector} from './modules/LPVector.js';
 //LPList
 export { LPList } from './modules/LPList.js';
+export { Queue } from './modules/LPList.js';
 
 //LPInstances
 export { LPGameObject } from './modules/LPInstances.js';
@@ -95,6 +96,10 @@ export { evKeyA } from './modules/LPEvents.js';
 export { evKeyD } from './modules/LPEvents.js';
 export { evArrowUp } from './modules/LPEvents.js';
 export { evArrowDown } from './modules/LPEvents.js';
+export { evArrowRight } from './modules/LPEvents.js';
+export { evArrowLeft } from './modules/LPEvents.js';
+export { evKeyQ } from './modules/LPEvents.js';
+export { evKeyE } from './modules/LPEvents.js';
 export { evKeyG_p } from './modules/LPEvents.js';
 export { evKeyS_p } from './modules/LPEvents.js';
 export { evKeyP_p } from './modules/LPEvents.js';
@@ -103,6 +108,10 @@ export { evKeyA_p } from './modules/LPEvents.js';
 export { evKeyD_p } from './modules/LPEvents.js';
 export { evArrowUp_p } from './modules/LPEvents.js';
 export { evArrowDown_p } from './modules/LPEvents.js';
+export { evArrowRight_p } from './modules/LPEvents.js';
+export { evArrowLeft_p } from './modules/LPEvents.js';
+export { evKeyQ_p } from './modules/LPEvents.js';
+export { evKeyE_p } from './modules/LPEvents.js';
 export { getMousePosition } from './modules/LPEvents.js';
 export { evMouseRegion } from './modules/LPEvents.js';
 export { isEventFired } from './modules/LPEvents.js';

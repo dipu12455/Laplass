@@ -177,14 +177,14 @@ export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor){
     path[j + 1] = vertex2[1];
     j = j + 2;
   }
-  if (_wireframe == true) {
-    drawObject.lineStyle(1, _lineColor, 1);
-    drawObject.drawPolygon(path);
-  } else {
+  
     drawObject.lineStyle(0);
     drawObject.beginFill(_fillColor, 1);
     drawObject.drawPolygon(path);
     drawObject.endFill();
+    if (_wireframe == true) {
+      drawObject.lineStyle(1, _lineColor, 1);
+      drawObject.drawPolygon(path);
   }
 }
 

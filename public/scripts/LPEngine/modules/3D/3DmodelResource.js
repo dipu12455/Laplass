@@ -1,4 +1,4 @@
-import { getMeshFromObj } from "./modules/LPModels3D.js";
+import { getMeshFromObj } from "./LPModels3D.js";
 
 //use this file to load 3D models resources from the server, models can be referred to by the following exported variables
 
