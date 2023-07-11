@@ -203,7 +203,7 @@ fragment shader takes drawing calls for drawing a certain pixel directly onto th
 
 export var fragmentSize = 20;
 export function setFragmentSize(_size) { fragmentSize = _size; }
-export function getFragmentSize() { return fragmentSize;}
+export function getFragmentSize() { return fragmentSize; }
 
 /*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
 this function will later be moved into the fragment shader module.*/
@@ -211,8 +211,36 @@ this function will later be moved into the fragment shader module.*/
 export function draw_fragment(_x, _y, _color) {
   drawObject.beginFill(_color);
   drawObject.lineStyle(0);
-  drawObject.drawRect(_x*fragmentSize, _y*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+  drawObject.drawRect(_x * fragmentSize, _y * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
+}
+
+export var depthBuffer = [];
+/* the number of columns of a depth buffer is same as the number of fragments that will fit in the screen width
+based on their size. the number rows of the depth buffer is same as the number of fragments that will fit in the 
+screen height*/
+export function initializeDepthBuffer(_screenWidth, _screenHeight) {
+  /*creates a 2D slot of the correct size, fills its value with 1. 1 means the farthest from the screen. 0 means closest possible
+  distance from the screen*/
+
+  let thisArray = [];
+  var noOfFragmentsX = Math.ceil(_screenWidth / fragmentSize);
+  var noOfFragmentsY = Math.ceil(_screenHeight / fragmentSize);
+
+  for (let i = 0; i < noOfFragmentsY; i++) {
+    thisArray[i] = []; // Initialize each row as an empty array
+
+    for (let j = 0; j < noOfFragmentsX; j++) {
+      thisArray[i][j] = 1; // Set initial value for each element in the row
+    }
+  }
+  depthBuffer = thisArray;
+}
+export function setDepthValue(_x,_y,_value){
+  depthBuffer[_y][_x] = _value;
+}
+export function getDepthValue(_x,_y){
+  return depthBuffer[_y][_x];
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
