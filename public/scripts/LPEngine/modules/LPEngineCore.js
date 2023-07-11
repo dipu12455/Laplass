@@ -217,7 +217,7 @@ export function draw_fragment(_x, _y, _z, _color) {
   /*read the depth buffer in this fragment spot.
   if current value is smaller than in the depth buffer, draw the fragment, and replace depth buffer value with your own*/
   var depthBufferValue = getDepthValue(fragX, fragY);
-  if (_z < depthBufferValue) {
+  if (_z <= depthBufferValue) {
     setDepthValue(fragX, fragY, _z);
     drawObject.beginFill(_color);
     drawObject.lineStyle(0);

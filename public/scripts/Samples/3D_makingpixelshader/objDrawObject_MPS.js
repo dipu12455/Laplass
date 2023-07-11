@@ -20,9 +20,9 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
 
         };
         this.draw = () => {
-            
-            draw_fragment(37.29, 81, 0xff0000); //fragment works on pixel coord
-            draw_fragment(20,60,0xff00ff);
+            //draw_fragment(x,y,,0x000000);
+            draw_fragment(32,32,0.1,0xff00ff);
+            draw_fragment(32,32,0.5,0x0000ff);
 
             LP.setPrintConsole(false);
         };
