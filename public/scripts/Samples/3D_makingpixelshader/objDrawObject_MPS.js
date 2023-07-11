@@ -16,7 +16,7 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
 
         };
         this.draw = () => {
-            LP.draw_rectangle(0,0,10,10);
+            LP.draw_rectangle(0,0,10,10,0xff0000,0xff0000,true);
 
         };
     }

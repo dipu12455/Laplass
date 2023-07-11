@@ -8,7 +8,7 @@ import * as Scene from './Samples/3D_makingpixelshader/Scene3D_MPS.js';
 
 //these functions need to be run in this exact order
 
-LP.showScreenGrid(); //display the screen grid
+//LP.showScreenGrid(); //display the screen grid
 
 /*the following function is called after all the setup is done.
 All primitives loaded, all instances added, all everything done.

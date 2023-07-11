@@ -168,14 +168,20 @@ export function draw_circle(_p, _radius, color) { //point of array form [x,y]
   drawObject.endFill();
 }
 
-export function draw_rectangle(_x,_y,_width,_height){
-  var p = moveToScreenCoord([_x,_y]);
+export function draw_rectangle(_x, _y, _width, _height, _lineColor, _fillColor, _filled) {
+  var p = moveToScreenCoord([_x, _y]);
   var w = _width * getWorldDelta();
   var h = _height * getWorldDelta();
-  drawObject.beginFill(0xff0000);
-  drawObject.lineStyle(1, 0x000000);
-  drawObject.drawRect(p[0]-w/2,p[1]-h/2,w,h); //keep its origin in its center
-  drawObject.endFill();
+
+  if (_filled) {
+    drawObject.beginFill(_fillColor);
+    drawObject.lineStyle(1, _lineColor);
+    drawObject.drawRect(p[0] - w / 2, p[1] - h / 2, w, h); //keep its origin in its center
+    drawObject.endFill();
+  } else {
+    drawObject.lineStyle(1, _lineColor);
+    drawObject.drawRect(p[0] - w / 2, p[1] - h / 2, w, h); //keep its origin in its center
+  }
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
