@@ -55,6 +55,8 @@ export { copyPrimitive } from './modules/LPPrimitives.js';
 
 //LPEngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app
 export { runEngine } from './modules/LPEngineCore.js';
+export { getScreenWidth } from './modules/LPEngineCore.js';
+export { getScreenHeight } from './modules/LPEngineCore.js';
 export { timeResume } from './modules/LPEngineCore.js';
 export { timePause } from './modules/LPEngineCore.js';
 export { printConsole } from './modules/LPEngineCore.js';
@@ -74,6 +76,7 @@ export { draw_vector_origin } from './modules/LPEngineCore.js';
 export { draw_polygon } from './modules/LPEngineCore.js';
 export { draw_primitive } from './modules/LPEngineCore.js';
 export { drawNormals } from './modules/LPEngineCore.js';
+export { draw_fragment } from './modules/LPEngineCore.js';
 
 //LPCollision
 export { checkCollisionCircles } from './modules/LPCollision.js';

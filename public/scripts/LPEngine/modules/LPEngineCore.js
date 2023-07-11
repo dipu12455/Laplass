@@ -16,6 +16,7 @@ import { drawMesh } from './3D/LPModels3D.js';
 var app;
 var drawObject;
 
+var screenWidth, screenHeight;
 var worldOriginX, worldOriginY, worldDelta;
 var screenGrid = false;
 var timeRun = true;
@@ -28,6 +29,8 @@ var ThreeDMode = false;
 
 
 export function runEngine(_window, _width, _height, _LPDraw) {
+  screenWidth = _width;
+  screenHeight = _height;
   worldOriginX = _width / 2;
   worldOriginY = _height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
@@ -67,7 +70,15 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   });
 
 }
-
+/* getting the screen width, height or any of the world delta values, needs to be done inside the instance's
+init, update or draw functions. In any other place, the value will appear as undefined because the engine will
+not have initialized yet*/
+export function getScreenWidth() {
+  return screenWidth;
+}
+export function getScreenHeight() {
+  return screenHeight;
+}
 export function getApp() {
   return app;
 }
@@ -182,6 +193,21 @@ export function draw_rectangle(_x, _y, _width, _height, _lineColor, _fillColor, 
     drawObject.lineStyle(1, _lineColor);
     drawObject.drawRect(p[0] - w / 2, p[1] - h / 2, w, h); //keep its origin in its center
   }
+}
+
+/*fragment shader coordinates and its screen dimensions need to work directly on the pixel of the screen,
+it can't follow LPE coordinate system. Later when changing worldDelta for zooming purposes, we don't want
+that changing the fragment grid. So hierarchically speaking, location of this fragment shader module will be 
+below LPE and above PIXIjs, the boundary where the transition from PIXIjs to LPE is taking place.
+fragment shader takes drawing calls for drawing a certain pixel directly onto the screen.*/
+/*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
+this function will later be moved into the fragment shader module.*/
+export function draw_fragment(_x, _y, _color) {
+  var size = 4; //this is size of 4 pixels
+  drawObject.beginFill(_color);
+  drawObject.lineStyle(0);
+  drawObject.drawRect(_x,_y,size,size); //keep its origin in its center
+  drawObject.endFill();
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
