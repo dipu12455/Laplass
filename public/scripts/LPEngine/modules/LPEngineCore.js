@@ -209,16 +209,22 @@ export function getFragmentSize() { return fragmentSize; }
 this function will later be moved into the fragment shader module.*/
 /*the x and y need to be changed into grid inputs. the slot that is drawn will be the  closest one in the grid to the given x and y.
 if you provide (draw a fragment in 32px by 41px), it will find the fragment slot at 20th by 40th, and fill that fragment*/
-export function draw_fragment(_x, _y, _color) {
+export function draw_fragment(_x, _y, _z, _color) {
   //find the fragment that encloses the given point
   var fragX = Math.floor(_x / fragmentSize);
   var fragY = Math.floor(_y / fragmentSize);
 
-  drawObject.beginFill(_color);
-  drawObject.lineStyle(0);
-  //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
-  drawObject.drawRect(fragX*fragmentSize, fragY*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
-  drawObject.endFill();
+  /*read the depth buffer in this fragment spot.
+  if current value is smaller than in the depth buffer, draw the fragment, and replace depth buffer value with your own*/
+  var depthBufferValue = getDepthValue(fragX, fragY);
+  if (_z < depthBufferValue) {
+    setDepthValue(fragX, fragY, _z);
+    drawObject.beginFill(_color);
+    drawObject.lineStyle(0);
+    //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
+    drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+    drawObject.endFill();
+  }
 }
 
 export var depthBuffer = [];
@@ -242,6 +248,7 @@ export function initializeDepthBuffer(_screenWidth, _screenHeight) {
   }
   depthBuffer = thisArray;
 }
+//provide the x and y of the fragment, and the depth value to set
 export function setDepthValue(_x, _y, _value) {
   depthBuffer[_y][_x] = _value;
 }
