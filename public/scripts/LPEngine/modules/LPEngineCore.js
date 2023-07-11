@@ -202,11 +202,13 @@ below LPE and above PIXIjs, the boundary where the transition from PIXIjs to LPE
 fragment shader takes drawing calls for drawing a certain pixel directly onto the screen.*/
 /*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
 this function will later be moved into the fragment shader module.*/
+export var fragmentSize = 20;
+export function setFragmentSize(_size) { fragmentSize = _size; }
+export function getFragmentSize() { return fragmentSize;}
 export function draw_fragment(_x, _y, _color) {
-  var size = 4; //this is size of 4 pixels
   drawObject.beginFill(_color);
   drawObject.lineStyle(0);
-  drawObject.drawRect(_x,_y,size,size); //keep its origin in its center
+  drawObject.drawRect(_x, _y, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
 }
 
