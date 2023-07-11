@@ -22,7 +22,7 @@ export function v2Minusv1_3D(_v2, _v1) {
 export function getUnitVector_3D(_v) {
     var x = 0, y = 1, z = 2; //just to make it more readable
     var length = Math.sqrt(_v[x] * _v[x] + _v[y] * _v[y] + _v[z] * _v[z]);
-    if (length <= 0) { return [0, 0, 0]; }
+    if (length <= 0) { return [0, 0, 0, _v[3]]; }
     return [_v[x] / length, _v[y] / length, _v[z] / length, _v[3]];
 }
 

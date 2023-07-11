@@ -219,11 +219,12 @@ export function draw_fragment(_x, _y, _z, _color) {
   var depthBufferValue = getDepthValue(fragX, fragY);
   if (_z <= depthBufferValue) {
     setDepthValue(fragX, fragY, _z);
-    drawObject.beginFill(_color);
-    drawObject.lineStyle(0);
+    //drawObject.beginFill(_color);
+    drawObject.lineStyle(1, 0x000000);
+    //drawObject.lineStyle(0);
     //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
     drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
-    drawObject.endFill();
+    //drawObject.endFill();
   }
 }
 

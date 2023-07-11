@@ -16,7 +16,7 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         };
         this.update = (_delta) => {
             this.checkEvents(); //this is a seperated function into another file, moves the camera with WASD and Up/Down
-            //this.rotateMyself(_delta);
+            this.rotateMyself(_delta);
 
         };
         this.draw = () => {

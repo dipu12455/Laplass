@@ -1,5 +1,5 @@
 import { crossProduct, dotProduct_3D, getMag_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./LPVector3D.js";
-import { draw_line, draw_polygon, printConsole, rgbToHex } from "../LPEngineCore.js";
+import { draw_fragment, draw_line, draw_polygon, fragmentSize, printConsole, rgbToHex, moveToScreenCoord, setPrintConsole } from "../LPEngineCore.js";
 import { LPList, Queue } from "../LPList.js";
 import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./LPMatrix4x4.js";
 import { Triangle } from "./LPModels3D.js";
@@ -13,6 +13,12 @@ class Line {
     constructor(_startPoint, _endPoint) {
         this.startPoint = _startPoint;
         this.endPoint = _endPoint;
+    }
+    getVector() {
+        return v2Minusv1_3D(this.endPoint, this.startPoint);
+    }
+    getUnitVector() {
+        return getUnitVector_3D(this.getVector());
     }
 }
 
@@ -91,23 +97,57 @@ export function fillTriangle(_v1, _v2, _v3, _color) {
     draw_polygon(vertexList, 0x000000, wireframe, _color, shaded);
 }
 
+function changeTriangleToScreenCoord(_triangle) {
+    var v12D = moveToScreenCoord([_triangle.v1[0], _triangle.v1[1]]);
+    var v22D = moveToScreenCoord([_triangle.v2[0], _triangle.v2[1]]);
+    var v32D = moveToScreenCoord([_triangle.v3[0], _triangle.v3[1]]);
+
+    var v1 = [v12D[0], v12D[1], _triangle.v1[2], _triangle.v1[3]];
+    var v2 = [v22D[0], v22D[1], _triangle.v2[2], _triangle.v2[3]];
+    var v3 = [v32D[0], v32D[1], _triangle.v3[2], _triangle.v3[3]];
+
+    var tri = new Triangle([v1, v2, v3]);
+    return tri;
+}
+
 //this is a draw function, it will directly call the draw_fragment function
 export function renderFragments(_triangle) {
+    var tri = changeTriangleToScreenCoord(_triangle); //change to triangles to pixel based
     //label the vertices, going anticlockwise from 0deg position
-    var A = _triangle.v1;
-    var B = _triangle.v2;
-    var C = _triangle.v3;
+    var A = tri.v1;
+    var B = tri.v2;
+    var C = tri.v3;
 
     //draw a line BA and CA.
     var BA = new Line(B, A);
-    var CA = new Line(C, A);
-    //how many fragments fit in BA
-    var vectorBA = v2Minusv1_3D(B, A);
-    var noOfFragmentsBA = getMag_3D(v2Minusv1_3D())
+    
 
-    //determine the scanline
-    var scanLine = new Line(A, A);
-    scanLine.startPoint = A;
+
+
+    var CA = new Line(C, A);
+
+    var P1 = B; //this is the start point of scanline that moves along BA
+    var P2 = C; //this is the end point of scanline that moves along CA
+
+    //move P1 along BA a distance of fz (fragmentSize)
+    var fz = fragmentSize;
+    var noOfFragmentsBA = Math.ceil(getMag_3D(BA.getVector()) / fz);
+    for (var i = 0; i < noOfFragmentsBA; i += 1) {
+        P1 = v1Plusv2_3D(BA.startPoint, scalarXVector_3D(i * fz, BA.getUnitVector()));
+        var factor = getMag_3D(v2Minusv1_3D(P1, BA.startPoint)) / getMag_3D(BA.getVector());
+        //move the exact portion in line CA, as reflected by 'factor'
+        P2 = v1Plusv2_3D(CA.startPoint, scalarXVector_3D(factor, CA.getVector()));
+        //now draw a line from P1 to P2
+        var scanline = new Line(P1, P2);
+        var noOfFragmentsSL = Math.ceil(getMag_3D(scanline.getVector()) / fz);
+
+
+        for (var j = 0; j < noOfFragmentsSL; j += 1) {
+            var Q = v1Plusv2_3D(scanline.startPoint, scalarXVector_3D(j * fz, scanline.getUnitVector()));
+            draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
+        }
+    }
+
 
 }
 
@@ -245,13 +285,13 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
 
     /*now based on how many inside points there are, clip the triangle accordingly
     if noOfInsidePoints == 3, clip the whole triange, return nothing
-
+ 
     if noOfInsidePoints == 2, there is one point outside, find which point it is, 
     then form a triangle with that point, and the two points of intersection with the plane
-
+ 
     if nofOfInsidePoints == 1, find out which points are outside, form two triangles using those points,
     and the two points of intersection with the plane
-
+ 
     if noOfInsidePoints == 0, return back the triangle given to you. there is no clipping*/
 
     if (noOfInsidePoints == 3) { //clip whole triangle, return nothing

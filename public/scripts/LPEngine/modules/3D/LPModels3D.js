@@ -1,5 +1,6 @@
+import { draw_fragment } from "../LPEngineCore.js";
 import { LPList } from "../LPList.js";
-import { fillTriangle, moveTrianglesToScreenSpace, sortTrianglesByDepth } from "./LPDraw3D.js";
+import { fillTriangle, moveTrianglesToScreenSpace, renderFragments, sortTrianglesByDepth } from "./LPDraw3D.js";
 
 export class Triangle {
     constructor(_vertices) { //the vertices is an array of vectors, and each vector is an array of three tuples [x,y,z]
@@ -134,6 +135,7 @@ export function drawMesh(_mesh, _matWorld) {
             fillTriangle([tri.v1[0], tri.v1[1]],
                 [tri.v2[0], tri.v2[1]],
                 [tri.v3[0], tri.v3[1]], tri.color);
+            renderFragments(tri);
         }
     }
 }
