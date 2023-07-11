@@ -200,15 +200,18 @@ it can't follow LPE coordinate system. Later when changing worldDelta for zoomin
 that changing the fragment grid. So hierarchically speaking, location of this fragment shader module will be 
 below LPE and above PIXIjs, the boundary where the transition from PIXIjs to LPE is taking place.
 fragment shader takes drawing calls for drawing a certain pixel directly onto the screen.*/
-/*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
-this function will later be moved into the fragment shader module.*/
+
 export var fragmentSize = 20;
 export function setFragmentSize(_size) { fragmentSize = _size; }
 export function getFragmentSize() { return fragmentSize;}
+
+/*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
+this function will later be moved into the fragment shader module.*/
+//the x and y are grid inputs. the grid size determined by the fragment size, (2,3) would be 2nd column and 3rd row grid.
 export function draw_fragment(_x, _y, _color) {
   drawObject.beginFill(_color);
   drawObject.lineStyle(0);
-  drawObject.drawRect(_x, _y, fragmentSize, fragmentSize); //keep its origin in its center
+  drawObject.drawRect(_x*fragmentSize, _y*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
 }
 
