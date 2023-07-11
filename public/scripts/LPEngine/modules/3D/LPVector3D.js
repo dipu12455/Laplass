@@ -35,3 +35,8 @@ export function scalarXVector_3D(_scalar, _v) {
     var x = 0, y = 1, z = 2; //just to make it more readable
     return [_scalar * _v[x], _scalar * _v[y], _scalar * _v[z], _v[3]];
 }
+
+export function getMag_3D(_v){
+    var x = 0, y = 1, z = 2; //just to make it more readable
+    return Math.sqrt(_v[x] * _v[x] + _v[y] * _v[y] + _v[z] * _v[z]);
+}

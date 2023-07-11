@@ -1,13 +1,20 @@
-import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./LPVector3D.js";
+import { crossProduct, dotProduct_3D, getMag_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./LPVector3D.js";
 import { draw_line, draw_polygon, printConsole, rgbToHex } from "../LPEngineCore.js";
 import { LPList, Queue } from "../LPList.js";
 import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./LPMatrix4x4.js";
 import { Triangle } from "./LPModels3D.js";
 
 //Render options, change it for debugging purposes
-var shaded = true;
+var shaded = false;
 var wireframe = true;
 var culling = false; //draw only the triangles facing the camera
+
+class Line {
+    constructor(_startPoint, _endPoint) {
+        this.startPoint = _startPoint;
+        this.endPoint = _endPoint;
+    }
+}
 
 export class Plane {
     constructor(_point, _normal) {
@@ -82,6 +89,26 @@ export function fillTriangle(_v1, _v2, _v3, _color) {
     vertexList.add(_v3);
 
     draw_polygon(vertexList, 0x000000, wireframe, _color, shaded);
+}
+
+//this is a draw function, it will directly call the draw_fragment function
+export function renderFragments(_triangle) {
+    //label the vertices, going anticlockwise from 0deg position
+    var A = _triangle.v1;
+    var B = _triangle.v2;
+    var C = _triangle.v3;
+
+    //draw a line BA and CA.
+    var BA = new Line(B, A);
+    var CA = new Line(C, A);
+    //how many fragments fit in BA
+    var vectorBA = v2Minusv1_3D(A, B);
+    var noOfFragmentsBA = getMag_3D(v2Minusv1_3D())
+
+    //determine the scanline
+    var scanLine = new Line(A, A);
+    scanLine.startPoint = A;
+
 }
 
 export function moveTriangleToScreen(_triangle, _scale, _screenWidth, _screenHeight) {
