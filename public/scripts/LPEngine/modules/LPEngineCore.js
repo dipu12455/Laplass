@@ -207,11 +207,12 @@ export function getFragmentSize() { return fragmentSize; }
 
 /*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
 this function will later be moved into the fragment shader module.*/
-//the x and y are grid inputs. the grid size determined by the fragment size, (2,3) would be 2nd column and 3rd row grid.
+//the x and y need to be changed into grid inputs. the slot that is drawn will be the one closest one in the grid to the given x and y
 export function draw_fragment(_x, _y, _color) {
+
   drawObject.beginFill(_color);
   drawObject.lineStyle(0);
-  drawObject.drawRect(_x * fragmentSize, _y * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+  drawObject.drawRect(Math.floor(_x / fragmentSize)*fragmentSize, Math.floor(_y / fragmentSize)*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
 }
 
@@ -236,10 +237,10 @@ export function initializeDepthBuffer(_screenWidth, _screenHeight) {
   }
   depthBuffer = thisArray;
 }
-export function setDepthValue(_x,_y,_value){
+export function setDepthValue(_x, _y, _value) {
   depthBuffer[_y][_x] = _value;
 }
-export function getDepthValue(_x,_y){
+export function getDepthValue(_x, _y) {
   return depthBuffer[_y][_x];
 }
 
