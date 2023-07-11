@@ -14,7 +14,7 @@ export function v1Plusv2_3D(_v1, _v2) {
     var x = 0, y = 1, z = 2;//just to make it more readable
     return [_v1[x] + _v2[x], _v1[y] + _v2[y], _v1[z] + _v2[z], _v1[3]];
 }
-export function v2Minusv1_3D(_v1, _v2) {
+export function v2Minusv1_3D(_v2, _v1) {
     var x = 0, y = 1, z = 2; //just to make it more readable
     return [_v2[x] - _v1[x], _v2[y] - _v1[y], _v2[z] - _v1[z], _v2[3]];
 }

@@ -9,7 +9,7 @@ export function checkEvents(_instance) {
     }
     if (LP.isPEventFired(LP.evKeyS_p)) {
         var vMovingForward = scalarXVector_3D(0.1, getLookDir());
-        setCamera(v2Minusv1_3D(vMovingForward, getCamera()));
+        setCamera(v2Minusv1_3D(getCamera(), vMovingForward));
     }
     if (LP.isPEventFired(LP.evKeyA_p)) {
         setCameraYaw(getCameraYaw() + 1);

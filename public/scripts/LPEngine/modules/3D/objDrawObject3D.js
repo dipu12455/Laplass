@@ -129,7 +129,7 @@ export class objDrawObject3D extends LP.LPGameObject {
     }
     isTriangleFacingCamera(_triangle, _normalFlipped) {
         var normal = getTriangleNormal(_triangle, _normalFlipped);
-        var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
+        var vector1 = v2Minusv1_3D(_triangle.v1, getCamera());
         var dotProduct = dotProduct_3D(normal, vector1);
         return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
     }

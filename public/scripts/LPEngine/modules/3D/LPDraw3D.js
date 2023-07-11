@@ -102,7 +102,7 @@ export function renderFragments(_triangle) {
     var BA = new Line(B, A);
     var CA = new Line(C, A);
     //how many fragments fit in BA
-    var vectorBA = v2Minusv1_3D(A, B);
+    var vectorBA = v2Minusv1_3D(B, A);
     var noOfFragmentsBA = getMag_3D(v2Minusv1_3D())
 
     //determine the scanline
@@ -142,8 +142,8 @@ export function multiplyTriangleWithMatrix(_triangle, _matrix) {
 
 export function getTriangleNormal(_triangle, _flipNormal) {
     var normal, line1, line2;
-    line1 = v2Minusv1_3D(_triangle.v1, _triangle.v2);
-    line2 = v2Minusv1_3D(_triangle.v1, _triangle.v3);
+    line1 = v2Minusv1_3D(_triangle.v2, _triangle.v1);
+    line2 = v2Minusv1_3D(_triangle.v3, _triangle.v1);
     if (_flipNormal == false) normal = crossProduct(line2, line1); //flipping the cross product, to try to get triangles to be defined by the counterclockwise order of vertices
     if (_flipNormal == true) normal = crossProduct(line1, line2); //for vertices being in the clockwise order
 
@@ -217,7 +217,7 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
     var noOfInsidePoints = 0;
 
     //for point A in the triangle
-    var vA = v2Minusv1_3D(planePoint, A);
+    var vA = v2Minusv1_3D(A, planePoint);
     var dpA = dotProduct_3D(vA, planeNormal);
     var insideA = false; //initializing
     if (dpA < 0) {
@@ -226,7 +226,7 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
     }
 
     //for point B in the triangle
-    var vB = v2Minusv1_3D(planePoint, B);
+    var vB = v2Minusv1_3D(B, planePoint);
     var dpB = dotProduct_3D(vB, planeNormal);
     var insideB = false;//initializing
     if (dpB < 0) {
@@ -235,7 +235,7 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
     }
 
     //for point C in the triangle
-    var vC = v2Minusv1_3D(planePoint, C);
+    var vC = v2Minusv1_3D(C, planePoint);
     var dpC = dotProduct_3D(vC, planeNormal);
     var insideC = false;//initializing
     if (dpC < 0) {
@@ -365,7 +365,7 @@ function getIntersectionPoint_LineWithPlane_3D(_lineStartPoint, _lineEndPoint, _
     var ad = dotProduct_3D(_lineStartPoint, plane_n);
     var bd = dotProduct_3D(_lineEndPoint, plane_n);
     var t = (-plane_d - ad) / (bd - ad);
-    var lineStartToEnd = v2Minusv1_3D(_lineStartPoint, _lineEndPoint);
+    var lineStartToEnd = v2Minusv1_3D(_lineEndPoint, _lineStartPoint,);
     var lineToIntersect = scalarXVector_3D(t, lineStartToEnd);
     return v1Plusv2_3D(_lineStartPoint, lineToIntersect);
 }
@@ -431,7 +431,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
 function isTriangleFacingCamera(_triangle, _normalFlipped) {
     if (culling == false) { return true; } //skip this check if culling is disabled
     var normal = getTriangleNormal(_triangle, _normalFlipped);
-    var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
+    var vector1 = v2Minusv1_3D(_triangle.v1, getCamera(),);
     var dotProduct = dotProduct_3D(normal, vector1);
     return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
 }

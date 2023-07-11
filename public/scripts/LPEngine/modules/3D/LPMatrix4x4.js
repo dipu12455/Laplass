@@ -120,13 +120,13 @@ export function matrixMultiMatrix(_m1, _m2) {
 //up is a vector that describes the up direction of the camera
 export function getPointAtMatrix(_pos, _target, _up) {
     //calculate the new forward direction
-    var newForwardVector = v2Minusv1_3D(_pos, _target); //target - position = forwardVector
+    var newForwardVector = v2Minusv1_3D(_target, _pos,); //target - position = forwardVector
     newForwardVector = getUnitVector_3D(newForwardVector); //normalize the vector
 
     //calculate new up direction
     var dotProd = dotProduct_3D(_up, newForwardVector);
     var product = scalarXVector_3D(dotProd, newForwardVector);
-    var newUpVector = v2Minusv1_3D(product, _up);
+    var newUpVector = v2Minusv1_3D(_up, product);
     newUpVector = getUnitVector_3D(newUpVector);
 
     //the right vector
@@ -136,35 +136,35 @@ export function getPointAtMatrix(_pos, _target, _up) {
     var x = 0; var y = 1; var z = 2;
     var matrix = new mat4x4();
     matrix.m[0][0] = newRightVector[x];
-    matrix.m[0][1] = newRightVector[y]; 
-    matrix.m[0][2] = newRightVector[z]; 
+    matrix.m[0][1] = newRightVector[y];
+    matrix.m[0][2] = newRightVector[z];
     matrix.m[0][3] = 0;
-    
-    matrix.m[1][0] = newUpVector[x]; 
-    matrix.m[1][1] = newUpVector[y]; 
-    matrix.m[1][2] = newUpVector[z]; 
+
+    matrix.m[1][0] = newUpVector[x];
+    matrix.m[1][1] = newUpVector[y];
+    matrix.m[1][2] = newUpVector[z];
     matrix.m[1][3] = 0;
-    
-    matrix.m[2][0] = newForwardVector[x]; 
-    matrix.m[2][1] = newForwardVector[y]; 
-    matrix.m[2][2] = newForwardVector[z]; 
+
+    matrix.m[2][0] = newForwardVector[x];
+    matrix.m[2][1] = newForwardVector[y];
+    matrix.m[2][2] = newForwardVector[z];
     matrix.m[2][3] = 0;
-    
-    matrix.m[3][0] = _pos[x]; 
-    matrix.m[3][1] = _pos[y]; 
-    matrix.m[3][2] = _pos[z]; 
+
+    matrix.m[3][0] = _pos[x];
+    matrix.m[3][1] = _pos[y];
+    matrix.m[3][2] = _pos[z];
     matrix.m[3][3] = 1;
     return matrix;
 }
 
 export function getMatrixQuickInverse(m) { //only for rotation/translation matrices
     var matrix = new mat4x4();
-		matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.;
-		matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0;
-		matrix.m[2][0] = m.m[0][2]; matrix.m[2][1] = m.m[1][2]; matrix.m[2][2] = m.m[2][2]; matrix.m[2][3] = 0;
-		matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
-		matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
-		matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
-		matrix.m[3][3] = 1;
-		return matrix;
-	}
+    matrix.m[0][0] = m.m[0][0]; matrix.m[0][1] = m.m[1][0]; matrix.m[0][2] = m.m[2][0]; matrix.m[0][3] = 0.;
+    matrix.m[1][0] = m.m[0][1]; matrix.m[1][1] = m.m[1][1]; matrix.m[1][2] = m.m[2][1]; matrix.m[1][3] = 0;
+    matrix.m[2][0] = m.m[0][2]; matrix.m[2][1] = m.m[1][2]; matrix.m[2][2] = m.m[2][2]; matrix.m[2][3] = 0;
+    matrix.m[3][0] = -(m.m[3][0] * matrix.m[0][0] + m.m[3][1] * matrix.m[1][0] + m.m[3][2] * matrix.m[2][0]);
+    matrix.m[3][1] = -(m.m[3][0] * matrix.m[0][1] + m.m[3][1] * matrix.m[1][1] + m.m[3][2] * matrix.m[2][1]);
+    matrix.m[3][2] = -(m.m[3][0] * matrix.m[0][2] + m.m[3][1] * matrix.m[1][2] + m.m[3][2] * matrix.m[2][2]);
+    matrix.m[3][3] = 1;
+    return matrix;
+}
