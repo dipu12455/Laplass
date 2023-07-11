@@ -7,6 +7,7 @@ import { Triangle } from "./LPModels3D.js";
 //Render options, change it for debugging purposes
 var shaded = true;
 var wireframe = true;
+var culling = false; //draw only the triangles facing the camera
 
 export class Plane {
     constructor(_point, _normal) {
@@ -401,6 +402,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
 }
 
 function isTriangleFacingCamera(_triangle, _normalFlipped) {
+    if (culling == false) { return true; } //skip this check if culling is disabled
     var normal = getTriangleNormal(_triangle, _normalFlipped);
     var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
     var dotProduct = dotProduct_3D(normal, vector1);

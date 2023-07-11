@@ -7,7 +7,7 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         super(_mesh); //provide the mesh to its parent class
         this.elapsed = getRandomInteger(0, 100); //this is not part of parent class, only for child class
         this.x = 0;
-        this.z = 5;
+        this.z = 8;
 
         this.init = () => {
             //this is an LPE module in progress, don't use LP prefix for internal module functions
@@ -16,7 +16,7 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         };
         this.update = (_delta) => {
             this.checkEvents(); //this is a seperated function into another file, moves the camera with WASD and Up/Down
-            this.rotateMyself(_delta);
+            //this.rotateMyself(_delta);
 
         };
         this.draw = () => {

@@ -37,7 +37,8 @@ app.get('/pmRectangle', (req, res) => {
 });
 
 app.get('/mesh1', (req, res) => {
-  res.sendFile(__dirname + '/pyramid.obj');
+  //res.sendFile(__dirname + '/pyramid.obj');
+  res.sendFile(__dirname + '/triangleFacingMinusZ.obj');
 });
 
 app.listen(port, () => {
