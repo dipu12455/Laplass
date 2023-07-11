@@ -144,8 +144,16 @@ export function renderFragments(_triangle) {
 
         for (var j = 0; j < noOfFragmentsSL; j += 1) {
             var Q = v1Plusv2_3D(scanline.startPoint, scalarXVector_3D(j * fz, scanline.getUnitVector()));
-            draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
+            //draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
         }
+    }
+
+    for (var i = -10; i < 10; i+= 0.05){
+        function getRandomNumber(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+        var color = rgbToHex(getRandomNumber(0,1),getRandomNumber(0,1),getRandomNumber(0,1));
+        draw_line([i,-10],[i,10],color);
     }
 
 
