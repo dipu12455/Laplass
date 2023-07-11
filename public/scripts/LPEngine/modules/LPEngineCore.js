@@ -168,6 +168,16 @@ export function draw_circle(_p, _radius, color) { //point of array form [x,y]
   drawObject.endFill();
 }
 
+export function draw_rectangle(_x,_y,_width,_height){
+  var p = moveToScreenCoord([_x,_y]);
+  var w = _width * getWorldDelta();
+  var h = _height * getWorldDelta();
+  drawObject.beginFill(0xff0000);
+  drawObject.lineStyle(1, 0x000000);
+  drawObject.drawRect(p[0]-w/2,p[1]-h/2,w,h); //keep its origin in its center
+  drawObject.endFill();
+}
+
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
   var origin = [0, 0];
   draw_line(origin, _v, _lineColor);

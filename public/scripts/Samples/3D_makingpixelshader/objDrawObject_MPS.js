@@ -16,7 +16,8 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
 
         };
         this.draw = () => {
-            LP.draw_anchor([-5, 5], 0xff0000); //just to show regardless 2D or 3D, all draw functions work just fine
+            LP.draw_rectangle(0,0,10,10);
+
         };
     }
     checkEvents() {
