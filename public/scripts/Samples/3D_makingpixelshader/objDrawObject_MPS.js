@@ -19,7 +19,8 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         this.draw = () => {
             //this is an LPE module in progress, don't use LP prefix for internal module functions
             setFragmentSize(20);
-            draw_fragment(37.29, 42, 0xff0000); //fragment works on pixel coord
+            draw_fragment(37.29, 81, 0xff0000); //fragment works on pixel coord
+            draw_fragment(20,60,0xff00ff);
 
             //populate a line of fragments
             var noOfFragmentsX = Math.ceil(311 / getFragmentSize()); //no of fragments that will fit in the screen width

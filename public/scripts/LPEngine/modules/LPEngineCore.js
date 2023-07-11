@@ -207,12 +207,17 @@ export function getFragmentSize() { return fragmentSize; }
 
 /*the following function is meant for fragment shader, its coords skips LPE coord and works directly onto the screen.
 this function will later be moved into the fragment shader module.*/
-//the x and y need to be changed into grid inputs. the slot that is drawn will be the one closest one in the grid to the given x and y
+/*the x and y need to be changed into grid inputs. the slot that is drawn will be the  closest one in the grid to the given x and y.
+if you provide (draw a fragment in 32px by 41px), it will find the fragment slot at 20th by 40th, and fill that fragment*/
 export function draw_fragment(_x, _y, _color) {
+  //find the fragment that encloses the given point
+  var fragX = Math.floor(_x / fragmentSize);
+  var fragY = Math.floor(_y / fragmentSize);
 
   drawObject.beginFill(_color);
   drawObject.lineStyle(0);
-  drawObject.drawRect(Math.floor(_x / fragmentSize)*fragmentSize, Math.floor(_y / fragmentSize)*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+  //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
+  drawObject.drawRect(fragX*fragmentSize, fragY*fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
 }
 
