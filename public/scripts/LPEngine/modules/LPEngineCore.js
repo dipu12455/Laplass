@@ -23,10 +23,11 @@ var printConsoleState = false;
 var unitTestState = false;
 
 var ThreeDMode = false;
+export var fragmentSize = 2;
+var fragXLimit, fragYLimit;
+
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
-
-
 export function runEngine(_window, _width, _height, _LPDraw) {
   worldOriginX = _width / 2;
   worldOriginY = _height / 2;
@@ -46,6 +47,11 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   //run test if toggled
   runAllTests();
   //start running the ticker (gameLoop)
+
+  //fragment shader
+  fragXLimit = Math.ceil(640 / fragmentSize);
+  fragYLimit = Math.ceil(480 / fragmentSize);
+
   app.ticker.add((delta) => {
     //text test end
     updateInstances(delta);
@@ -289,4 +295,17 @@ function draw_screen_grid(_width, _height, _primColor, _secColor) {
   //draw the origin
   draw_line([-_width / 2, 0], [_width / 2, 0], _primColor);
   draw_line([0, _height / 2], [0, -_height / 2], _primColor);
+}
+
+export function draw_fragment(_x, _y, _color) {
+  //find the fragment that encloses the given point
+  var fragX = Math.floor(_x / fragmentSize);
+  var fragY = Math.floor(_y / fragmentSize);
+
+  drawObject.beginFill(_color);
+  //drawObject.lineStyle(1, 0x000000);
+  drawObject.lineStyle(0);
+  //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
+  drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+  drawObject.endFill();
 }
