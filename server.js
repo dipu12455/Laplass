@@ -28,6 +28,18 @@ app.get('/pmSquare', (req, res) => {
   res.sendFile(__dirname + '/pmSquare.pm');
 });
 
+app.get('/pmGround', (req, res) => {
+  res.sendFile(__dirname + '/pmGround.pm');
+});
+
+app.get('/pmRectangle', (req, res) => {
+  res.sendFile(__dirname + '/pmRectangle.pm');
+});
+
+app.get('/mesh1', (req, res) => {
+  res.sendFile(__dirname + '/pyramid.obj');
+});
+
 app.listen(port, () => {
   console.log(`Server running at port ${port}`);
 });

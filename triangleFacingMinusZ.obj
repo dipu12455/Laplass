@@ -1,0 +1,10 @@
+# Pyramid OBJ File
+# this was generate by chatgpt. i asked it to create an obj file with no quad faces,
+# and arrange vertex of triangles in the anticlockwise manner. I guess that's how I 
+# programed the obj parser accidentally
+# Vertices
+v 5 0 0
+v -2.5 4.5 0
+v -2.5 -4.5 0
+# Faces
+f 1 2 3

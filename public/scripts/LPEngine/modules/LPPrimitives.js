@@ -1,19 +1,36 @@
+
 import { LPList } from "./LPList.js";
-import { LPVector } from './LPVector.js';
-import { v2Minusv1 } from './LPVector.js';
+import { getTheta, v2Minusv1 } from './LPVector.js';
 import { findLeftPerpendicular } from './LPVector.js';
 import { transformVector } from "./LPVector.js";
 
 
 
+export class BoundingBox {
+  constructor(_p1, _p2) {
+      this.p1 = [0, 0];
+      this.p2 = [0, 0];
+  }
+  set(_p1, _p2) {
+      this.p1 = _p1;
+      this.p2 = _p2;
+  }
+  getP1() {
+      return this.p1;
+  }
+  getP2() {
+      return this.p2;
+  }
+}
+
 export class Primitive extends LPList {
   constructor() { //in this case the _primitivePath is the route to the server for the primitive text file
     super();
-    this.xorigin = 0;
-    this.yorigin = 0;
+    this.origin = [0, 0];
     this.lineColor = 0x000000;
     this.fillColor = 0x000000;
     this.wireframe = true;
+    this.boundingBox = new BoundingBox([0, 0], [0, 0]);
   }
   getPrint() {
     var i = 0;
@@ -23,12 +40,19 @@ export class Primitive extends LPList {
     }
     return output;
   }
-  set(_xorigin, _yorigin, _lineColor, _fillColor, _wireframe, _boundingBox) {
-    this.xorigin = _xorigin;
-    this.yorigin = _yorigin;
+  set(_origin, _lineColor, _fillColor, _wireframe, _boundingBox) {
+    this.origin = _origin;
     this.lineColor = _lineColor;
     this.fillColor = _fillColor;
     this.wireframe = _wireframe;
+    this.boundingBox = _boundingBox;
+  }
+  copyAttributes (_primitive) { //doesn't copy the vertices, just the primitive data
+    this.origin = _primitive.origin;
+    this.lineColor = _primitive.lineColor;
+    this.fillColor = _primitive.fillColor;
+    this.wireframe = _primitive.wireframe;
+    this.boundingBox = _primitive.boundingBox;
   }
 }
 
@@ -45,7 +69,8 @@ export function getPrimitive(_index) {
 }
 
 export function addPrimitiveVertex(_index, _vx, _vy) {
-  PRIMITIVES.get(_index).add(new LPVector(_vx, _vy));
+  var temp = [_vx,_vy];
+  PRIMITIVES.get(_index).add(temp);
 }
 
 export function loadPrimitive(_index, _primitivePath) {
@@ -65,15 +90,16 @@ export function loadPrimitive(_index, _primitivePath) {
 
 function addPrimitiveFromString(_index, _primString) {
   //parse the string and add the vertices to primitive
-  //the first five fields in the string file is xorigin, yorigin, lineColor, fillColor, and wireframe(T/F)
+  //the first five fields in the string file is xorigin, yorigin, lineColor, fillColor, wireframe(T/F), bboxp1x,bboxp1y,bboxp2x,bboxp2y
   let fields = _primString.split(',');
-  setOrigin(_index, new LPVector(parseFloat(fields[0]), parseFloat(fields[1])));
+  setOrigin(_index, [parseFloat(fields[0]), parseFloat(fields[1])]);
   setLineColor(_index, fields[2]); //hex is considered string in javascript (apparently...), so with or without quotes, the hex still yields the correct color value
   setFillColor(_index, fields[3]);
   setWireframe(_index, stringToBool(fields[4]));
+  setBoundingBox(_index, [parseFloat(fields[5]), parseFloat(fields[6])], [parseFloat(fields[7]), parseFloat(fields[8])]);
 
-  let i = 5;
-  for (i = 5; i < fields.length; i += 2) {
+  let i = 9;
+  for (i = 9; i < fields.length; i += 2) {
     addPrimitiveVertex(_index, parseFloat(fields[i]), parseFloat(fields[i + 1]));
   }
 }
@@ -104,18 +130,19 @@ export function transform_primitive(_primitive, _x, _y, _rot) {
   var output = new Primitive(); //this function sets origin to (0,0) for now
 
   // copy the usual values to the new primitive
-  output.set(_primitive.xorigin,
-    _primitive.yorigin,
+  output.set(_primitive.origin,
     _primitive.lineColor,
     _primitive.fillColor,
-    _primitive.wireframe);
+    _primitive.wireframe,
+    _primitive.boundingBox);
 
   for (i = 0; i < _primitive.getSize(); i += 1) {
     //get the vertex
     var vertex = _primitive.get(i);
 
     //translate the vertex to prim's rot and coord, using new var to leave prim's vertex untouched.
-    var vertex2 = transformVector(vertex, _x, _y, vertex.getTheta() + _rot);
+   
+    var vertex2 = transformVector(vertex, _x, _y, getTheta(vertex) + _rot);
 
     //add this transformed vertex to new primitive
     output.add(vertex2);
@@ -126,8 +153,7 @@ export function transform_primitive(_primitive, _x, _y, _rot) {
 
 //setters
 export function setOrigin(_index, _origin) { //takes a vector as input
-  PRIMITIVES.get(_index).xorigin = _origin.getX();
-  PRIMITIVES.get(_index).yorigin = _origin.getY();
+  PRIMITIVES.get(_index).origin = _origin;
 }
 export function setLineColor(_index, _lineColor) {
   PRIMITIVES.get(_index).lineColor = _lineColor;
@@ -142,7 +168,7 @@ export function setWireframe(_index, _wireframe) {
 
 //getters
 export function getOrigin(_index) {
-  return new LPVector(PRIMITIVES.get(_index).xorigin, PRIMITIVES.get(_index).yorigin);
+  return PRIMITIVES.get(_index).origin;
 }
 export function getLineColor(_index) {
   return PRIMITIVES.get(_index).lineColor;
@@ -154,9 +180,32 @@ export function getWireframe(_index, _wireframe) {
   return PRIMITIVES.get(_index).wireframe;
 }
 
+export function setBoundingBox(_index, _p1, _p2) {
+  PRIMITIVES.get(_index).boundingBox.set(_p1, _p2);
+}
+
+export function getBoundingBox(_index) { //returns the BoundingBox object of the primitive _index
+  return PRIMITIVES.get(_index).boundingBox;
+}
+
 
 function stringToBool(_string) {
   if (_string == '1') return true;
   if (_string == '0') return false;
+}
+
+export function copyPrimitive(_primitive){
+  var newPrim =  new Primitive();
+  newPrim.set(_primitive.origin,
+    _primitive.lineColor,
+    _primitive.fillColor,
+    _primitive.wireframe,
+    _primitive.boundingBox);
+
+  var i = 0;
+  for (i = 0; i < _primitive.getSize(); i += 1) {
+    newPrim.add(_primitive.get(i));
+  }
+  return newPrim;
 }
 

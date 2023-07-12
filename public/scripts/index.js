@@ -1,6 +1,10 @@
 import * as LP from './LPEngine/LPEngine.js';
-//import * as Scene01 from './scene01.js';
-import * as Scene from './Scene.js';
+//import * as Scene from './Scene.js'; 
+/*each scene can be a container of an entirely 
+different application, so using this scene file and its accompanying property def files 
+to experiment with 3D*/
+
+import * as Scene from './Samples/3D_Scene/Scene3D.js';
 
 //these functions need to be run in this exact order
 
