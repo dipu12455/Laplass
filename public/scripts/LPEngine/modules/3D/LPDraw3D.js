@@ -105,9 +105,11 @@ function changeTriangleToScreenCoord(_triangle) {
     var v1 = [v12D[0], v12D[1], _triangle.v1[2], _triangle.v1[3]];
     var v2 = [v22D[0], v22D[1], _triangle.v2[2], _triangle.v2[3]];
     var v3 = [v32D[0], v32D[1], _triangle.v3[2], _triangle.v3[3]];
-
-    var tri = new Triangle([v1, v2, v3]);
-    return tri;
+    _triangle.v1 = v1;
+    _triangle.v2 = v2;
+    _triangle.v3 = v3;
+    
+    return _triangle;
 }
 
 //this is a draw function, it will directly call the draw_fragment function
@@ -138,7 +140,8 @@ export function renderFragments(_triangle) {
         var noOfFragmentsSL = Math.ceil(getMag_3D(scanline.getVector()) / fz);
         for (var j = 0; j < noOfFragmentsSL; j += 1) {
             var Q = v1Plusv2_3D(scanline.startPoint, scalarXVector_3D(j * fz, scanline.getUnitVector()));
-            draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
+            draw_fragment(Q[0], Q[1], Q[2], tri.color);
+            printConsole(`tri.color = ${tri.color}`);
         }
     }
 }
@@ -436,7 +439,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
             //this loop to iterate through the list of clipped triangles
             var j = 0;
             for (j = 0; j < clippedTriangles.length; j += 1) {
-                var color = getTriangleColorFromLighting(clippedTriangles[j], _mesh.normalFlipped); /*call this function here,
+                var color = getTriangleColorFromLighting(clippedTriangles[j], _mesh.normalFlipped, _mesh.color); /*call this function here,
                 lighting is calculated in this exact stage of transformation, after view space and before projection space*/
 
                 //move triangle to projection space
@@ -452,6 +455,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
 
                 //store this finished triangle into the unsorted list
                 triProjected.color = color;
+                printConsole("triProjected.color = " + triProjected.color);
                 unsortedTrianglesList.push(triProjected);
             }
 
@@ -460,6 +464,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
     return unsortedTrianglesList;
 }
 
+
 function isTriangleFacingCamera(_triangle, _normalFlipped) {
     if (culling == false) { return true; } //skip this check if culling is disabled
     var normal = getTriangleNormal(_triangle, _normalFlipped);
@@ -467,8 +472,11 @@ function isTriangleFacingCamera(_triangle, _normalFlipped) {
     var dotProduct = dotProduct_3D(normal, vector1);
     return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
 }
-//returns how much to shade this tri. lighting and shading color is fixed for now
-function getTriangleColorFromLighting(_triangle, _normalFlipped) {
+
+
+//returns how much to shade this tri.
+//the mesh color needs to be defined as color = [R, G, B] and value between 0 and 1
+function getTriangleColorFromLighting(_triangle, _normalFlipped, _meshColorRGBArray) {
     //illumination (of course, only if you can see it)
     const light_direction = [0, 0, -1];
     const vU_light_direction = getUnitVector_3D(light_direction);
@@ -480,5 +488,33 @@ function getTriangleColorFromLighting(_triangle, _normalFlipped) {
     var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
     //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
     //use this dotproduct2 value to input rbg between 0-1
-    return rgbToHex(0, dotProduct2, dotProduct2); //just green
+    var R = dotProduct2 * _meshColorRGBArray[0];
+    var G = dotProduct2 * _meshColorRGBArray[1];
+    var B = dotProduct2 * _meshColorRGBArray[2];
+    return rgbToHex(R, G, B);
+}
+
+//draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
+export function drawMesh(_mesh, _matWorld) {
+    if (_mesh !== null) { //objects can be defined with null mesh
+        //takes a mesh, returns with a list of triangles ready to be drawn on screen using 2D draw functions
+        var unsortedTrianglesList = moveTrianglesToScreenSpace(_mesh, _matWorld);
+
+        //triangles from all meshes need to be collected into a list, depth sorted, then drawn onto the screen
+
+        //sort triangles here by depth, then draw them.
+        //sorting them back to front, so the back triangles get drawn first
+        var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
+
+        //loop through the list to draw each triangle
+        var k = 0;
+        for (k = 0; k < sortedTrianglesList.length; k += 1) {
+            var tri = sortedTrianglesList[k];
+            renderFragments(tri);
+            fillTriangle([tri.v1[0], tri.v1[1]],
+                [tri.v2[0], tri.v2[1]],
+                [tri.v3[0], tri.v3[1]], tri.color);
+            
+        }
+    }
 }

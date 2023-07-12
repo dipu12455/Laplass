@@ -9,8 +9,7 @@ import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './LPTest.js';
 import { initTexts, resetTexts } from './LPTexts.js';
-import { updateCamera } from './3D/LPDraw3D.js';
-import { drawMesh } from './3D/LPModels3D.js';
+import { drawMesh, updateCamera, zFar } from './3D/LPDraw3D.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -48,6 +47,9 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   collisionsInit();
   //run test if toggled
   runAllTests();
+
+  var initDepthBuffer = false;
+
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     //text test end
@@ -56,7 +58,15 @@ export function runEngine(_window, _width, _height, _LPDraw) {
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
+    //one of the instances will switch on the 3D mode, detect that and do some initialization routines in this if-block
+    if (!initDepthBuffer && ThreeDMode) {
+      initDepthBuffer = true;
+      setFragmentSize(4); //set fragment size before anything 3D rendering
+      initializeDepthBuffer(getScreenWidth(), getScreenHeight());
+    }
+
     if (ThreeDMode) {
+      clearDepthBuffer();
       updateCamera(); //update camera before any mesh drawing function
     }
     drawObject.clear();
@@ -251,11 +261,20 @@ export function initializeDepthBuffer(_screenWidth, _screenHeight) {
     thisArray[i] = []; // Initialize each row as an empty array
 
     for (let j = 0; j < noOfFragmentsX; j++) {
-      thisArray[i][j] = 1; // Set initial value for each element in the row
+      thisArray[i][j] = zFar; // Set initial value for each element in the row
     }
   }
   depthBuffer = thisArray;
 }
+
+export function clearDepthBuffer() {
+  for (let i = 0; i < depthBuffer.length; i += 1) {
+    for (let j = 0; j < depthBuffer[i].length; j += 1) {
+      depthBuffer[i][j] = zFar;
+    }
+  }
+}
+
 //provide the x and y of the fragment, and the depth value to set
 export function setDepthValue(_x, _y, _value) {
   depthBuffer[_y][_x] = _value;

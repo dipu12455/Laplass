@@ -15,13 +15,14 @@ export class Triangle {
 }
 
 export class Mesh {
-    constructor(_triangles, _normalFlipped) { //the input is an array of the instance of the class Triangle
+    constructor(_triangles, _normalFlipped, _color) { //the input is an array of the instance of the class Triangle
         this.triangles = _triangles;
         this.normalFlipped = _normalFlipped;
+        this.color = _color; //this is an RGB array value; color = [R,G,B] between 0 and 1
     }
 }
 
-export function meshFromStringObj(_string, _normalFlipped) {
+export function meshFromStringObj(_string, _normalFlipped, _color) {
     var vertexList = new LPList();
     var facesList = new LPList();
 
@@ -93,14 +94,14 @@ export function meshFromStringObj(_string, _normalFlipped) {
         triangleArray.push(new Triangle(vertexArray));
     }
 
-    return new Mesh(triangleArray, _normalFlipped);
+    return new Mesh(triangleArray, _normalFlipped, _color);
 }
 
-export async function getMeshFromObj(_serverRoute, _normalFlipped) {
+export async function getMeshFromObj(_serverRoute, _normalFlipped, _color) {
     try {
         const response = await fetch(_serverRoute);
         const data = await response.text();
-        return meshFromStringObj(data, _normalFlipped);
+        return meshFromStringObj(data, _normalFlipped, _color);
 
     } catch (error) {
         console.log(error);
@@ -116,27 +117,3 @@ export function printMesh(_mesh) {
     }
 }
 
-//draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
-export function drawMesh(_mesh, _matWorld) {
-    if (_mesh !== null) { //objects can be defined with null mesh
-        //takes a mesh, returns with a list of triangles ready to be drawn on screen using 2D draw functions
-        var unsortedTrianglesList = moveTrianglesToScreenSpace(_mesh, _matWorld);
-
-        //triangles from all meshes need to be collected into a list, depth sorted, then drawn onto the screen
-
-        //sort triangles here by depth, then draw them.
-        //sorting them back to front, so the back triangles get drawn first
-        var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
-
-        //loop through the list to draw each triangle
-        var k = 0;
-        for (k = 0; k < sortedTrianglesList.length; k += 1) {
-            var tri = sortedTrianglesList[k];
-            renderFragments(tri);
-            fillTriangle([tri.v1[0], tri.v1[1]],
-                [tri.v2[0], tri.v2[1]],
-                [tri.v3[0], tri.v3[1]], tri.color);
-            
-        }
-    }
-}
