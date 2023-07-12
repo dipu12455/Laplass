@@ -7,7 +7,7 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         super(_mesh); //provide the mesh to its parent class
         this.elapsed = getRandomInteger(0, 100); //this is not part of parent class, only for child class
         this.x = 0;
-        this.z = 8;
+        this.z = 3;
 
         this.init = () => {
             

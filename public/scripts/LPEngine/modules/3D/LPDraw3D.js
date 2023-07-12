@@ -5,9 +5,10 @@ import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotati
 import { Triangle } from "./LPModels3D.js";
 
 //Render options, change it for debugging purposes
-var shaded = false;
-var wireframe = true;
+var shaded = true;
+var wireframe = false;
 var culling = false; //draw only the triangles facing the camera
+var fragmentShading = false;
 
 class Line {
     constructor(_startPoint, _endPoint) {
@@ -94,6 +95,10 @@ export function fillTriangle(_v1, _v2, _v3, _color) {
     vertexList.add(_v2);
     vertexList.add(_v3);
 
+    if (fragmentShading) {
+        shaded = false;
+    }
+
     draw_polygon(vertexList, 0x000000, wireframe, _color, shaded);
 }
 
@@ -108,7 +113,7 @@ function changeTriangleToScreenCoord(_triangle) {
     _triangle.v1 = v1;
     _triangle.v2 = v2;
     _triangle.v3 = v3;
-    
+
     return _triangle;
 }
 
@@ -141,7 +146,6 @@ export function renderFragments(_triangle) {
         for (var j = 0; j < noOfFragmentsSL; j += 1) {
             var Q = v1Plusv2_3D(scanline.startPoint, scalarXVector_3D(j * fz, scanline.getUnitVector()));
             draw_fragment(Q[0], Q[1], Q[2], tri.color);
-            printConsole(`tri.color = ${tri.color}`);
         }
     }
 }
@@ -498,23 +502,25 @@ function getTriangleColorFromLighting(_triangle, _normalFlipped, _meshColorRGBAr
 export function drawMesh(_mesh, _matWorld) {
     if (_mesh !== null) { //objects can be defined with null mesh
         //takes a mesh, returns with a list of triangles ready to be drawn on screen using 2D draw functions
-        var unsortedTrianglesList = moveTrianglesToScreenSpace(_mesh, _matWorld);
+        var triangleList = moveTrianglesToScreenSpace(_mesh, _matWorld); //not yet depth sorted, in case fragmentShading is turned off
 
         //triangles from all meshes need to be collected into a list, depth sorted, then drawn onto the screen
 
         //sort triangles here by depth, then draw them.
         //sorting them back to front, so the back triangles get drawn first
-        var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
+        //if (!fragmentShading) {
+            triangleList = sortTrianglesByDepth(triangleList);
+        //}
 
         //loop through the list to draw each triangle
         var k = 0;
-        for (k = 0; k < sortedTrianglesList.length; k += 1) {
-            var tri = sortedTrianglesList[k];
-            renderFragments(tri);
+        for (k = 0; k < triangleList.length; k += 1) {
+            var tri = triangleList[k];
+            if (fragmentShading) renderFragments(tri);
             fillTriangle([tri.v1[0], tri.v1[1]],
                 [tri.v2[0], tri.v2[1]],
                 [tri.v3[0], tri.v3[1]], tri.color);
-            
+
         }
     }
 }
