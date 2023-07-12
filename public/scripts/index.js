@@ -4,7 +4,7 @@ import * as LP from './LPEngine/LPEngine.js';
 different application, so using this scene file and its accompanying property def files 
 to experiment with 3D*/
 
-import * as Scene from './Samples/3D_Scene/Scene3D.js';
+import * as Scene from './Samples/raster_with_lines_test/scene_RWLT.js';
 
 //these functions need to be run in this exact order
 
