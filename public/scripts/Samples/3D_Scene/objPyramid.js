@@ -4,6 +4,7 @@ import { getRandomInteger } from './functions.js';
 export class objPyramid extends LP.LPGameObject_3D {
     constructor(_mesh) {
         super(_mesh); //provide the mesh to its parent class
+        this.color = [getRandomInteger(0,255)/255,getRandomInteger(0,255)/255,getRandomInteger(0,255)/255];
         this.elapsed = getRandomInteger(0,100); //this is not part of parent class, only for child class
         this.x = getRandomInteger(-5,5);
         this.z = 5;

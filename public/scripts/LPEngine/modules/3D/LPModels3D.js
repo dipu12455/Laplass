@@ -1,5 +1,4 @@
 import { LPList } from "../LPList.js";
-import { fillTriangle, moveTrianglesToScreenSpace, sortTrianglesByDepth } from "./LPDraw3D.js";
 
 export class Triangle {
     constructor(_vertices) { //the vertices is an array of vectors, and each vector is an array of three tuples [x,y,z]
@@ -7,6 +6,7 @@ export class Triangle {
         this.v2 = _vertices[1];
         this.v3 = _vertices[2];
         this.color = 0x000000;
+        this.normalFlipped = false;
     }
     getString() {
         return "v1: " + this.v1 + "\nv2: " + this.v2 + "\nv3: " + this.v3;
@@ -14,9 +14,8 @@ export class Triangle {
 }
 
 export class Mesh {
-    constructor(_triangles, _normalFlipped) { //the input is an array of the instance of the class Triangle
+    constructor(_triangles) { //the input is an array of the instance of the class Triangle
         this.triangles = _triangles;
-        this.normalFlipped = _normalFlipped;
     }
 }
 
@@ -89,10 +88,12 @@ export function meshFromStringObj(_string, _normalFlipped) {
         var vertexArray = [vertexList.get(face[0] - 1),
         vertexList.get(face[1] - 1),
         vertexList.get(face[2] - 1)];
-        triangleArray.push(new Triangle(vertexArray));
+        var newTri = new Triangle(vertexArray);
+        newTri.normalFlipped = _normalFlipped;
+        triangleArray.push(newTri);
     }
 
-    return new Mesh(triangleArray, _normalFlipped);
+    return new Mesh(triangleArray);
 }
 
 export async function getMeshFromObj(_serverRoute, _normalFlipped) {
@@ -115,25 +116,3 @@ export function printMesh(_mesh) {
     }
 }
 
-//draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
-export function drawMesh(_mesh, _matWorld) {
-    if (_mesh !== null) { //objects can be defined with null mesh
-        //takes a mesh, returns with a list of triangles ready to be drawn on screen using 2D draw functions
-        var unsortedTrianglesList = moveTrianglesToScreenSpace(_mesh, _matWorld);
-
-        //triangles from all meshes need to be collected into a list, depth sorted, then drawn onto the screen
-
-        //sort triangles here by depth, then draw them.
-        //sorting them back to front, so the back triangles get drawn first
-        var sortedTrianglesList = sortTrianglesByDepth(unsortedTrianglesList);
-
-        //loop through the list to draw each triangle
-        var k = 0;
-        for (k = 0; k < sortedTrianglesList.length; k += 1) {
-            var tri = sortedTrianglesList[k];
-            fillTriangle([tri.v1[0], tri.v1[1]],
-                [tri.v2[0], tri.v2[1]],
-                [tri.v3[0], tri.v3[1]], tri.color);
-        }
-    }
-}

@@ -1,10 +1,11 @@
 import { LPList } from "./LPList.js";
-import { isTimeRunning, printConsole, set3DMode, setPrintConsole } from "./LPEngineCore.js";
+import { is3DMode, isTimeRunning, printConsole, set3DMode, setPrintConsole } from "./LPEngineCore.js";
 import { turnOffEvents } from "./LPEvents.js";
 import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
 import { getCollisions } from "./LPCollision.js";
 import { getMag, isVectorWithinRange, v1Plusv2 } from "./LPVector.js";
 import { getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from "./3D/LPMatrix4x4.js";
+import { updateCamera } from "./3D/LPDraw3D.js";
 
 export class LPGameObject {
     constructor() {
@@ -244,6 +245,10 @@ export function updateInstances(_delta) {
     The exchange of momentum function outputs the exact acceleration needed to prevent an overlap. 
     But, the order of object motion processing needs to be
     **specifically** in the **exact order** laid out in here.*/
+
+    if (is3DMode) {
+        updateCamera(); //update camera before any mesh drawing function
+    }
     turnOffEvents(); //only for non-persistent events
 
 }
@@ -267,35 +272,39 @@ function updateVelocitiesAndPositions(_delta, _threshold) {
 
         //get the instance
         var current = INSTANCES.get(i);
+        if (!current.is3D) {
 
-        //get its hspeed and vspeed
-        var velocity = current.getVelocity();
+            //get its hspeed and vspeed
+            var velocity = current.getVelocity();
 
-        var acc = current.getAcceleration();
+            var acc = current.getAcceleration();
 
-        velocity = v1Plusv2(velocity, acc);
+            velocity = v1Plusv2(velocity, acc);
 
-        //if velocity is too small, make it equal to zero
-        if (isVectorWithinRange(velocity, 0, _threshold)) {
-            velocity = [0, 0];
+            //if velocity is too small, make it equal to zero
+            if (isVectorWithinRange(velocity, 0, _threshold)) {
+                velocity = [0, 0];
+            }
+
+            current.setVelocity(velocity);
+
+            //translate the instance according to their speed
+
+            current.setPosition(
+                v1Plusv2(current.getPosition(),
+                    current.getVelocity()));
+
+            current.setRot(current.getRot() + current.getRSpeed());
         }
-
-        current.setVelocity(velocity);
-
-        //translate the instance according to their speed
-
-        current.setPosition(
-            v1Plusv2(current.getPosition(),
-                current.getVelocity()));
-
-        current.setRot(current.getRot() + current.getRSpeed());
     }
 }
 
 export function flushCollisions() {
     var i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-        INSTANCES.get(i).collisionList = new LPList();
+        if (!INSTANCES.get(i).is3D) {
+            INSTANCES.get(i).collisionList = new LPList();
+        }
     }
 }
 
@@ -307,6 +316,7 @@ export class LPGameObject_3D extends LPGameObject {
         super();
         this.is3D = true; //this is switched true, to tell engine to turn on 3D mode
         this.mesh = _mesh; //this is meant to be set in instance
+        this.color = [1, 0, 0]; //array of RGB, A = [R,G,B]. determines the color of the mesh
         this.z = 0; //move it furhter into the screen, meant to be set in instance
         this.rotX = 0;
         this.rotY = 0;

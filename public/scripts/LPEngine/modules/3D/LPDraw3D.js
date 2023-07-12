@@ -3,6 +3,7 @@ import { draw_line, draw_polygon, printConsole, rgbToHex } from "../LPEngineCore
 import { LPList, Queue } from "../LPList.js";
 import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./LPMatrix4x4.js";
 import { Triangle } from "./LPModels3D.js";
+import { INSTANCES, updateWorldMatrixForInstance } from "../LPInstances.js";
 
 //Render options, change it for debugging purposes
 var shaded = true;
@@ -109,15 +110,18 @@ export function multiplyTriangleWithMatrix(_triangle, _matrix) {
         multiplyMatrixVector(_triangle.v1, _matrix),
         multiplyMatrixVector(_triangle.v2, _matrix),
         multiplyMatrixVector(_triangle.v3, _matrix)]);
+        triange.color = _triangle.color;
+        triange.normalFlipped = _triangle.normalFlipped;
     return triange;
 }
 
-export function getTriangleNormal(_triangle, _flipNormal) {
+export function getTriangleNormal(_triangle) {
     var normal, line1, line2;
+    var flipNormal = _triangle.normalFlipped;
     line1 = v2Minusv1_3D(_triangle.v1, _triangle.v2);
     line2 = v2Minusv1_3D(_triangle.v1, _triangle.v3);
-    if (_flipNormal == false) normal = crossProduct(line2, line1); //flipping the cross product, to try to get triangles to be defined by the counterclockwise order of vertices
-    if (_flipNormal == true) normal = crossProduct(line1, line2); //for vertices being in the clockwise order
+    if (flipNormal == false) normal = crossProduct(line2, line1); //flipping the cross product, to try to get triangles to be defined by the counterclockwise order of vertices
+    if (flipNormal == true) normal = crossProduct(line1, line2); //for vertices being in the clockwise order
 
     //normalize the normal
     normal = getUnitVector_3D(normal);
@@ -143,23 +147,6 @@ export function sortTrianglesByDepth(_trianglesList) { //the input is an array o
     return _trianglesList;
 }
 
-export function clipTrianglesWithPlanes(_triangleList, _clippingPlanesList) {
-    var i = 0;
-    var outputList = _triangleList.slice(); //copy the list
-    for (i = 0; i < _clippingPlanesList.length; i += 1) {
-        var processingQueue = new Queue(); //take things from top of queue, add things to back of queue
-        var temp = [];
-        processingQueue.pushList(outputList); //update the queue with the triangles to get started
-        while (!processingQueue.isEmpty()) {
-            var triangle = processingQueue.pop(); //take from the top
-            var clip = clipTriangleWithPlane(triangle, _clippingPlanesList[i]);
-            temp = temp.concat(clip.clippedTriangles); //updates the output list with triangles
-        }
-        outputList = temp.slice(); //copy the list
-    }
-    return outputList;
-}
-
 function printTheTrianglesOfList(_triangleList) {
     var i = 0;
     printConsole(`Length of _triangleList = ${_triangleList.length}`);
@@ -167,6 +154,19 @@ function printTheTrianglesOfList(_triangleList) {
         printConsole(`_triangleList[${i}]`);
         printConsole(`${_triangleList[i].getString()}`);
     }
+}
+
+function getIntersectionPoint_LineWithPlane_3D(_lineStartPoint, _lineEndPoint, _clippingPlane) {
+    var plane_p = _clippingPlane.point;
+    var plane_n = _clippingPlane.normal;
+    plane_n = getUnitVector_3D(plane_n); //this is important, because the normal def is 'eye-balled' and not normalized
+    var plane_d = -dotProduct_3D(plane_n, plane_p);
+    var ad = dotProduct_3D(_lineStartPoint, plane_n);
+    var bd = dotProduct_3D(_lineEndPoint, plane_n);
+    var t = (-plane_d - ad) / (bd - ad);
+    var lineStartToEnd = v2Minusv1_3D(_lineStartPoint, _lineEndPoint);
+    var lineToIntersect = scalarXVector_3D(t, lineStartToEnd);
+    return v1Plusv2_3D(_lineStartPoint, lineToIntersect);
 }
 
 function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of sub-triangles that are clipped from the given triangle
@@ -274,6 +274,8 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
 
         //form the triangle
         var clippedTriangle = new Triangle([iP1LineIntersectionPoint, iP2LineIntersectionPoint, oP]);
+        clippedTriangle.color = _triangle.color;
+        clippedTriangle.normalFlipped = _triangle.normalFlipped;
 
         clippedTrianglesList.push(clippedTriangle); //return the triangle, there is only one triangle returned
         return {
@@ -318,6 +320,10 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
         //form triangle 1
         var clippedTriangle1 = new Triangle([line1IntersectionPoint, oP1, oP2]);
         var clippedTriangle2 = new Triangle([line1IntersectionPoint, oP2, line2IntersectionPoint]);
+        clippedTriangle1.color = _triangle.color;
+        clippedTriangle2.color = _triangle.color;
+        clippedTriangle1.normalFlipped = _triangle.normalFlipped;
+        clippedTriangle2.normalFlipped = _triangle.normalFlipped;
 
         //return the triangles
         clippedTrianglesList.push(clippedTriangle1);
@@ -329,18 +335,50 @@ function clipTriangleWithPlane(_triangle, _clippingPlane) { //returns a list of 
     }
 }
 
-function getIntersectionPoint_LineWithPlane_3D(_lineStartPoint, _lineEndPoint, _clippingPlane) {
-    var plane_p = _clippingPlane.point;
-    var plane_n = _clippingPlane.normal;
-    plane_n = getUnitVector_3D(plane_n); //this is important, because the normal def is 'eye-balled' and not normalized
-    var plane_d = -dotProduct_3D(plane_n, plane_p);
-    var ad = dotProduct_3D(_lineStartPoint, plane_n);
-    var bd = dotProduct_3D(_lineEndPoint, plane_n);
-    var t = (-plane_d - ad) / (bd - ad);
-    var lineStartToEnd = v2Minusv1_3D(_lineStartPoint, _lineEndPoint);
-    var lineToIntersect = scalarXVector_3D(t, lineStartToEnd);
-    return v1Plusv2_3D(_lineStartPoint, lineToIntersect);
+export function clipTrianglesWithPlanes(_triangleList, _clippingPlanesList) {
+    var i = 0;
+    var outputList = _triangleList.slice(); //copy the list
+    for (i = 0; i < _clippingPlanesList.length; i += 1) {
+        var processingQueue = new Queue(); //take things from top of queue, add things to back of queue
+        var temp = [];
+        processingQueue.pushList(outputList); //update the queue with the triangles to get started
+        while (!processingQueue.isEmpty()) {
+            var triangle = processingQueue.pop(); //take from the top
+            var clip = clipTriangleWithPlane(triangle, _clippingPlanesList[i]);
+            temp = temp.concat(clip.clippedTriangles); //updates the output list with triangles
+        }
+        outputList = temp.slice(); //copy the list
+    }
+    return outputList;
 }
+
+function isTriangleFacingCamera(_triangle) {
+    var normal = getTriangleNormal(_triangle);
+    var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
+    var dotProduct = dotProduct_3D(normal, vector1);
+    return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
+}
+//returns how much to shade this tri. lighting and shading color is fixed for now
+function getTriangleColorFromLighting(_triangle,_color) {
+    //illumination (of course, only if you can see it)
+    const light_direction = [0, 0, -1];
+    const vU_light_direction = getUnitVector_3D(light_direction);
+
+    //get normal of triangle
+    var normal = getTriangleNormal(_triangle);
+
+    //see how similar the normal is to the light direction
+    var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
+    //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
+    //use this dotproduct2 value to input rbg between 0-1
+
+    var R = dotProduct2 * _color[0];
+    var G = dotProduct2 * _color[1];
+    var B = dotProduct2 * _color[2];
+
+    return rgbToHex(R, G, B); //just green
+}
+
 
 /*processes the triangles of a mesh to be drawn on the screen, returns a list of unsorted triangles, to be sorted by depth order
 Chronologically, this function 
@@ -352,7 +390,7 @@ Chronologically, this function
 -> projects them into 2D plane and adjusts their 2D coord for screen space 
 -> determines their color based on lighting 
 -> returns a list of unsorted triangles*/
-export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
+export function moveTrianglesToScreenSpace(_mesh, _color, _matWorld) {
     var unsortedTrianglesList = [];
     var i = 0;
     for (i = 0; i < _mesh.triangles.length; i += 1) {
@@ -362,7 +400,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
         var triTransformed = multiplyTriangleWithMatrix(tri, _matWorld);
 
         //only draw triangle if it is facing towards the camera
-        if (isTriangleFacingCamera(triTransformed, _mesh.normalFlipped)) {
+        if (isTriangleFacingCamera(triTransformed)) {
             //move triangle into view space
             var triViewed = multiplyTriangleWithMatrix(triTransformed, matView);
 
@@ -376,7 +414,7 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
             //this loop to iterate through the list of clipped triangles
             var j = 0;
             for (j = 0; j < clippedTriangles.length; j += 1) {
-                var color = getTriangleColorFromLighting(clippedTriangles[j], _mesh.normalFlipped); /*call this function here,
+                var color = getTriangleColorFromLighting(clippedTriangles[j], _color); /*call this function here,
                 lighting is calculated in this exact stage of transformation, after view space and before projection space*/
 
                 //move triangle to projection space
@@ -400,24 +438,26 @@ export function moveTrianglesToScreenSpace(_mesh, _matWorld) {
     return unsortedTrianglesList;
 }
 
-function isTriangleFacingCamera(_triangle, _normalFlipped) {
-    var normal = getTriangleNormal(_triangle, _normalFlipped);
-    var vector1 = v2Minusv1_3D(getCamera(), _triangle.v1);
-    var dotProduct = dotProduct_3D(normal, vector1);
-    return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
-}
-//returns how much to shade this tri. lighting and shading color is fixed for now
-function getTriangleColorFromLighting(_triangle, _normalFlipped) {
-    //illumination (of course, only if you can see it)
-    const light_direction = [0, 0, -1];
-    const vU_light_direction = getUnitVector_3D(light_direction);
-
-    //get normal of triangle
-    var normal = getTriangleNormal(_triangle, _normalFlipped);
-
-    //see how similar the normal is to the light direction
-    var dotProduct2 = dotProduct_3D(normal, vU_light_direction);
-    //dotProduct2 is already a value between 0 and 1, because it is the dot product of two unit vectors
-    //use this dotproduct2 value to input rbg between 0-1
-    return rgbToHex(0, dotProduct2, dotProduct2); //just green
-}
+export function drawScene_3D() {
+    var allMeshTriangles = [];
+    for (var i = 0; i < INSTANCES.getSize(); i += 1) {
+      var current = INSTANCES.get(i);
+      if (current.isHidden()) continue; //if hidden, skip this instance
+      if (!current.is3D) continue; //if not 3D, skip this instance
+      if (current.mesh === null) continue; //if no mesh, skip this instance
+      updateWorldMatrixForInstance(current);//update the world matrix for this instance
+  
+      allMeshTriangles = allMeshTriangles.concat(moveTrianglesToScreenSpace(current.mesh, current.color, current.matWorld));
+    }
+    allMeshTriangles = sortTrianglesByDepth(allMeshTriangles);
+  
+    //loop through the list to draw each triangle
+    var k = 0;
+    for (k = 0; k < allMeshTriangles.length; k += 1) {
+      var tri = allMeshTriangles[k];
+      fillTriangle([tri.v1[0], tri.v1[1]],
+        [tri.v2[0], tri.v2[1]],
+        [tri.v3[0], tri.v3[1]], tri.color);
+    }
+  
+  }

@@ -43,11 +43,13 @@ export function getCollisions() {
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     var current = INSTANCES.get(i);
     if (current.getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+    if (current.is3D) continue; //skip collision check for 3D instances
 
     let j = 0;
     for (j = 0; j < INSTANCES.getSize(); j += 1) {
       var target = INSTANCES.get(j);
       if (target.getPrimitiveIndex() == -1) continue; //skip collision check for instance with no primitive
+      if (target.is3D) continue; //skip collision check for 3D instances
 
       //if checking collision with self, skip to next
       if (target.id == current.id) {

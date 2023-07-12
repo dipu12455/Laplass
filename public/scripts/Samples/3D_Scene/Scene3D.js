@@ -9,7 +9,9 @@ var camObject = new objCameraController(null);
 LP.addInstance(camObject);
 
 var pyramid = new objPyramid(mesh);
+pyramid.x = 1;
 LP.addInstance(pyramid);
 
 var pyr2 = new objPyramid(mesh);
+pyr2.x = -1;
 LP.addInstance(pyr2);

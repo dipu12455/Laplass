@@ -9,8 +9,7 @@ import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './LPTest.js';
 import { initTexts, resetTexts } from './LPTexts.js';
-import { updateCamera } from './3D/LPDraw3D.js';
-import { drawMesh } from './3D/LPModels3D.js';
+import { drawScene_3D} from './3D/LPDraw3D.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -22,7 +21,7 @@ var timeRun = true;
 var printConsoleState = false;
 var unitTestState = false;
 
-var ThreeDMode = false;
+export var ThreeDMode = false;
 
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
@@ -53,9 +52,6 @@ export function runEngine(_window, _width, _height, _LPDraw) {
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
-    if (ThreeDMode) {
-      updateCamera(); //update camera before any mesh drawing function
-    }
     drawObject.clear();
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
 
@@ -134,6 +130,10 @@ function runAllTests() {
 
 export function set3DMode(_state) {
   ThreeDMode = _state;
+}
+
+export function is3DMode(){
+  return ThreeDMode;
 }
 
 export function rgbToHex(_r, _g, _b) { //rgb value provide in 0-1 range
@@ -243,6 +243,10 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
 }
 
 function draw_instances() { //works on the instance currently selected
+  //generate a 3D scene frist
+  drawScene_3D();
+
+  //draw 2D instances as overlay, including 2D draw calls from 3D instances
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     var current = INSTANCES.get(i);
@@ -253,17 +257,6 @@ function draw_instances() { //works on the instance currently selected
         draw_primitive(trans);
       }
     }
-
-    //if instance is 3D, then draw the 3D primitive
-    if (!current.isHidden() && current.is3D) {
-      /*this can work in draw function because it doesn't need delta, 
-      also it is technically a draw function*/
-      updateWorldMatrixForInstance(current);
-      //draws mesh projected 2D onto the screen, the world matrix tells where to position this mesh in 3D space
-      drawMesh(current.mesh, current.matWorld);
-
-    }
-
     //afer that run the draw event of this instance
     current.draw(); //run the draw function of this instance
   }
