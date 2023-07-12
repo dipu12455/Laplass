@@ -309,3 +309,23 @@ export function draw_fragment(_x, _y, _color) {
   drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
   drawObject.endFill();
 }
+
+export function draw_fragment_linePixels(_x, _y, _color) {
+  //find the fragment that encloses the given point
+  var fragX = Math.floor(_x / fragmentSize);
+  var fragY = Math.floor(_y / fragmentSize);
+
+  drawObject.beginFill(_color);
+  //drawObject.lineStyle(1, 0x000000);
+  drawObject.lineStyle(0);
+  //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
+  drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+  drawObject.endFill();
+}
+
+export function draw_line_PIXI(_x, _y, _color) {
+  drawObject.lineStyle(1, _color, 1);
+  drawObject.moveTo(_x, _y);
+  drawObject.lineTo(_x+1, _y+1);
+
+}
