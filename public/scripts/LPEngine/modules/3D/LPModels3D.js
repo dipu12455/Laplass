@@ -132,10 +132,11 @@ export function drawMesh(_mesh, _matWorld) {
         var k = 0;
         for (k = 0; k < sortedTrianglesList.length; k += 1) {
             var tri = sortedTrianglesList[k];
+            renderFragments(tri);
             fillTriangle([tri.v1[0], tri.v1[1]],
                 [tri.v2[0], tri.v2[1]],
                 [tri.v3[0], tri.v3[1]], tri.color);
-            renderFragments(tri);
+            
         }
     }
 }

@@ -28,6 +28,20 @@ export class objDrawObject_MPS extends LP.LPGameObject_3D {
         };
     }
     checkEvents() {
+        if (LP.isPEventFired(LP.evKeyW_p)) {
+            var vMovingForward = LP.scalarXVector_3D(0.1, LP.getLookDir());
+            LP.setCamera(LP.v1Plusv2_3D(LP.getCamera(), vMovingForward));
+        }
+        if (LP.isPEventFired(LP.evKeyS_p)) {
+            var vMovingForward = LP.scalarXVector_3D(0.1, LP.getLookDir());
+            LP.setCamera(LP.v2Minusv1_3D(LP.getCamera(), vMovingForward));
+        }
+        if (LP.isPEventFired(LP.evKeyA_p)) {
+            LP.setCameraYaw(LP.getCameraYaw() + 1);
+        }
+        if (LP.isPEventFired(LP.evKeyD_p)) {
+            LP.setCameraYaw(LP.getCameraYaw() - 1);
+        }
     }
     rotateMyself(_delta) {
         this.elapsed += _delta;

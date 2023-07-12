@@ -120,10 +120,6 @@ export function renderFragments(_triangle) {
 
     //draw a line BA and CA.
     var BA = new Line(B, A);
-    
-
-
-
     var CA = new Line(C, A);
 
     var P1 = B; //this is the start point of scanline that moves along BA
@@ -140,23 +136,11 @@ export function renderFragments(_triangle) {
         //now draw a line from P1 to P2
         var scanline = new Line(P1, P2);
         var noOfFragmentsSL = Math.ceil(getMag_3D(scanline.getVector()) / fz);
-
-
         for (var j = 0; j < noOfFragmentsSL; j += 1) {
             var Q = v1Plusv2_3D(scanline.startPoint, scalarXVector_3D(j * fz, scanline.getUnitVector()));
-            //draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
+            draw_fragment(Q[0], Q[1], 0.1, 0x0000ff);
         }
     }
-
-    for (var i = -10; i < 10; i+= 0.05){
-        function getRandomNumber(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-        var color = rgbToHex(getRandomNumber(0,1),getRandomNumber(0,1),getRandomNumber(0,1));
-        draw_line([i,-10],[i,10],color);
-    }
-
-
 }
 
 export function moveTriangleToScreen(_triangle, _scale, _screenWidth, _screenHeight) {

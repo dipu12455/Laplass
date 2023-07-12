@@ -214,17 +214,24 @@ export function draw_fragment(_x, _y, _z, _color) {
   var fragX = Math.floor(_x / fragmentSize);
   var fragY = Math.floor(_y / fragmentSize);
 
+  var fragXLimit = Math.ceil(getScreenWidth() / fragmentSize);
+  var fragYLimit = Math.ceil(getScreenHeight() / fragmentSize);
+
+  //if fragment is being drawn outside the render zone, don't draw
+  var condition = fragX > fragXLimit || fragX < 0 || fragY > fragYLimit || fragY < 0;
   /*read the depth buffer in this fragment spot.
   if current value is smaller than in the depth buffer, draw the fragment, and replace depth buffer value with your own*/
-  var depthBufferValue = getDepthValue(fragX, fragY);
-  if (_z <= depthBufferValue) {
-    setDepthValue(fragX, fragY, _z);
-    //drawObject.beginFill(_color);
-    drawObject.lineStyle(1, 0x000000);
-    //drawObject.lineStyle(0);
-    //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
-    drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
-    //drawObject.endFill();
+  if (!condition) {
+    var depthBufferValue = getDepthValue(fragX, fragY);
+    if (_z <= depthBufferValue) {
+      setDepthValue(fragX, fragY, _z);
+      drawObject.beginFill(_color);
+      //drawObject.lineStyle(1, 0x000000);
+      drawObject.lineStyle(0);
+      //multiply the fragment position by its size in pixels, to determine its position on the screen in terms of pixels
+      drawObject.drawRect(fragX * fragmentSize, fragY * fragmentSize, fragmentSize, fragmentSize); //keep its origin in its center
+      drawObject.endFill();
+    }
   }
 }
 
