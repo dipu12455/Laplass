@@ -1,6 +1,6 @@
-import { checkPointInsidePrimitive, primFromBoundingBox } from "./LPCollision.js";
-import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole, timePause, timeResume} from "./LPEngineCore.js";
-import { transform_primitive } from "./LPPrimitives.js";
+import { checkPointInsidePrimitive, primFromBoundingBox } from "./Collision.js";
+import { getWorldDelta, getWorldOrigin, isUnitTest, screenCoordtoWorldCoord, setPrintConsole, timePause, timeResume} from "./EngineCore.js";
+import { transform_primitive } from "./Primitives.js";
 
 var mouseX = 0, mouseY = 0;
 

@@ -1,7 +1,7 @@
-import { getApp, getWorldDelta, moveToScreenCoord, printConsole } from "./LPEngineCore.js";
-import { LPList } from "./LPList.js";
+import { getApp, getWorldDelta, moveToScreenCoord, printConsole } from "./EngineCore.js";
+import { List } from "./List.js";
 
-export var PIXITEXTSLIST = new LPList();
+export var PIXITEXTSLIST = new List();
 var updated = [];
 
 export function draw_text(_string, _p, _size, _color) { /*use this function only inside instance functions like init, update or draw.

@@ -1,9 +1,50 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
+  <!--put the PIXIjs script-->
   <script src="https://pixijs.download/release/pixi.min.js"></script>
-  </head>
-  <body>
-    <script type="module" src="./scripts/index.js"></script>
-  </body>
+  <!--This is the initialization scripts for Threejs-->
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+  <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three/examples/jsm/"
+        }
+      }
+    </script>
+
+  <!--Set the canvas elements to overlap. PIXIjs is already configured to render transparent-->
+  <style>
+    #canvasContainer {
+      position: relative;
+    }
+
+    #underlayCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    #overlayCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="canvasContainer">
+    <canvas id="underlayCanvas" width="640" height="480" style="border: 1px solid #000000;"></canvas>
+    <canvas id="overlayCanvas" width="640" height="480" style="border: 1px solid #00ff00;"></canvas>
+  </div>
+  <script type="module" src="./scripts/app.js"></script>
+
+</body>
+
 </html>

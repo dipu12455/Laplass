@@ -1,19 +1,19 @@
-import { LPList } from "./LPList.js";
-import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, sumOfSqr, v2Minusv1 } from './LPVector.js';
-import { dotProduct } from './LPVector.js';
-import { scalarXvector, v1Plusv2 } from './LPVector.js';
-import { draw_anchor, draw_line, printConsole, setPrintConsole } from './LPEngineCore.js';
-import { Primitive, addPrimitiveVertex, getBoundingBox, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { INSTANCES } from "./LPInstances.js";
+import { List } from "./List.js";
+import { findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, sqr, sumOfSqr, v2Minusv1 } from './Vector.js';
+import { dotProduct } from './Vector.js';
+import { scalarXvector, v1Plusv2 } from './Vector.js';
+import { draw_anchor, draw_line, printConsole, setPrintConsole } from './EngineCore.js';
+import { Primitive, addPrimitiveVertex, getBoundingBox, getNormalsOfPrimitive, getPrimitive, transform_primitive } from "./Primitives.js";
+import { INSTANCES } from "./Instances.js";
 
 var collisionPerFrame = 0;
 var collisionPatternList = [];
-export function collisionsInit() { //call this after all instances are added to LPE, best call it after instancesInit()
+export function collisionsInit() { //call this after all instances are added to engine, best call it after instancesInit()
   let i = 0;
   for (i = 0; i < INSTANCES.getSize(); i += 1) {
     collisionPatternList[i] = [];
   }//each element of this array will hold elements equal to number of instances
-  //if n is number of instances in LPE, the main array has n slots, and each of those n slots have n slots
+  //if n is number of instances in engine, the main array has n slots, and each of those n slots have n slots
 
   //now loop through all and fill with 0. 0 means pattern not encountered. 1 means pattern encountered
   i = 0;
@@ -36,7 +36,7 @@ function resetCollisionPatternList() {
 
 }
 
-//function to analyze collisions between all registered instances of LPE.
+//function to analyze collisions between all registered instances of engine.
 //if the instance is switched into 'physical' mode, this function will teleport two overlapping instances to their MTV
 export function getCollisions() {
   let i = 0;
@@ -144,7 +144,7 @@ export function checkCollisionPrimitives(_primitive1, _primitive2) {
   var normalList = getNormalsOfPrimitive(_primitive1);
   var normalList2 = getNormalsOfPrimitive(_primitive2);
   normalList.append(normalList2);
-  var distances = new LPList();
+  var distances = new List();
   var overlap = false;
   var minOverlapAxis = [];
   let i = 0;
@@ -309,7 +309,7 @@ export function primFromBoundingBox(_bbox) {
 //takes a primitive and only returns a list of the coefficient of each point with the axis
 export function getCoefficientsOfProjection(_primitive, _axisVector) {
   var i = 0;
-  var pointList = new LPList();
+  var pointList = new List();
   for (i = 0; i < _primitive.getSize(); i += 1) {
     var point = _primitive.get(i);
 
@@ -324,7 +324,7 @@ export function getCoefficientsOfProjection(_primitive, _axisVector) {
 //returns a list of vectors that are projected on the given axisVector
 export function projectPrimitiveOntoAxis(_primitive, _axisVector) {
   var i = 0;
-  var projPointList = new LPList();
+  var projPointList = new List();
   for (i = 0; i < _primitive.getSize(); i += 1) {
     var point = _primitive.get(i);
 
@@ -338,7 +338,7 @@ export function projectPrimitiveOntoAxis(_primitive, _axisVector) {
 
 
 //takes a list and finds the min, returns the index of the min value of the list
-export function findMin(_list /*type LPList*/) { //TODO: what if there are more that one min values? it is possible for two different vertices to have equal projection vector
+export function findMin(_list /*type List*/) { //TODO: what if there are more that one min values? it is possible for two different vertices to have equal projection vector
   var min = 0;
   var value = 0;
   min = _list.get(0); //important to initialize the min var to the first value of the list

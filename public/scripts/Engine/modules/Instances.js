@@ -1,13 +1,13 @@
-import { LPList } from "./LPList.js";
-import { is3DMode, isTimeRunning, printConsole, set3DMode, setPrintConsole } from "./LPEngineCore.js";
-import { turnOffEvents } from "./LPEvents.js";
-import { getPrimitive, transform_primitive } from "./LPPrimitives.js";
-import { getCollisions } from "./LPCollision.js";
-import { getMag, isVectorWithinRange, v1Plusv2 } from "./LPVector.js";
-import { getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from "./3D/LPMatrix4x4.js";
-import { updateCamera } from "./3D/LPDraw3D.js";
+import { List } from "./List.js";
+import { is3DMode, isTimeRunning, printConsole, set3DMode, setPrintConsole } from "./EngineCore.js";
+import { turnOffEvents } from "./Events.js";
+import { getPrimitive, transform_primitive } from "./Primitives.js";
+import { getCollisions } from "./Collision.js";
+import { getMag, isVectorWithinRange, v1Plusv2 } from "./Vector.js";
+import { getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from "./3D/Matrix4x4.js";
+import { updateCamera } from "./3D/Draw3D.js";
 
-export class LPGameObject {
+export class GameObject {
     constructor() {
         this.name = ""; //used to identify instances by their parent objects, for collision purposes
         //instance ids are obtained from the instances array, need not be stored per instance
@@ -26,15 +26,15 @@ export class LPGameObject {
         this.hspeed = 0;
         this.vspeed = 0;
         this.rspeed = 0;
-        this.collisionList = new LPList();
+        this.collisionList = new List();
         this.physical = false;
         this.mass = 1; //1 is default, so it won't multiply anything
         this.acceleration = [0, 0];
         this.is3D = false;
-        /*the LPGameObject_3D class is a child of this class, when an instance of that
+        /*the GameObject_3D class is a child of this class, when an instance of that
         class is created, it will set this.is3D to true. In order for main game loop to
         seamlessly classify between drawing 2D and 3D object. there is 3D switch in LPE.
-        once LPE detects an instance of LPGameObject_3D, it will switch to 3D mode.
+        once LPE detects an instance of GameObject_3D, it will switch to 3D mode.
         otherwise all 3D functions will be disabled.*/
         this.init = () => { };
         this.update = (_delta) => { };
@@ -194,16 +194,16 @@ export class LPGameObject {
 
 }
 
-export var INSTANCES = new LPList(); //list of all instances in LPE
+export var INSTANCES = new List(); //list of all instances in LPE
 
-//use the LPGameObject class to make a child class that is the game 'object'. define attributes and behaviors for that object class.
+//use the GameObject class to make a child class that is the game 'object'. define attributes and behaviors for that object class.
 //then create an instance of that object class which is the 'instance', its this instance you add to the INSTANCES list.
 //if you make changes to x or y or even the spriteindex, you change one instance of that object, not all of them.
 //object files are part of game code, not LP code.
 
 //some functions to manipulate the INSTANCES list, to make it more readable.
 
-//create an instance (new LP.LPGameObject), then returns its index for use in other functions
+//create an instance (new LP.GameObject), then returns its index for use in other functions
 export function addInstance(_instance) {
     var index = INSTANCES.add(_instance);
     INSTANCES.get(index).id = index;
@@ -303,19 +303,19 @@ export function flushCollisions() {
     var i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
         if (!INSTANCES.get(i).is3D) {
-            INSTANCES.get(i).collisionList = new LPList();
+            INSTANCES.get(i).collisionList = new List();
         }
     }
 }
 
 
-//LPGameObject_3D functions and variables-------------------------------------------------------------
+//GameObject_3D functions and variables-------------------------------------------------------------
 
-export class LPGameObject_3D extends LPGameObject {
+export class GameObject_3D extends GameObject {
     constructor(_mesh) {
         super();
         this.is3D = true; //this is switched true, to tell engine to turn on 3D mode
-        this.mesh = _mesh; //this is meant to be set in instance
+        this.meshID = _mesh; //this is meant to be set in instance
         this.color = [1, 0, 0]; //array of RGB, A = [R,G,B]. determines the color of the mesh
         this.z = 0; //move it furhter into the screen, meant to be set in instance
         this.rotX = 0;

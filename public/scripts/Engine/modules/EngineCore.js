@@ -1,15 +1,16 @@
 //import * as PIXI from './pixi.js';
 
-import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './LPPrimitives.js';
-import { v1Plusv2 } from './LPVector.js';
-import { LPEventsInit } from './LPEvents.js';
-import { INSTANCES, flushCollisions, initInstances, updateInstances, updateWorldMatrixForInstance } from './LPInstances.js';
-import { collisionsInit } from './LPCollision.js';
+import { getNormalsOfPrimitive, getPrimitive, transform_primitive } from './Primitives.js';
+import { v1Plusv2 } from './Vector.js';
+import { LPEventsInit } from './Events.js';
+import { INSTANCES, flushCollisions, initInstances, updateInstances, updateWorldMatrixForInstance } from './Instances.js';
+import { collisionsInit } from './Collision.js';
 import { LPVectorTest } from './tests/LPVector.test.js';
 import { LPEventsTest } from './tests/LPEvents.test.js';
-import { runTest } from './LPTest.js';
-import { initTexts, resetTexts } from './LPTexts.js';
-import { drawScene_3D} from './3D/LPDraw3D.js';
+import { runTest } from './Test.js';
+import { initTexts, resetTexts } from './Texts.js';
+import { drawScene_3D } from './3D/Draw3D.js';
+import { TJS_init, TJS_render } from './3D/TJS_module.js';
 
 // these variables need to be referenced from all functions
 var app;
@@ -26,12 +27,24 @@ export var ThreeDMode = false;
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
 
-export function runEngine(_window, _width, _height, _LPDraw) {
-  worldOriginX = _width / 2;
-  worldOriginY = _height / 2;
+export function initEngine(_window, _underlayCanvas, _overlayCanvas) {
+  var width = _overlayCanvas.clientWidth;
+  var height = _overlayCanvas.clientHeight;
+  worldOriginX = width / 2;
+  worldOriginY = height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
-  app = new PIXI.Application({ width: _width, height: _height, background: '#ffffff' });
-  _window.document.body.appendChild(app.view); //usually you would only work with document object, but LP needs the window object for event actions, so we are just taking in the whole window object.
+  app = new PIXI.Application({
+    view: _overlayCanvas,
+    backgroundAlpha: 0,
+    width: width,
+    height: height,
+  });
+  /*no need to append the canvas created by PIXI to the html body,
+  here you created your own canvas object, 
+  then making pixi use this canvas object as its 'view'*/
+
+  //now pass on the underlay canvas to TJS_module.js
+  TJS_init(_underlayCanvas);
 
   LPEventsInit(_window);
 
@@ -44,6 +57,9 @@ export function runEngine(_window, _width, _height, _LPDraw) {
   collisionsInit();
   //run test if toggled
   runAllTests();
+}
+
+export function runEngine() {
   //start running the ticker (gameLoop)
   app.ticker.add((delta) => {
     //text test end
@@ -59,6 +75,8 @@ export function runEngine(_window, _width, _height, _LPDraw) {
     draw_instances();
 
     resetTexts();
+
+
 
   });
 
@@ -79,13 +97,13 @@ export function setWorldDelta(_worldDelta) {
   worldDelta = _worldDelta;
 }
 
-export function moveToScreenCoord(_p) { //change from LP's coordinate system to screen coords, coordinates are converted to pixel positions on screen
+export function moveToScreenCoord(_p) { //change from engine's coordinate system to screen coords, coordinates are converted to pixel positions on screen
   var xx = worldOriginX + (_p[0] * worldDelta);
   var yy = worldOriginY - (_p[1] * worldDelta);
   return [xx, yy];
 }
 
-export function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in LP's coordinate system
+export function screenCoordtoWorldCoord(_p) { //this changes the pixel xy received by events into xy used in engine's coordinate system
   if (getWorldDelta() <= 0) console.error(`worldDelta cannot be zero`);
   var xx = (_p[0] - getWorldOrigin()[0]) / getWorldDelta();
   var yy = (getWorldOrigin()[1] - _p[1]) / getWorldDelta(); //these are simply opposites of changing worldcoord into pixels
@@ -132,7 +150,7 @@ export function set3DMode(_state) {
   ThreeDMode = _state;
 }
 
-export function is3DMode(){
+export function is3DMode() {
   return ThreeDMode;
 }
 
@@ -207,7 +225,7 @@ transform the primitive to the objects position and orientation
 before you draw it*/
 
 export function draw_primitive(_primitive) {
-  var lineColor = _primitive.lineColor; //not using getLineColor() because inside LPE, we don't work with indices, just the object directly
+  var lineColor = _primitive.lineColor; //not using getLineColor() because inside engine, we don't work with indices, just the object directly
   var fillColor = _primitive.fillColor;
   var wireframe = _primitive.wireframe;
 
@@ -244,7 +262,13 @@ export function drawNormals(_primitive, _p, _primColor, _secColor) {
 
 function draw_instances() { //works on the instance currently selected
   //generate a 3D scene frist
-  drawScene_3D();
+  TJS_render();
+  /*similarity test:
+  load the same mesh in both Draw3D and TJS, keep camera at [0,0,0] looking at
+  z into the screen (that is [0,0,1] for Draw3D but [0,0,-1] for TJS). Place the mesh
+  5 units away from the camera. When activating both renderings, and keeping camera settings the
+  same (such as FOV), the mesh in both images should have the same apparent size. This will
+  make sure that render size is same regardless of renderer for a single LPE app*/
 
   //draw 2D instances as overlay, including 2D draw calls from 3D instances
   let i = 0;

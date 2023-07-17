@@ -1,6 +1,6 @@
-import * as LP from '../../LPEngine/LPEngine.js';
+import * as EN from '../../Engine/Engine.js';
 
-export class objCameraController extends LP.LPGameObject_3D {
+export class objCameraController extends EN.GameObject_3D {
     constructor(_mesh) {
         super(_mesh); //provide the mesh to its parent class
         this.init = () => {
@@ -13,19 +13,19 @@ export class objCameraController extends LP.LPGameObject_3D {
         };
     }
     checkEvents() {
-        if (LP.isPEventFired(LP.evKeyW_p)) {
-            var vMovingForward = LP.scalarXVector_3D(0.1, LP.getLookDir());
-            LP.setCamera(LP.v1Plusv2_3D(LP.getCamera(), vMovingForward));
+        if (EN.isPEventFired(EN.evKeyW_p)) {
+            var vMovingForward = EN.scalarXVector_3D(0.1, EN.getLookDir());
+            EN.setCamera(EN.v1Plusv2_3D(EN.getCamera(), vMovingForward));
         }
-        if (LP.isPEventFired(LP.evKeyS_p)) {
-            var vMovingForward = LP.scalarXVector_3D(0.1, LP.getLookDir());
-            LP.setCamera(LP.v2Minusv1_3D(vMovingForward, LP.getCamera()));
+        if (EN.isPEventFired(EN.evKeyS_p)) {
+            var vMovingForward = EN.scalarXVector_3D(0.1, EN.getLookDir());
+            EN.setCamera(EN.v2Minusv1_3D(vMovingForward, EN.getCamera()));
         }
-        if (LP.isPEventFired(LP.evKeyA_p)) {
-            LP.setCameraYaw(LP.getCameraYaw() + 1);
+        if (EN.isPEventFired(EN.evKeyA_p)) {
+            EN.setCameraYaw(EN.getCameraYaw() + 1);
         }
-        if (LP.isPEventFired(LP.evKeyD_p)) {
-            LP.setCameraYaw(LP.getCameraYaw() - 1);
+        if (EN.isPEventFired(EN.evKeyD_p)) {
+            EN.setCameraYaw(EN.getCameraYaw() - 1);
         }
     }
 }

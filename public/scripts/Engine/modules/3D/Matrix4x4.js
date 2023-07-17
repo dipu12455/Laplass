@@ -1,5 +1,5 @@
-import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v2Minusv1_3D } from "./LPVector3D.js";
-import { degtorad } from "../LPVector.js";
+import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v2Minusv1_3D } from "./Vector3D.js";
+import { degtorad } from "../Vector.js";
 
 // the vectors will be of form [x,y,z], represented as arrays
 

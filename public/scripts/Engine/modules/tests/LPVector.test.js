@@ -1,5 +1,5 @@
-import { degtorad, dotProduct, findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, getVectorRTHeta, isVectorWithinRange, radtodeg, rotateVector, scalarXvector, sqr, sumOfSqr, transformVector, v1Plusv2, v2Minusv1 } from "../LPVector.js";
-import { TEST, printTest, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest } from "../LPTest.js";
+import { degtorad, dotProduct, findAverage, findLeftPerpendicular, getMag, getTheta, getUnitVector, getVectorRTHeta, isVectorWithinRange, radtodeg, rotateVector, scalarXvector, sqr, sumOfSqr, transformVector, v1Plusv2, v2Minusv1 } from "../Vector.js";
+import { TEST, printTest, areAlmostEqualBoolean, areAlmostEqualScalar, areAlmostEqualVector, nameTheTest } from "../Test.js";
 
 
 

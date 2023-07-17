@@ -1,4 +1,4 @@
-import { LPList } from "../LPList.js";
+import { List } from "../List.js";
 
 export class Triangle {
     constructor(_vertices) { //the vertices is an array of vectors, and each vector is an array of three tuples [x,y,z]
@@ -20,8 +20,8 @@ export class Mesh {
 }
 
 export function meshFromStringObj(_string, _normalFlipped) {
-    var vertexList = new LPList();
-    var facesList = new LPList();
+    var vertexList = new List();
+    var facesList = new List();
 
     const lines = _string.split("\n");
 
@@ -92,8 +92,10 @@ export function meshFromStringObj(_string, _normalFlipped) {
         newTri.normalFlipped = _normalFlipped;
         triangleArray.push(newTri);
     }
+    var newMesh = new Mesh(triangleArray);
+    var index = addMesh(newMesh);
 
-    return new Mesh(triangleArray);
+    return index;
 }
 
 export async function getMeshFromObj(_serverRoute, _normalFlipped) {
@@ -114,5 +116,16 @@ export function printMesh(_mesh) {
     for (i = 0; i < _mesh.triangles.length; i += 1) {
         console.log(`triangle ${i}: v1 = ${_mesh.triangles[i].v1}, v2 = ${_mesh.triangles[i].v2}, v3 = ${_mesh.triangles[i].v3}`);
     }
+}
+
+var MESHES = new List();
+
+function addMesh(_mesh) { //this add a mesh to engine, but also loads a mesh onto TJS. Then the same index can be used to retrieve mesh from either renderer
+    var ind = MESHES.add(_mesh);
+    return ind;
+}
+
+export function getMesh(_index) { //this is for LPE to retrieve its mesh, for TJS, the renderer will just read the mesh id off of the instance, render accordingly
+    return MESHES.get(_index);
 }
 

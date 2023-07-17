@@ -1,8 +1,8 @@
 
-import { LPList } from "./LPList.js";
-import { getTheta, v2Minusv1 } from './LPVector.js';
-import { findLeftPerpendicular } from './LPVector.js';
-import { transformVector } from "./LPVector.js";
+import { List } from "./List.js";
+import { getTheta, v2Minusv1 } from './Vector.js';
+import { findLeftPerpendicular } from './Vector.js';
+import { transformVector } from "./Vector.js";
 
 
 
@@ -23,7 +23,7 @@ export class BoundingBox {
   }
 }
 
-export class Primitive extends LPList {
+export class Primitive extends List {
   constructor() { //in this case the _primitivePath is the route to the server for the primitive text file
     super();
     this.origin = [0, 0];
@@ -56,7 +56,7 @@ export class Primitive extends LPList {
   }
 }
 
-var PRIMITIVES = new LPList(); //list of all primitives in LPE
+var PRIMITIVES = new List(); //list of all primitives in LPE
 
 export function addPrimitive(_primitivePath) {
   var ind = PRIMITIVES.add(new Primitive());

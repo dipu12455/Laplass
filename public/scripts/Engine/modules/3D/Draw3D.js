@@ -1,9 +1,9 @@
-import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./LPVector3D.js";
-import { draw_line, draw_polygon, printConsole, rgbToHex } from "../LPEngineCore.js";
-import { LPList, Queue } from "../LPList.js";
-import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./LPMatrix4x4.js";
-import { Triangle } from "./LPModels3D.js";
-import { INSTANCES, updateWorldMatrixForInstance } from "../LPInstances.js";
+import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./Vector3D.js";
+import { draw_line, draw_polygon, printConsole, rgbToHex } from "../EngineCore.js";
+import { List, Queue } from "../List.js";
+import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./Matrix4x4.js";
+import { Triangle, getMesh } from "./Models3D.js";
+import { INSTANCES, updateWorldMatrixForInstance } from "../Instances.js";
 
 //Render options, change it for debugging purposes
 var shaded = true;
@@ -26,10 +26,15 @@ export const screenTopPlane = new Plane([0, 0, 0, 1], [0, -0.70710, 0.70710, 1])
 export const screenBottomPlane = new Plane([0, 0, 0, 1], [0, 0.70833, 0.70587, 1]);
 
 //projection space related constants
+/*-------------------------------------------------*/
+//screen size is total chaos in Draw3D, all triangles are drawn to LPE coord space.
+//and variables are hard coded for now. TJS won't have the same coordinate as Draw3D,
+//so programs won't appear the same in these two renderers anymore.
 export const screenWidth = (640 - 640 / 2) / 20;
 export const screenHeight = (480 / 2 - 480) / 20;
 export const aspectRatio = screenHeight / screenWidth;
-export const fieldOfView = 90;
+/*---------------------------------------------------------*/
+export const fieldOfView = 75; //Draw3D's clipping was made for 90degFOV, but it will still work for 75deg
 export const zNear = 0.1;
 export const zFar = 1000;
 export const matProj = getProjectionMatrix(aspectRatio, fieldOfView, zNear, zFar);
@@ -39,6 +44,11 @@ var matView = new mat4x4();
 var vCamera = [0, 0, 0, 1];
 var vLookDir = [0, 0, 1, 1];
 var cameraYaw = 0;
+
+/*define a camera class, create one instance of it, then export it.
+GameObjects will modify this camera instance, then either Draw3D or TJS will
+read this object every frame and move their camera accordingly*/
+
 
 /*this function needs to be called in every frame to update the view matrix according
 to continuously updated camera position (vCamera) and yaw/look directions (vLookDir)*/
@@ -76,7 +86,7 @@ export function getMatView() { //get the view matrix, used by other functions to
 
 //draws a 2D filled triangle on the screen. Inputs are 2D vectors. Drawing is taking place in the 2D screen space, regular X and Y coordinates in the LPE system
 export function fillTriangle(_v1, _v2, _v3, _color) {
-    const vertexList = new LPList();
+    const vertexList = new List();
     vertexList.add(_v1);
     vertexList.add(_v2);
     vertexList.add(_v3);
@@ -444,10 +454,11 @@ export function drawScene_3D() {
       var current = INSTANCES.get(i);
       if (current.isHidden()) continue; //if hidden, skip this instance
       if (!current.is3D) continue; //if not 3D, skip this instance
-      if (current.mesh === null) continue; //if no mesh, skip this instance
+      if (current.meshID === null) continue; //if no mesh, skip this instance
       updateWorldMatrixForInstance(current);//update the world matrix for this instance
   
-      allMeshTriangles = allMeshTriangles.concat(moveTrianglesToScreenSpace(current.mesh, current.color, current.matWorld));
+      var mesh = getMesh(current.meshID);
+      allMeshTriangles = allMeshTriangles.concat(moveTrianglesToScreenSpace(mesh, current.color, current.matWorld));
     }
     allMeshTriangles = sortTrianglesByDepth(allMeshTriangles);
   
