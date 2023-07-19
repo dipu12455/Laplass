@@ -31,6 +31,7 @@ export { INSTANCES } from './modules/Instances.js';
 export { addInstance } from './modules/Instances.js';
 export { destroyInstance } from './modules/Instances.js';
 export { GameObject_3D } from './modules/Instances.js';
+export { setFollowedInstance_3D } from './modules/Instances.js';
 
 //Primitives
 export { Primitive } from './modules/Primitives.js';
@@ -54,6 +55,7 @@ export { copyPrimitive } from './modules/Primitives.js';
 
 
 //EngineCore, some functions while exported are still missing. this is to allow only some functions accessible to client app
+export { initEngine } from './modules/EngineCore.js';
 export { runEngine } from './modules/EngineCore.js';
 export { timeResume } from './modules/EngineCore.js';
 export { timePause } from './modules/EngineCore.js';
@@ -137,4 +139,7 @@ export { v2Minusv1_3D } from './modules/3D/Vector3D.js';
 export { getUnitVector_3D } from './modules/3D/Vector3D.js';
 export { vDivScalar_3D } from './modules/3D/Vector3D.js';
 export { scalarXVector_3D } from './modules/3D/Vector3D.js';
+
+//TJS
+export { TJS_loadMesh } from './modules/3D/TJS_module.js';
 

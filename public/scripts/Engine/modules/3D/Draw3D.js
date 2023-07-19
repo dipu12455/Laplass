@@ -3,7 +3,7 @@ import { draw_line, draw_polygon, printConsole, rgbToHex } from "../EngineCore.j
 import { List, Queue } from "../List.js";
 import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./Matrix4x4.js";
 import { Triangle, getMesh } from "./Models3D.js";
-import { INSTANCES, updateWorldMatrixForInstance } from "../Instances.js";
+import { INSTANCES, getFollowedInstance_3D, updateWorldMatrixForInstance } from "../Instances.js";
 
 //Render options, change it for debugging purposes
 var shaded = true;
@@ -53,6 +53,13 @@ read this object every frame and move their camera accordingly*/
 /*this function needs to be called in every frame to update the view matrix according
 to continuously updated camera position (vCamera) and yaw/look directions (vLookDir)*/
 export function updateCamera() {
+    if(getFollowedInstance_3D() != null){ 
+        setCameraYaw(0);
+        var x = getFollowedInstance_3D().x;
+        var y = getFollowedInstance_3D().y;
+        var z = getFollowedInstance_3D().z;
+        setCamera([x,y,z-5,1]);
+    }
     var vUp = [0, 1, 0, 1];
     var vTarget = [0, 0, 1, 1];
     var matCameraRot = getRotationMatrixY(cameraYaw);

@@ -347,5 +347,17 @@ export function updateWorldMatrixForInstance(_instance) {
     _instance.matWorld = matrixMultiMatrix(_instance.matWorld, matTrans);
 }
 
+var followedInstance_3D = null; //variable that stores reference to currently selected instance to be followed
+
+//only for following 3d instances, 2d instances don't have properties that the 3d functions try to read, so there will be error
+export function setFollowedInstance_3D(_instance) {
+    if (!_instance.is3D) return null;
+    followedInstance_3D = _instance;
+}
+
+export function getFollowedInstance_3D() {
+    return followedInstance_3D;
+}
+
 
 

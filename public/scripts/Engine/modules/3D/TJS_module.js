@@ -4,9 +4,7 @@ import * as THREE from 'three';
 import { getCamera, getCameraYaw } from './Draw3D.js';
 
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { getWorldDelta, printConsole } from '../EngineCore.js';
 import { degtorad } from '../Vector.js';
-import { List } from '../List.js';
 import { INSTANCES } from '../Instances.js';
 
 var renderer, scene, camera; //variables that need to have scope in all functions of this file

@@ -1,20 +1,23 @@
 import * as EN from '../../Engine/Engine.js';
 import { objPyramid } from './objPyramid.js';
 import { objCameraController } from './objCameraController.js';
-import { TJS_loadMesh } from '../../Engine/modules/3D/TJS_module.js';
 
 export function runScene() {
     EN.setPrintConsole(true);
 
-    var mesh = TJS_loadMesh('/mesh1', 0xff0000);
-    var mesh2 = TJS_loadMesh('/mesh1', 0x00ff00);
-    var mesh3 = TJS_loadMesh('/mesh1', 0x0000ff);
+    var mesh = EN.TJS_loadMesh('/mesh1', 0xff0000);
+    var mesh2 = EN.TJS_loadMesh('/mesh1', 0x00ff00);
+    var mesh3 = EN.TJS_loadMesh('/mesh1', 0x0000ff);
 
     var camObject = new objCameraController(null);
     EN.addInstance(camObject);
 
     var pyramid = new objPyramid(mesh);
     pyramid.x = 5;
+    pyramid.y = -3;
+    pyramid.z = 5
+    EN.setFollowedInstance_3D(pyramid);
+    pyramid.selected = true;
     EN.addInstance(pyramid);
 
     var pyr2 = new objPyramid(mesh2);
