@@ -1,4 +1,5 @@
 import * as EN from '../../Engine/Engine.js';
+import { getFollowedInstance_3D } from '../../Engine/modules/Instances.js';
 import { getRandomInteger } from './functions.js';
 
 export class objPyramid extends EN.GameObject_3D {
@@ -29,18 +30,6 @@ export class objPyramid extends EN.GameObject_3D {
     }
     checkEvents() {
         if (this.selected) {
-            if (EN.isPEventFired(EN.evArrowUp_p)) {
-                this.y += 0.1;
-            }
-            if (EN.isPEventFired(EN.evArrowDown_p)) {
-                this.y -= 0.1;
-            } //raise the triangle up and down
-            if (EN.isPEventFired(EN.evArrowLeft_p)) {
-                this.x -= 0.1;
-            }
-            if (EN.isPEventFired(EN.evArrowRight_p)) {
-                this.x += 0.1;
-            }
         }
     }
 }

@@ -89,6 +89,7 @@ function updateCamera() {
     camera.position.z = -z;
 
     var vTarget = v1Plusv2_3D(ENCamPos, getLookDir());
+    //the lookAt in TJS is the vTarget being calculated in Engine. the point in front of the camera that its supposed to look at
     camera.lookAt(vTarget[0], vTarget[1], -vTarget[2]);
 }
 function TJS_update() {

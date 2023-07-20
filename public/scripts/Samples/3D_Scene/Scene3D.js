@@ -15,7 +15,7 @@ export function runScene() {
     var pyramid = new objPyramid(mesh);
     pyramid.x = 5;
     pyramid.y = 1;
-    //EN.setFollowedInstance_3D(pyramid);
+    EN.setFollowedInstance_3D(pyramid);
     pyramid.selected = true;
     EN.addInstance(pyramid);
 
