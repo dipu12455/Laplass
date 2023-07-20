@@ -22,6 +22,7 @@ export const evKeyQ = 13;
 export const evKeyE = 14;
 export const evKeyR = 15;
 export const evKeyF = 16;
+export const evKeyT = 17;
 
 var eventArray = [];
 eventArray[evMouseClick] = false; //evMouseClick
@@ -41,6 +42,7 @@ eventArray[evKeyQ] = false;
 eventArray[evKeyE] = false;
 eventArray[evKeyR] = false;
 eventArray[evKeyF] = false;
+eventArray[evKeyT] = false;
 
 //persistent event codes
 export const evKeyG_p = 0;
@@ -57,6 +59,7 @@ export const evKeyQ_p = 10;
 export const evKeyE_p = 11;
 export const evKeyR_p = 12;
 export const evKeyF_p = 13;
+export const evKeyT_p = 14;
 
 var eventArray_p = [];
 eventArray_p[evKeyG_p] = false;
@@ -73,6 +76,7 @@ eventArray_p[evKeyQ_p] = false;
 eventArray_p[evKeyE_p] = false;
 eventArray_p[evKeyR_p] = false;
 eventArray_p[evKeyF_p] = false;
+eventArray_p[evKeyT_p] = false;
 
 //all functions in this module are exported for testing purposes, and for usage inside the LPE.
 //the functions that are not allowed to be used by the client app are not included in LPEngine.js
@@ -190,6 +194,11 @@ export function LPEventsInit(_window) {
             fireEvent(evKeyF);
             firePEvent(evKeyF_p);
         }
+        if (keyCode == 'KeyT') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyT`);
+            fireEvent(evKeyT);
+            firePEvent(evKeyT_p);
+        }
     });
     /*keyboard events are different. If you want to move a player when the key is pressed,
     the event needs to stay fired (true) until the key is released. THat's when the keyup
@@ -254,6 +263,10 @@ export function LPEventsInit(_window) {
         if (keyCode == 'KeyF') {
             if (isUnitTest()) console.log(`JS: Keyup KeyF`);
             turnOffPEvent(evKeyF_p);
+        }
+        if (keyCode == 'KeyT') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyT`);
+            turnOffPEvent(evKeyT_p);
         }
 
     });

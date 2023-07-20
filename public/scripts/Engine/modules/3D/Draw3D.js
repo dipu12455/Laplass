@@ -44,6 +44,7 @@ var matView = new mat4x4();
 var vCamera = [0, 0, 0, 1];
 var vLookDir = [0, 0, 1, 1];
 var cameraYaw = 0;
+var cameraPitch = 0; //pitching only works with TJS right now
 
 /*define a camera class, create one instance of it, then export it.
 GameObjects will modify this camera instance, then either Draw3D or TJS will
@@ -83,6 +84,12 @@ export function getCameraYaw() {
 }
 export function setCameraYaw(_yaw) { //provide in degrees
     cameraYaw = _yaw;
+}
+export function setCameraPitch(_pitch){
+    cameraPitch = _pitch;
+}
+export function getCameraPitch(){
+    return cameraPitch;
 }
 export function getLookDir() { //returns the look direction vector
     return vLookDir;

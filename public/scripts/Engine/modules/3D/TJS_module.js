@@ -1,7 +1,7 @@
 //PIXI doesnt need an import statement because it is retrieved from a CDN. But Threejs isn't
 import * as THREE from 'three';
 
-import { getCamera, getCameraYaw } from './Draw3D.js';
+import { getCamera, getCameraPitch, getCameraYaw } from './Draw3D.js';
 
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { degtorad } from '../Vector.js';
@@ -81,13 +81,16 @@ export function TJS_loadMesh(_meshPath, _color) {
 
 function updateCamera() {
     //reads the camera state from engine, then updates own camera
-    var LPCamPos = getCamera();
-    camera.position.x = LPCamPos[0];
-    camera.position.y = LPCamPos[1];
-    camera.position.z = -LPCamPos[2]; //need to flip z for TJS
+    var ENCamPos = getCamera();
+    camera.position.x = ENCamPos[0];
+    camera.position.y = ENCamPos[1];
+    camera.position.z = -ENCamPos[2]; //need to flip z for TJS
 
-    var LPCamYaw = getCameraYaw();
-    camera.rotation.y = degtorad(LPCamYaw); //TJS works in rad
+    var ENCamYaw = getCameraYaw();
+    camera.rotation.y = degtorad(ENCamYaw); //TJS works in rad
+
+    var ENCamPitch = getCameraPitch();
+    camera.rotation.x = degtorad(-ENCamPitch); //TJS works in rad, and x is flipped
 
 }
 function TJS_update() {

@@ -105,6 +105,9 @@ export { evKeyQ } from './modules/Events.js';
 export { evKeyE } from './modules/Events.js';
 export { evKeyR } from './modules/Events.js';
 export { evKeyF } from './modules/Events.js';
+export { evKeyT } from './modules/Events.js';
+
+//persistent keys
 export { evKeyG_p } from './modules/Events.js';
 export { evKeyS_p } from './modules/Events.js';
 export { evKeyP_p } from './modules/Events.js';
@@ -119,6 +122,7 @@ export { evKeyQ_p } from './modules/Events.js';
 export { evKeyE_p } from './modules/Events.js';
 export { evKeyR_p } from './modules/Events.js';
 export { evKeyF_p } from './modules/Events.js';
+export { evKeyT_p } from './modules/Events.js';
 export { getMousePosition } from './modules/Events.js';
 export { evMouseRegion } from './modules/Events.js';
 export { isEventFired } from './modules/Events.js';
@@ -134,6 +138,8 @@ export { setCamera } from './modules/3D/Draw3D.js';
 export { getCamera } from './modules/3D/Draw3D.js';
 export { setCameraYaw } from './modules/3D/Draw3D.js';
 export { getCameraYaw } from './modules/3D/Draw3D.js';
+export { setCameraPitch } from './modules/3D/Draw3D.js';
+export { getCameraPitch } from './modules/3D/Draw3D.js';
 
 //Vector3D
 export { dotProduct_3D } from './modules/3D/Vector3D.js';
