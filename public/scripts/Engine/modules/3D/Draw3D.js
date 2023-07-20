@@ -63,8 +63,11 @@ export function updateCamera() {
     }
     var vUp = [0, 1, 0, 1];
     var vTarget = [0, 0, 1, 1];
-    var matCameraRot = getRotationMatrixY(cameraYaw);
-    vLookDir = multiplyMatrixVector(vTarget, matCameraRot);
+    var matCameraRotX = getRotationMatrixX(cameraPitch);
+    var matCameraRotY = getRotationMatrixY(cameraYaw);
+    vLookDir = multiplyMatrixVector(vTarget, matCameraRotX);
+    vLookDir = multiplyMatrixVector(vLookDir, matCameraRotY);
+
 
     vTarget = v1Plusv2_3D(vCamera, vLookDir);
     var matCamera = getPointAtMatrix(vCamera, vTarget, vUp);

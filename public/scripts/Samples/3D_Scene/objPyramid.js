@@ -41,12 +41,6 @@ export class objPyramid extends EN.GameObject_3D {
             if (EN.isPEventFired(EN.evArrowRight_p)) {
                 this.x += 0.1;
             }
-            if (EN.isPEventFired(EN.evKeyQ_p)) {
-                this.z += 0.1;
-            }
-            if (EN.isPEventFired(EN.evKeyE_p)) {
-                this.z -= 0.1;
-            }
         }
     }
 }

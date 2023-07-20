@@ -1,11 +1,12 @@
 //PIXI doesnt need an import statement because it is retrieved from a CDN. But Threejs isn't
 import * as THREE from 'three';
 
-import { getCamera, getCameraPitch, getCameraYaw } from './Draw3D.js';
+import { getCamera, getCameraPitch, getCameraYaw, getLookDir } from './Draw3D.js';
 
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { degtorad } from '../Vector.js';
 import { INSTANCES } from '../Instances.js';
+import { v1Plusv2_3D } from './Vector3D.js';
 
 var renderer, scene, camera, gridlinePlane; //variables that need to have scope in all functions of this file
 
@@ -82,16 +83,13 @@ export function TJS_loadMesh(_meshPath, _color) {
 function updateCamera() {
     //reads the camera state from engine, then updates own camera
     var ENCamPos = getCamera();
-    camera.position.x = ENCamPos[0];
-    camera.position.y = ENCamPos[1];
-    camera.position.z = -ENCamPos[2]; //need to flip z for TJS
+    var x = ENCamPos[0]; var y = ENCamPos[1]; var z = ENCamPos[2];
+    camera.position.x = x;
+    camera.position.y = y;
+    camera.position.z = -z;
 
-    var ENCamYaw = getCameraYaw();
-    camera.rotation.y = degtorad(ENCamYaw); //TJS works in rad
-
-    var ENCamPitch = getCameraPitch();
-    camera.rotation.x = degtorad(-ENCamPitch); //TJS works in rad, and x is flipped
-
+    var vTarget = v1Plusv2_3D(ENCamPos, getLookDir());
+    camera.lookAt(vTarget[0], vTarget[1], -vTarget[2]);
 }
 function TJS_update() {
     //TJS doesn't need delta, because it just reads value changes on LPGameObjects.
