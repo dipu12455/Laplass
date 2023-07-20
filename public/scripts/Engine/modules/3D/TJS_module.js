@@ -7,7 +7,7 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { degtorad } from '../Vector.js';
 import { INSTANCES } from '../Instances.js';
 
-var renderer, scene, camera; //variables that need to have scope in all functions of this file
+var renderer, scene, camera, gridlinePlane; //variables that need to have scope in all functions of this file
 
 var MESHES = [];
 var MESHES_indexCounter = 0;
@@ -38,6 +38,22 @@ export function TJS_init(_canvas) {
     const backLight = new THREE.PointLight(0xffffff, 0.2);
     backLight.position.set(0, 0, -1000); //light is same at all distance
     scene.add(backLight);
+
+    //make a square plane on the XZ axis then give it material of a gridline
+    const planeGeo = new THREE.PlaneGeometry(10,10);
+
+    const planeMatLoader = new THREE.TextureLoader();
+    const planeMatTexture = planeMatLoader.load( `./images/gridlineMat.png`);
+    planeMatTexture.wrapS = THREE.RepeatWrapping;
+    planeMatTexture.wrapT = THREE.RepeatWrapping;
+    planeMatTexture.repeat.set( 10, 10 );
+    const planeMat = new THREE.MeshBasicMaterial({map: planeMatTexture, side: THREE.DoubleSide});
+    //the plane is MeshBasicMaterial so it won't react to light
+    gridlinePlane = new THREE.Mesh(planeGeo, planeMat);
+    gridlinePlane.position.set(0,0,0);
+    gridlinePlane.rotation.x = degtorad(-90);
+    scene.add(gridlinePlane);
+
 }
 
 export function TJS_loadMesh(_meshPath, _color) {

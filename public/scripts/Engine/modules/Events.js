@@ -20,6 +20,8 @@ export const evArrowRight = 11;
 export const evArrowLeft = 12;
 export const evKeyQ = 13;
 export const evKeyE = 14;
+export const evKeyR = 15;
+export const evKeyF = 16;
 
 var eventArray = [];
 eventArray[evMouseClick] = false; //evMouseClick
@@ -37,6 +39,8 @@ eventArray[evArrowRight] = false;
 eventArray[evArrowLeft] = false;
 eventArray[evKeyQ] = false;
 eventArray[evKeyE] = false;
+eventArray[evKeyR] = false;
+eventArray[evKeyF] = false;
 
 //persistent event codes
 export const evKeyG_p = 0;
@@ -51,6 +55,8 @@ export const evArrowRight_p = 8;
 export const evArrowLeft_p = 9;
 export const evKeyQ_p = 10;
 export const evKeyE_p = 11;
+export const evKeyR_p = 12;
+export const evKeyF_p = 13;
 
 var eventArray_p = [];
 eventArray_p[evKeyG_p] = false;
@@ -65,6 +71,8 @@ eventArray_p[evArrowRight_p] = false;
 eventArray_p[evArrowLeft_p] = false;
 eventArray_p[evKeyQ_p] = false;
 eventArray_p[evKeyE_p] = false;
+eventArray_p[evKeyR_p] = false;
+eventArray_p[evKeyF_p] = false;
 
 //all functions in this module are exported for testing purposes, and for usage inside the LPE.
 //the functions that are not allowed to be used by the client app are not included in LPEngine.js
@@ -172,6 +180,16 @@ export function LPEventsInit(_window) {
             fireEvent(evKeyE);
             firePEvent(evKeyE_p);
         }
+        if (keyCode == 'KeyR') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyR`);
+            fireEvent(evKeyR);
+            firePEvent(evKeyR_p);
+        }
+        if (keyCode == 'KeyF') {
+            if (isUnitTest()) console.log(`JS: Keydown KeyF`);
+            fireEvent(evKeyF);
+            firePEvent(evKeyF_p);
+        }
     });
     /*keyboard events are different. If you want to move a player when the key is pressed,
     the event needs to stay fired (true) until the key is released. THat's when the keyup
@@ -229,6 +247,15 @@ export function LPEventsInit(_window) {
             if (isUnitTest()) console.log(`JS: Keyup KeyE`);
             turnOffPEvent(evKeyE_p);
         }
+        if (keyCode == 'KeyR') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyR`);
+            turnOffPEvent(evKeyR_p);
+        }
+        if (keyCode == 'KeyF') {
+            if (isUnitTest()) console.log(`JS: Keyup KeyF`);
+            turnOffPEvent(evKeyF_p);
+        }
+
     });
 }
 

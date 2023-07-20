@@ -16,7 +16,7 @@ export function runScene() {
     pyramid.x = 5;
     pyramid.y = -3;
     pyramid.z = 5
-    EN.setFollowedInstance_3D(pyramid);
+    //EN.setFollowedInstance_3D(pyramid);
     pyramid.selected = true;
     EN.addInstance(pyramid);
 

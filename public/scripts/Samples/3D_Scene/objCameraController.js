@@ -27,6 +27,12 @@ export class objCameraController extends EN.GameObject_3D {
         if (EN.isPEventFired(EN.evKeyD_p)) {
             EN.setCameraYaw(EN.getCameraYaw() - 1);
         }
+        if (EN.isPEventFired(EN.evKeyR_p)){
+            EN.setCamera(EN.v1Plusv2_3D(EN.getCamera(), [0, 0.1, 0]));
+        }
+        if (EN.isPEventFired(EN.evKeyF_p)){
+            EN.setCamera(EN.v1Plusv2_3D(EN.getCamera(), [0, -0.1, 0]));
+        }
     }
 }
 
