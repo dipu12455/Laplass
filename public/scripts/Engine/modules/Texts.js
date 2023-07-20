@@ -48,7 +48,8 @@ export function initTexts() {
         fontFamily: "Courier",
         fontSize: 50,
         fill: "white"
-    }); //defining a default font setting. This font ('BitmapFont') can be referred to using the MyFont name
+    }, {chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-_~#\"'&()[]|`\\/@°+=*$£€<>%{}^¨"} //this is the default font
+    ); //defining a default font setting. This font ('BitmapFont') can be referred to using the MyFont name
 }
 
 export function resetTexts() {
