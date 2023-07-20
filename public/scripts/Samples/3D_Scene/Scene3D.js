@@ -14,19 +14,19 @@ export function runScene() {
 
     var pyramid = new objPyramid(mesh);
     pyramid.x = 5;
-    pyramid.y = -3;
-    pyramid.z = 5
+    pyramid.y = 1;
     //EN.setFollowedInstance_3D(pyramid);
     pyramid.selected = true;
     EN.addInstance(pyramid);
 
     var pyr2 = new objPyramid(mesh2);
     pyr2.x = -5;
-    pyr2.y = 3;
+    pyr2.y = 1;
     EN.addInstance(pyr2);
 
     var pyr3 = new objPyramid(mesh3);
     pyr3.x = 0;
-    pyr3.y = 5;
+    pyr3.y = 1;
+    pyr3.z = 0;
     EN.addInstance(pyr3);
 }
