@@ -56,7 +56,6 @@ export class objCameraController extends EN.GameObject_3D {
         }
         else {
             //if following is active, use these controls to move the instance instead
-
             if (EN.isPEventFired(EN.evKeyW_p)) {
                 getFollowedInstance_3D().z += 0.1;
             }

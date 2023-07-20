@@ -11,6 +11,8 @@ export class objPyramid extends EN.GameObject_3D {
         this.z = 5;
 
         this.animate = 0;
+        this.animate2 = 0;
+        this.animate3 = 0;
         this.selected = false;
         this.init = () => {
 
@@ -22,7 +24,12 @@ export class objPyramid extends EN.GameObject_3D {
             //update theta
             var theta = this.elapsed * 0.5;
             this.animate = Math.cos(this.elapsed / 50.0);
+            this.animate2 = Math.sin(this.elapsed / 50.0);
+            this.animate3 = Math.sin(this.elapsed / 50.0);
             this.rotY = theta;
+            this.x = this.animate*5;
+            this.y = this.animate2*5;
+            this.z = this.animate3*5;
         };
         this.draw = () => {
             EN.draw_anchor([this.animate, 5], 0xff0000); //just to show regardless 2D or 3D, all draw functions work just fine

@@ -443,21 +443,21 @@ function draw_follow_grid() {
     for (var i = 0; i < gridLines.length; i++) {
       draw_line([gridLines[i], -(gHeight / 2) + 1.1], [gridLines[i], -(gHeight / 2) + 0.8], 0x000000);
       draw_line([gridLines[i] + 1, -(gHeight / 2) + 1.05], [gridLines[i] + 1, -(gHeight / 2) + 0.9], 0x000000);
-      draw_text(`${gridTexts[i]}`, [gridLines[i] - 0.2, -(gHeight / 2) + 0.8], 0.5, 0x000000);
+      draw_text(`${Math.floor(gridTexts[i])}`, [gridLines[i] - 0.2, -(gHeight / 2) + 0.8], 0.5, 0x000000);
     }
 
     //draw the gridlines Y
     for (var i = 0; i < gridLinesY.length; i++) {
       draw_line([-(gWidth / 2) + 1.1, gridLinesY[i]], [-(gWidth / 2) + 0.8, gridLinesY[i]], 0x000000);
       draw_line([-(gWidth / 2) + 1.05, gridLinesY[i] + 1], [-(gWidth / 2) + 0.9, gridLinesY[i] + 1], 0x000000);
-      draw_text(`${gridTextsY[i]}`, [-(gWidth / 2) + 0.2, gridLinesY[i] + 0.2], 0.5, 0x000000);
+      draw_text(`${Math.floor(gridTextsY[i])}`, [-(gWidth / 2) + 0.2, gridLinesY[i] + 0.2], 0.5, 0x000000);
     }
 
     //draw the gridlines Z
     for (var i = 0; i < gridLinesZ.length; i++) {
       draw_line([(gWidth / 2) - 1.1, gridLinesZ[i]], [(gWidth / 2) - 0.8, gridLinesZ[i]], 0x000000);
       draw_line([(gWidth / 2) - 1.05, gridLinesZ[i] + 1], [(gWidth / 2) - 0.9, gridLinesZ[i] + 1], 0x000000);
-      draw_text(`${gridTextsZ[i]}`, [(gWidth / 2) - 0.7, gridLinesZ[i] + 0.2], 0.5, 0x000000);
+      draw_text(`${Math.floor(gridTextsZ[i])}`, [(gWidth / 2) - 0.7, gridLinesZ[i] + 0.2], 0.5, 0x000000);
     }
   }
 }
