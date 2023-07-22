@@ -11,10 +11,22 @@ import { runTest } from './Test.js';
 import { draw_text, initTexts, resetTexts } from './Texts.js';
 import { TJS_init, TJS_render } from './3D/TJS_module.js';
 
+class View {
+  constructor(_canvas, _worldDelta, _drawObject) {
+    this.width = _canvas.clientWidth;
+    this.height = _canvas.clientHeight;
+    this.drawObject = _drawObject;
+    this.worldOriginX = this.width / 2;
+    this.worldOriginY = this.height / 2;
+    this.worldDelta = _worldDelta;
+  }
+}
 // these variables need to be referenced from all functions
 var app;
-var drawObject;
+var drawObject, drawObjectXYcanvas, drawObjectXZcanvas;
+var selectedView;
 
+var mainView, XYview, XZview;
 var worldOriginX, worldOriginY, worldDelta;
 var screenWidth, screenHeight; //this is local coord, not pixel coord
 var screenGrid = false;
@@ -27,17 +39,41 @@ export var ThreeDMode = false;
 //this function needs to be called before initialize(). This sets up the update operations that need to occur in each iteration of the game loop
 
 
-export function initEngine(_window, _underlayCanvas, _overlayCanvas) {
+export function initEngine(_window, _underlayCanvas, _overlayCanvas, _XYcanvas, _XZcanvas) {
   var width = _overlayCanvas.clientWidth;
   var height = _overlayCanvas.clientHeight;
   worldOriginX = width / 2;
   worldOriginY = height / 2;
   worldDelta = 20; //one unit means 20 pixels. so (-5,2) means (-100,40) pixels
+
+  mainView = new View(_overlayCanvas, 20, new PIXI.Graphics());
+
+  //initialize the main PIXI canvas
   app = new PIXI.Application({
     view: _overlayCanvas,
     backgroundAlpha: 0,
-    width: width,
-    height: height,
+    width: mainView.width,
+    height: mainView.height
+  });
+
+  XYview = new View(_XYcanvas, 20, new PIXI.Graphics());
+
+  //initialize the two mini canvas of XY and XZ
+  var XYapp = new PIXI.Application({
+    view: _XYcanvas,
+    backgroundAlpha: 0,
+    width: XYview.width,
+    height: XYview.height
+  });
+
+
+  XZview = new View(_XZcanvas, 20, new PIXI.Graphics());
+
+  var XZapp = new PIXI.Application({
+    view: _XZcanvas,
+    backgroundAlpha: 0,
+    width: XZview.width,
+    height: XZview.height
   });
   /*no need to append the canvas created by PIXI to the html body,
   here you created your own canvas object, 
@@ -48,8 +84,14 @@ export function initEngine(_window, _underlayCanvas, _overlayCanvas) {
 
   LPEventsInit(_window);
 
-  drawObject = new PIXI.Graphics();
-  app.stage.addChild(drawObject);
+  //draw object for main canvas
+  app.stage.addChild(mainView.drawObject);
+  //selectedView = mainView;
+  selectedView = XYview;
+
+  XYapp.stage.addChild(XYview.drawObject);
+  XZapp.stage.addChild(XZview.drawObject);
+
 
   initTexts();
   runAllTests();
@@ -77,7 +119,9 @@ export function runEngine() {
     flushCollisions(); //function that resets the collisionArray of each instance to -1
     //done after updating all instances. the next frame will have fresh collisionArray in all instances
 
-    drawObject.clear();
+    mainView.drawObject.clear(); //run the clear function for the drawObject of each view
+    XYview.drawObject.clear();
+    XZview.drawObject.clear();
     if (screenGrid == true) { draw_screen_grid(50, 50, 0x000000, 0xcccccc); }
 
     //draw all the instances, here the drawings from the client app would be drawn over the instances
@@ -140,8 +184,8 @@ export function getScreenHeight() {
 
 
 export function moveToScreenCoord(_p) { //change from engine's coordinate system to screen coords, coordinates are converted to pixel positions on screen
-  var xx = worldOriginX + (_p[0] * worldDelta);
-  var yy = worldOriginY - (_p[1] * worldDelta);
+  var xx = selectedView.worldOriginX + (_p[0] * selectedView.worldDelta);
+  var yy = selectedView.worldOriginY - (_p[1] * selectedView.worldDelta);
   return [xx, yy];
 }
 
@@ -206,26 +250,39 @@ export function hideScreenGrid() { screenGrid = false; }
 export function draw_line(_p1, _p2, color) {
   var p1 = moveToScreenCoord(_p1);
   var p2 = moveToScreenCoord(_p2);
-  drawObject.lineStyle(1, color, 1);
-  drawObject.moveTo(p1[0], p1[1]);
-  drawObject.lineTo(p2[0], p2[1]);
+  selectedView.drawObject.lineStyle(1, color, 1);
+  selectedView.drawObject.moveTo(p1[0], p1[1]);
+  selectedView.drawObject.lineTo(p2[0], p2[1]);
+}
+
+
+
+//TODO: the following function need to be changed into view centric
+export function selectXYview() {
+  selectedView = XYview;
+}
+export function selectXZview() {
+  selectedView = XZview;
+}
+export function unselectAllView() {
+  selectedView = mainView;
 }
 
 //takes a vector to take point input
 export function draw_anchor(_p, color) { //point of array form [x,y]
   var v = moveToScreenCoord(_p);
-  drawObject.lineStyle(0);
-  drawObject.beginFill(color, 1);
-  drawObject.drawCircle(v[0], v[1], 2);
-  drawObject.endFill();
+  selectedView.drawObject.lineStyle(0);
+  selectedView.drawObject.beginFill(color, 1);
+  selectedView.drawObject.drawCircle(v[0], v[1], 2);
+  selectedView.drawObject.endFill();
 }
 
 export function draw_circle(_p, _radius, color) { //point of array form [x,y]
   var v = moveToScreenCoord(_p);
   var r = _radius * getWorldDelta();
-  drawObject.lineStyle(1, color, 1);
-  drawObject.drawCircle(v[0], v[1], r);
-  drawObject.endFill();
+  selectedView.drawObject.lineStyle(1, color, 1);
+  selectedView.drawObject.drawCircle(v[0], v[1], r);
+  selectedView.drawObject.endFill();
 }
 
 export function draw_vector_origin(_v, _lineColor, _anchorColor) {
@@ -250,14 +307,14 @@ export function draw_polygon(_vertexList, _lineColor, _wireframe, _fillColor, _s
   }
 
   if (_shaded == true) {
-    drawObject.lineStyle(0);
-    drawObject.beginFill(_fillColor, 1);
-    drawObject.drawPolygon(path);
-    drawObject.endFill();
+    selectedView.drawObject.lineStyle(0);
+    selectedView.drawObject.beginFill(_fillColor, 1);
+    selectedView.drawObject.drawPolygon(path);
+    selectedView.drawObject.endFill();
   }
   if (_wireframe == true) {
-    drawObject.lineStyle(1, _lineColor, 1);
-    drawObject.drawPolygon(path);
+    selectedView.drawObject.lineStyle(1, _lineColor, 1);
+    selectedView.drawObject.drawPolygon(path);
   }
 }
 
@@ -283,13 +340,13 @@ export function draw_primitive(_primitive) {
     j = j + 2;
   }
   if (wireframe == true) {
-    drawObject.lineStyle(1, lineColor, 1);
-    drawObject.drawPolygon(path);
+    selectedView.drawObject.lineStyle(1, lineColor, 1);
+    selectedView.drawObject.drawPolygon(path);
   } else {
-    drawObject.lineStyle(0);
-    drawObject.beginFill(fillColor, 1);
-    drawObject.drawPolygon(path);
-    drawObject.endFill();
+    selectedView.drawObject.lineStyle(0);
+    selectedView.drawObject.beginFill(fillColor, 1);
+    selectedView.drawObject.drawPolygon(path);
+    selectedView.drawObject.endFill();
   }
 } // this is inside engineCore and not Primitives because it used PIXI functions. I don't want more than one file to import PIXI
 
@@ -341,6 +398,9 @@ var yyPrev = 0;
 var zzPrev = 0;
 
 function draw_follow_grid() {
+  //save current view selection and select main view, draw follow grid only on main view
+  var temp = selectedView;
+  selectedView = mainView;
   //the initialization part
   if (gridInitialized == false && getFollowedInstance_3D() != null) {
     gridInitialized = true;
@@ -460,4 +520,6 @@ function draw_follow_grid() {
       draw_text(`${Math.floor(gridTextsZ[i])}`, [(gWidth / 2) - 0.7, gridLinesZ[i] + 0.2], 0.5, 0x000000);
     }
   }
+  //return view selection to what it was
+  selectedView = temp;
 }

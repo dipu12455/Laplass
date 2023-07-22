@@ -1,6 +1,7 @@
 import * as EN from '../../Engine/Engine.js';
 import { objPyramid } from './objPyramid.js';
 import { objCameraController } from './objCameraController.js';
+import { objDrawObjectXZ } from './objDrawObjectXZ.js';
 
 export function runScene() {
     EN.setPrintConsole(true);
@@ -29,4 +30,7 @@ export function runScene() {
     pyr3.y = 1;
     pyr3.z = 0;
     EN.addInstance(pyr3);
+
+    var drawObjectXZ = new objDrawObjectXZ();
+    EN.addInstance(drawObjectXZ);
 }

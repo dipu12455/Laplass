@@ -10,8 +10,10 @@ Obtain the canvas element and its dimensions, then feed it to engine.
 The window element still gets sent in for now, for use by LPEvents.*/
 const underlayCanvas = document.getElementById('underlayCanvas');
 const overlayCanvas = document.getElementById('overlayCanvas');
+const XYcanvas = document.getElementById('XYcanvas');
+const XZcanvas = document.getElementById('XZcanvas');
 
-EN.initEngine(window, underlayCanvas, overlayCanvas);
+EN.initEngine(window, underlayCanvas, overlayCanvas, XYcanvas, XZcanvas);
 
 Scene.runScene(); //this sets up the state of the engine (like add all instances, load up their local properties, etc.). Run engine after this
 

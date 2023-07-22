@@ -35,6 +35,20 @@
       left: 0;
       z-index: 2;
     }
+
+    #XYcanvas {
+      position: absolute;
+      top: 0;
+      left: 640px;
+      z-index: 3;
+    }
+
+    #XZcanvas {
+      position: absolute;
+      top: 240px;
+      left: 640px;
+      z-index: 3;
+    }
   </style>
 </head>
 
@@ -42,6 +56,8 @@
   <div id="canvasContainer">
     <canvas id="underlayCanvas" width="640" height="480" style="border: 1px solid #000000;"></canvas>
     <canvas id="overlayCanvas" width="640" height="480" style="border: 1px solid #00ff00;"></canvas>
+    <canvas id="XYcanvas" width="240" height="240" style="border: 1px solid #ff0000;"></canvas>
+    <canvas id="XZcanvas" width="240" height="240" style="border: 1px solid #0000ff;"></canvas>
   </div>
   <script type="module" src="./scripts/app.js"></script>
 

@@ -1,5 +1,4 @@
 import * as EN from '../../Engine/Engine.js';
-import { getFollowedInstance_3D } from '../../Engine/modules/Instances.js';
 import { getRandomInteger } from './functions.js';
 
 export class objPyramid extends EN.GameObject_3D {
@@ -32,7 +31,7 @@ export class objPyramid extends EN.GameObject_3D {
             this.z = this.animate3*5;
         };
         this.draw = () => {
-            EN.draw_anchor([this.animate, 5], 0xff0000); //just to show regardless 2D or 3D, all draw functions work just fine
+            EN.draw_anchor([this.animate, 0], 0xff0000); //just to show regardless 2D or 3D, all draw functions work just fine
         };
     }
     checkEvents() {
