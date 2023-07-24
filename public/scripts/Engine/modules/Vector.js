@@ -7,6 +7,11 @@ export function scalarXvector(_scalar, _vector) {
   return [_scalar * _vector[0], _scalar * _vector[1]];
 }
 
+export function scalarDivVector(_scalar, _vector) {
+  if (_scalar == 0) return [0, 0];
+  return [_vector[0] / _scalar, _vector[1] / _scalar];
+}
+
 export function v2Minusv1(_v1, _v2) {
   return [_v2[0] - _v1[0], _v2[1] - _v1[1]];
 }

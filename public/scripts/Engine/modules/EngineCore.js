@@ -10,6 +10,7 @@ import { LPEventsTest } from './tests/LPEvents.test.js';
 import { runTest } from './Test.js';
 import { draw_text, initTexts, resetTexts } from './Texts.js';
 import { TJS_init, TJS_render } from './3D/TJS_module.js';
+import { draw_follow_grid } from './FollowGrid.js';
 
 class View {
   constructor(_canvas, _worldDelta, _drawObject) {
@@ -23,10 +24,9 @@ class View {
 }
 // these variables need to be referenced from all functions
 var app;
-var drawObject, drawObjectXYcanvas, drawObjectXZcanvas;
 var selectedView;
 
-var mainView, XYview, XZview;
+export var mainView, XYview, XZview;
 var worldOriginX, worldOriginY, worldDelta;
 var screenWidth, screenHeight; //this is local coord, not pixel coord
 var screenGrid = false;
@@ -86,8 +86,7 @@ export function initEngine(_window, _underlayCanvas, _overlayCanvas, _XYcanvas, 
 
   //draw object for main canvas
   app.stage.addChild(mainView.drawObject);
-  //selectedView = mainView;
-  selectedView = XYview;
+  selectedView = mainView;
 
   XYapp.stage.addChild(XYview.drawObject);
   XZapp.stage.addChild(XZview.drawObject);
@@ -258,14 +257,11 @@ export function draw_line(_p1, _p2, color) {
 
 
 //TODO: the following function need to be changed into view centric
-export function selectXYview() {
-  selectedView = XYview;
+export function getSelectedView(){
+  return selectedView;
 }
-export function selectXZview() {
-  selectedView = XZview;
-}
-export function unselectAllView() {
-  selectedView = mainView;
+export function setSelectedView(_view){
+  selectedView = _view;
 }
 
 //takes a vector to take point input
@@ -382,144 +378,3 @@ function draw_screen_grid(_width, _height, _primColor, _secColor) {
 }
 
 
-//drawing the follow grid, animated scale for 3D objects being followed
-var gWidth = 0;
-var gHeight = 0
-
-var gridInitialized = false;
-var gridLines = [];
-var gridTexts = [];
-var gridLinesY = [];
-var gridTextsY = [];
-var gridLinesZ = [];
-var gridTextsZ = [];
-var xxPrev = 0;
-var yyPrev = 0;
-var zzPrev = 0;
-
-function draw_follow_grid() {
-  //save current view selection and select main view, draw follow grid only on main view
-  var temp = selectedView;
-  selectedView = mainView;
-  //the initialization part
-  if (gridInitialized == false && getFollowedInstance_3D() != null) {
-    gridInitialized = true;
-    gWidth = getScreenWidth();
-    gHeight = getScreenHeight();
-    //draw grid lines, first position them on the number line where they need to be in their start state
-    //we draw one gridline in each unit of the number line
-    gridLines = [];
-    for (var i = -(gWidth / 2) - 2; i < (gWidth / 2) + 2; i += 2) {
-      gridLines.push(i);
-    }
-    gridTexts = [];
-    xxPrev = getFollowedInstance_3D().x;
-    for (var i = -(gWidth / 2) - 2; i < (gWidth / 2) + 2; i += 2) {
-      gridTexts.push(xxPrev + i);
-    }
-
-    //draw the Y grid lines, y grid lines drawn first because a masking box with be drawn over a portion of it, then the X gridline laid over that
-    gridLinesY = [];
-    for (var i = -(gHeight / 2) - 2; i < (gHeight / 2) + 2; i += 2) {
-      gridLinesY.push(i);
-    }
-    gridTextsY = [];
-    yyPrev = getFollowedInstance_3D().y;
-    for (var i = -(gHeight / 2) - 2; i < (gHeight / 2) + 2; i += 2) {
-      gridTextsY.push(yyPrev + i);
-    }
-
-    //draw the z grid lines
-    gridLinesZ = [];
-    for (var i = -(gHeight / 2) - 2; i < (gHeight / 2) + 2; i += 2) {
-      gridLinesZ.push(i);
-    }
-    gridTextsZ = [];
-    zzPrev = getFollowedInstance_3D().z;
-    for (var i = -(gHeight / 2) - 2; i < (gHeight / 2) + 2; i += 2) {
-      gridTextsZ.push(zzPrev + i);
-    }
-  }
-
-  //the update part
-  if (getFollowedInstance_3D() != null) {
-    //move the gridline and the gridtext with the delta x of the object
-    var xx = getFollowedInstance_3D().x;
-    for (var i = 0; i < gridLines.length; i++) {
-      gridLines[i] -= xx - xxPrev; //it needs to decrement because the scale animtes opposite to the object motion. the scale is stuck with the 'world'. an object moves forwards, but its 'world' moves backwards
-      if (gridLines[i] > (gWidth / 2) + 2) {
-        gridLines[i] -= gWidth + 4;
-        gridTexts[i] -= gWidth + 4;
-      }
-      if (gridLines[i] < -(gWidth / 2) - 2) {
-        gridLines[i] += gWidth + 4;
-        gridTexts[i] += gWidth + 4;
-      }
-    }
-    xxPrev = xx;
-
-    //update the gridLine Y
-    var yy = getFollowedInstance_3D().y;
-    for (var i = 0; i < gridLinesY.length; i++) {
-      gridLinesY[i] -= yy - yyPrev;
-      if (gridLinesY[i] > (gHeight / 2) + 2) {
-        gridLinesY[i] -= gHeight + 4;
-        gridTextsY[i] -= gHeight + 4;
-      }
-      if (gridLinesY[i] < -(gHeight / 2) - 2) {
-        gridLinesY[i] += gHeight + 4;
-        gridTextsY[i] += gHeight + 4;
-      }
-    }
-    yyPrev = yy;
-
-    //update the gridLine Z
-    var zz = getFollowedInstance_3D().z;
-    for (var i = 0; i < gridLinesZ.length; i++) {
-      gridLinesZ[i] -= zz - zzPrev;
-      if (gridLinesZ[i] > (gHeight / 2) + 2) {
-        gridLinesZ[i] -= gHeight + 4;
-        gridTextsZ[i] -= gHeight + 4;
-      }
-      if (gridLinesZ[i] < -(gHeight / 2) - 2) {
-        gridLinesZ[i] += gHeight + 4;
-        gridTextsZ[i] += gHeight + 4;
-      }
-    }
-    zzPrev = zz;
-  }
-  if (getFollowedInstance_3D === null) gridInitialized = false;
-
-  if (getFollowedInstance_3D() != null) {
-    draw_line([-gWidth / 2, -(gHeight / 2) + 1], [gWidth / 2, -(gHeight / 2) + 1], 0x000000);
-    draw_line([-gWidth / 2 + 1, -(gHeight / 2)], [-gWidth / 2 + 1, gHeight / 2], 0x000000);
-    draw_line([(gWidth / 2) - 1, -(gHeight / 2)], [gWidth / 2 - 1, gHeight / 2], 0x000000);
-    draw_text(`Screen gWidth: ${getScreenWidth()}`, [-15, 10], 0.5, 0x000000);
-    draw_text(`Screen gHeight: ${getScreenHeight()}`, [-15, 9], 0.5, 0x000000);
-    draw_text(`X: ${getFollowedInstance_3D().x}`, [-15, 8], 0.5, 0x000000);
-    draw_text(`Y: ${getFollowedInstance_3D().y}`, [-15, 7], 0.5, 0x000000);
-    draw_text(`Z: ${getFollowedInstance_3D().z}`, [-15, 6], 0.5, 0x000000);
-
-    for (var i = 0; i < gridLines.length; i++) {
-      draw_line([gridLines[i], -(gHeight / 2) + 1.1], [gridLines[i], -(gHeight / 2) + 0.8], 0x000000);
-      draw_line([gridLines[i] + 1, -(gHeight / 2) + 1.05], [gridLines[i] + 1, -(gHeight / 2) + 0.9], 0x000000);
-      draw_text(`${Math.floor(gridTexts[i])}`, [gridLines[i] - 0.2, -(gHeight / 2) + 0.8], 0.5, 0x000000);
-    }
-
-    //draw the gridlines Y
-    for (var i = 0; i < gridLinesY.length; i++) {
-      draw_line([-(gWidth / 2) + 1.1, gridLinesY[i]], [-(gWidth / 2) + 0.8, gridLinesY[i]], 0x000000);
-      draw_line([-(gWidth / 2) + 1.05, gridLinesY[i] + 1], [-(gWidth / 2) + 0.9, gridLinesY[i] + 1], 0x000000);
-      draw_text(`${Math.floor(gridTextsY[i])}`, [-(gWidth / 2) + 0.2, gridLinesY[i] + 0.2], 0.5, 0x000000);
-    }
-
-    //draw the gridlines Z
-    for (var i = 0; i < gridLinesZ.length; i++) {
-      draw_line([(gWidth / 2) - 1.1, gridLinesZ[i]], [(gWidth / 2) - 0.8, gridLinesZ[i]], 0x000000);
-      draw_line([(gWidth / 2) - 1.05, gridLinesZ[i] + 1], [(gWidth / 2) - 0.9, gridLinesZ[i] + 1], 0x000000);
-      draw_text(`${Math.floor(gridTextsZ[i])}`, [(gWidth / 2) - 0.7, gridLinesZ[i] + 0.2], 0.5, 0x000000);
-    }
-  }
-  //return view selection to what it was
-  selectedView = temp;
-}

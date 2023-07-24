@@ -315,6 +315,7 @@ export class GameObject_3D extends GameObject {
     constructor(_mesh) {
         super();
         this.is3D = true; //this is switched true, to tell engine to turn on 3D mode
+        this.isCamera = false;
         this.meshID = _mesh; //this is meant to be set in instance
         this.color = [1, 0, 0]; //array of RGB, A = [R,G,B]. determines the color of the mesh
         this.z = 0; //move it furhter into the screen, meant to be set in instance

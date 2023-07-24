@@ -4,7 +4,6 @@ import { getRandomInteger } from './functions.js';
 export class objPyramid extends EN.GameObject_3D {
     constructor(_mesh) {
         super(_mesh); //provide the mesh to its parent class
-        this.color = [getRandomInteger(0, 255) / 255, getRandomInteger(0, 255) / 255, getRandomInteger(0, 255) / 255];
         this.elapsed = getRandomInteger(0, 100); //this is not part of parent class, only for child class
         this.x = getRandomInteger(-5, 5);
         this.z = 5;
@@ -26,9 +25,9 @@ export class objPyramid extends EN.GameObject_3D {
             this.animate2 = Math.sin(this.elapsed / 50.0);
             this.animate3 = Math.sin(this.elapsed / 50.0);
             this.rotY = theta;
-            this.x = this.animate*5;
+            /* this.x = this.animate*5;
             this.y = this.animate2*5;
-            this.z = this.animate3*5;
+            this.z = this.animate3*5; */
         };
         this.draw = () => {
             EN.draw_anchor([this.animate, 0], 0xff0000); //just to show regardless 2D or 3D, all draw functions work just fine

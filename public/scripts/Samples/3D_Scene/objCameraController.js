@@ -4,8 +4,9 @@ import { getFollowedInstance_3D } from '../../Engine/modules/Instances.js';
 export class objCameraController extends EN.GameObject_3D {
     constructor(_mesh) {
         super(_mesh); //provide the mesh to its parent class
+        this.isCamera = true;
+        
         this.init = () => {
-
         };
         this.update = (_delta) => {
             this.checkEvents(); //this is a seperated function into another file, moves the camera with WASD and Up/Down
