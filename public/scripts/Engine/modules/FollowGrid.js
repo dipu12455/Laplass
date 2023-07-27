@@ -1,4 +1,4 @@
-import { XYview, XZview, draw_anchor, draw_line, getScreenHeight, getScreenWidth, getSelectedView, mainView, printConsole, rgbToHex, setPrintConsole, setSelectedView } from "./EngineCore.js";
+import { XYview, XZview, draw_anchor, draw_line, draw_vector_origin, getScreenHeight, getScreenWidth, getSelectedView, mainView, printConsole, rgbToHex, setPrintConsole, setSelectedView } from "./EngineCore.js";
 import { INSTANCES, getFollowedInstance_3D } from "./Instances.js";
 import { draw_text } from "./Texts.js";
 import { getUnitVector, scalarXvector, v1Plusv2} from "./Vector.js";
@@ -155,7 +155,12 @@ export function draw_follow_grid() {
         var wD = getSelectedView().worldDelta;
         gridLineX.drawGrid(h / wD); //the grid is drawn perpendicularly to its axis, so the length provided seems opposite
         gridLineY.drawGrid(w / wD);
+        //draw the velocity vector of follow object
+        var velocity = getFollowedInstance_3D().getVelocity();
+        var scale = 3;
+        draw_vector_origin([velocity[0]*scale, velocity[1]*scale], 0x00ff00, 0x2cb945);
         draw_anchor([0, 0], 0xff0000); //this the anchor to represent the object being followed
+
         //draw lines to represent origin
         var XYorigin = [-getFollowedInstance_3D().x, -getFollowedInstance_3D().y];
         draw_line([-w / 2, XYorigin[1]], [w / 2, XYorigin[1]], 0x000000);
@@ -180,6 +185,8 @@ export function draw_follow_grid() {
         wD = getSelectedView().worldDelta;
         gridLineX.drawGrid(h / wD);
         gridLineZ.drawGrid(w / wD);
+        
+        draw_vector_origin([velocity[0]*scale,velocity[2]*scale], 0x00ff00, 0x2cb945);
         draw_anchor([0, 0], 0xff0000); //this the anchor to represent the object being followed
         //draw lines to represent origin
         var XZorigin = [-getFollowedInstance_3D().x, -getFollowedInstance_3D().z];

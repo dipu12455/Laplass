@@ -6,6 +6,8 @@ import { getCollisions } from "./Collision.js";
 import { getMag, isVectorWithinRange, v1Plusv2 } from "./Vector.js";
 import { getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix } from "./3D/Matrix4x4.js";
 import { updateCamera } from "./3D/Draw3D.js";
+import { v1Plusv2_3D } from "../Engine.js";
+import { isVectorWithinRange_3D } from "./3D/Vector3D.js";
 
 export class GameObject {
     constructor() {
@@ -269,16 +271,12 @@ function updateVelocitiesAndPositions(_delta, _threshold) {
     //loop through all instances to factor their velocities and positions according to their acchs.
     let i = 0;
     for (i = 0; i < INSTANCES.getSize(); i += 1) {
-
         //get the instance
         var current = INSTANCES.get(i);
         if (!current.is3D) {
-
             //get its hspeed and vspeed
             var velocity = current.getVelocity();
-
             var acc = current.getAcceleration();
-
             velocity = v1Plusv2(velocity, acc);
 
             //if velocity is too small, make it equal to zero
@@ -289,12 +287,31 @@ function updateVelocitiesAndPositions(_delta, _threshold) {
             current.setVelocity(velocity);
 
             //translate the instance according to their speed
-
             current.setPosition(
                 v1Plusv2(current.getPosition(),
                     current.getVelocity()));
-
             current.setRot(current.getRot() + current.getRSpeed());
+        } else { //for 3D instances
+            //the following look like same functions, but they are overloaded by GameObject_3D
+            var velocity = current.getVelocity();
+            var acc = current.getAcceleration();
+            velocity = v1Plusv2_3D(velocity, acc);
+            
+            //isVectorWithinRange - TODO
+            //if velocity is too small, make it equal to zero
+            if (isVectorWithinRange_3D(velocity, 0, 0.004)) { //a good rule of thumb is put range as one unit below friction. like fric is 0.005 then put thres 0.004
+                velocity = [0, 0, 0, 1];
+            }
+
+            current.setVelocity(velocity);
+
+            //translate 3D instances according to their speed
+            current.setPosition(
+                v1Plusv2_3D(current.getPosition(),
+                current.getVelocity()));
+            current.setRotX(current.getRotX() + current.getRXSpeed());
+            current.setRotY(current.getRotY() + current.getRYSpeed());
+            current.setRotZ(current.getRotZ() + current.getRZSpeed());
         }
     }
 }
@@ -330,10 +347,101 @@ export class GameObject_3D extends GameObject {
         this.rXspeed = 0; //speed of rotation in the X axis
         this.rYspeed = 0; //speed of rotation in the Y axis
         this.rZspeed = 0; //speed of rotation in the Z axis
-        this.acceleration = [0, 0, 0, 0]; //this is now a 4-tuple vector
+        this.acceleration3D = [0, 0, 0, 0]; //this is now a 4-tuple vector
 
         this.matWorld = new mat4x4(); //matWorld is local to each object, says how to transform this object into a place in the world
     }
+    setZ(_z) {
+        this.zprev = this.z;
+        this.z = _z;
+    }
+    setPosition(_position) {
+        this.xprev = this.x;
+        this.yprev = this.y;
+        this.zprev = this.z;
+
+        this.x = _position[0];
+        this.y = _position[1];
+        this.z = _position[2];
+    }
+    setRotX(_rotX) {
+        this.rotXprev = this.rotX;
+        this.rotX = _rotX;
+    }
+    setRotY(_rotY) {
+        this.rotYprev = this.rotY;
+        this.rotY = _rotY;
+    }
+    setRotZ(_rotZ) {
+        this.rotZprev = this.rotZ;
+        this.rotZ = _rotZ;
+    }
+    getZ() {
+        return this.z;
+    }
+    getPosition() {
+        return [this.x, this.y, this.z, 1];
+    }
+    getRotX() {
+        return this.rotX;
+    }
+    getRotY() {
+        return this.rotY;
+    }
+    getRotZ() {
+        return this.rotZ;
+    }
+    getZPrev() {
+        return this.zprev;
+    }
+    getRotXPrev() {
+        return this.rotXprev;
+    }
+    getRotYPrev() {
+        return this.rotYprev;
+    }
+    getRotZPrev() {
+        return this.rotZprev;
+    }
+    setDSpeed(_dspeed) {
+        this.dspeed = _dspeed;
+    }
+    setRXSpeed(_rXspeed) {
+        this.rXspeed = _rXspeed;
+    }
+    setRYSpeed(_rYspeed) {
+        this.rYspeed = _rYspeed;
+    }
+    setRZSpeed(_rZspeed) {
+        this.rZspeed = _rZspeed;
+    }
+    getDSpeed() {
+        return this.dspeed;
+    }
+    getRXSpeed() {
+        return this.rXspeed;
+    }
+    getRYSpeed() {
+        return this.rYspeed;
+    }
+    getRZSpeed() {
+        return this.rZspeed;
+    }
+    setAcceleration(_acc) {
+        this.acceleration = _acc;
+    }
+    getAcceleration() {
+        return this.acceleration;
+    }
+    setVelocity(_velocity) {
+        this.hspeed = _velocity[0];
+        this.vspeed = _velocity[1];
+        this.dspeed = _velocity[2];
+    }
+    getVelocity() {
+        return [this.hspeed, this.vspeed, this.dspeed, 1];
+    }
+
 }
 
 export function updateWorldMatrixForInstance(_instance) {

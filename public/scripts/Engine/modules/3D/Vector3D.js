@@ -35,3 +35,7 @@ export function scalarXVector_3D(_scalar, _v) {
     var x = 0, y = 1, z = 2; //just to make it more readable
     return [_scalar * _v[x], _scalar * _v[y], _scalar * _v[z], _v[3]];
 }
+export function isVectorWithinRange_3D(_v, _low, _high){
+    var mag = Math.sqrt(_v[0] * _v[0] + _v[1] * _v[1] + _v[2] * _v[2]);
+    return (mag >= _low && mag <= _high);
+}

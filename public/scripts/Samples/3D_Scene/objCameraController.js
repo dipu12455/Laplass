@@ -55,29 +55,6 @@ export class objCameraController extends EN.GameObject_3D {
                 EN.setCameraPitch(EN.getCameraPitch() + 1); //pitching down means positive rotation in x axis
             }
         }
-        else {
-            //if following is active, use these controls to move the instance instead
-            if (EN.isPEventFired(EN.evKeyW_p)) {
-                getFollowedInstance_3D().z += 0.1;
-            }
-            if (EN.isPEventFired(EN.evKeyS_p)) {
-                getFollowedInstance_3D().z -= 0.1;
-            } //raise the triangle up and down
-            if (EN.isPEventFired(EN.evKeyA_p)) {
-                getFollowedInstance_3D().x -= 0.1;
-            }
-            if (EN.isPEventFired(EN.evKeyD_p)) {
-                getFollowedInstance_3D().x += 0.1;
-            }
-            if (EN.isPEventFired(EN.evKeyR_p)) {
-                getFollowedInstance_3D().y += 0.1;
-            }
-            if (EN.isPEventFired(EN.evKeyF_p)) {
-                getFollowedInstance_3D().y -= 0.1;
-            }
-
-
-        }
     }
 }
 
