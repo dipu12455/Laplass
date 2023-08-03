@@ -30,15 +30,15 @@ export function TJS_init(_canvas) {
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, -1);
 
+    //lighting in TJS goes out a lot, 99% of the time, its because the light is too far away, or too dim.
+    //if lighting bugs come up, check the light position and intensity first
     //using two lghts, one for proper shading, other for not making unshaded too dark
-    const pointLight = new THREE.PointLight(0xffffff, 0.8);
-    pointLight.position.set(0, 0, 1000); //light is same at all distance
-    scene.add(pointLight);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    scene.add(ambientLight);
 
-    //add a back light, meshes have no shading in the shadow
-    const backLight = new THREE.PointLight(0xffffff, 0.2);
-    backLight.position.set(0, 0, -1000); //light is same at all distance
-    scene.add(backLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+    directionalLight.position.set(-1, 1, 1);
+    scene.add(directionalLight);
 
     //make a square plane on the XZ axis then give it material of a gridline
     const planeGeo = new THREE.PlaneGeometry(10,10);
