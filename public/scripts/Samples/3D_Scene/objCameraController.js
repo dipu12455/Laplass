@@ -5,7 +5,7 @@ export class objCameraController extends EN.GameObject_3D {
     constructor(_mesh) {
         super(_mesh); //provide the mesh to its parent class
         this.isCamera = true;
-        
+
         this.init = () => {
         };
         this.update = (_delta) => {
@@ -53,6 +53,14 @@ export class objCameraController extends EN.GameObject_3D {
             }
             if (EN.isPEventFired(EN.evKeyG_p)) {
                 EN.setCameraPitch(EN.getCameraPitch() + 1); //pitching down means positive rotation in x axis
+            }
+        }
+        if (getFollowedInstance_3D() != null) {
+            if (EN.isPEventFired(EN.evKeyZ_p)) {
+                EN.setCameraZoomDistance(EN.getCameraZoomDistance() + 0.1);
+            }
+            if (EN.isPEventFired(EN.evKeyX_p)) {
+                EN.setCameraZoomDistance(EN.getCameraZoomDistance() - 0.1);
             }
         }
     }

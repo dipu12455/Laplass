@@ -1,5 +1,7 @@
 //Vector
 
+import { evKeyZ } from './modules/Events.js';
+
 export { degtorad } from './modules/Vector.js';
 export { radtodeg } from './modules/Vector.js';
 export { sqr } from './modules/Vector.js';
@@ -106,6 +108,8 @@ export { evKeyE } from './modules/Events.js';
 export { evKeyR } from './modules/Events.js';
 export { evKeyF } from './modules/Events.js';
 export { evKeyT } from './modules/Events.js';
+export { evKeyZ } from './modules/Events.js';
+export { evKeyX } from './modules/Events.js';
 
 //persistent keys
 export { evKeyG_p } from './modules/Events.js';
@@ -123,6 +127,8 @@ export { evKeyE_p } from './modules/Events.js';
 export { evKeyR_p } from './modules/Events.js';
 export { evKeyF_p } from './modules/Events.js';
 export { evKeyT_p } from './modules/Events.js';
+export { evKeyZ_p } from './modules/Events.js';
+export { evKeyX_p } from './modules/Events.js';
 export { getMousePosition } from './modules/Events.js';
 export { evMouseRegion } from './modules/Events.js';
 export { isEventFired } from './modules/Events.js';
@@ -140,6 +146,8 @@ export { setCameraYaw } from './modules/3D/Draw3D.js';
 export { getCameraYaw } from './modules/3D/Draw3D.js';
 export { setCameraPitch } from './modules/3D/Draw3D.js';
 export { getCameraPitch } from './modules/3D/Draw3D.js';
+export { setCameraZoomDistance } from './modules/3D/Draw3D.js';
+export { getCameraZoomDistance } from './modules/3D/Draw3D.js';
 
 //Vector3D
 export { dotProduct_3D } from './modules/3D/Vector3D.js';
