@@ -46,6 +46,8 @@ var vLookDir = [0, 0, 1, 1];
 var cameraYaw = 0;
 var cameraPitch = 0; //pitching only works with TJS right now
 
+var cameraZoomDistance = 5; //how close is the camera to the object when following it
+
 /*define a camera class, create one instance of it, then export it.
 GameObjects will modify this camera instance, then either Draw3D or TJS will
 read this object every frame and move their camera accordingly*/
@@ -54,12 +56,12 @@ read this object every frame and move their camera accordingly*/
 /*this function needs to be called in every frame to update the view matrix according
 to continuously updated camera position (vCamera) and yaw/look directions (vLookDir)*/
 export function updateCamera() {
-    if(getFollowedInstance_3D() != null){ 
+    if (getFollowedInstance_3D() != null) {
         setCameraYaw(0);
         var x = getFollowedInstance_3D().x;
         var y = getFollowedInstance_3D().y;
         var z = getFollowedInstance_3D().z;
-        setCamera([x,y,z-5,1]);
+        setCamera([x, y, z - cameraZoomDistance, 1]);
     }
     var vUp = [0, 1, 0, 1];
     var vTarget = [0, 0, 1, 1];
@@ -88,11 +90,19 @@ export function getCameraYaw() {
 export function setCameraYaw(_yaw) { //provide in degrees
     cameraYaw = _yaw;
 }
-export function setCameraPitch(_pitch){
+export function setCameraPitch(_pitch) {
     cameraPitch = _pitch;
 }
-export function getCameraPitch(){
+export function getCameraPitch() {
     return cameraPitch;
+}
+export function setCameraZoomDistance(_distance) {
+    if (_distance > 5) {
+        cameraZoomDistance = _distance;
+    }
+}
+export function getCameraZoomDistance() {
+    return cameraZoomDistance;
 }
 export function getLookDir() { //returns the look direction vector
     return vLookDir;
@@ -137,8 +147,8 @@ export function multiplyTriangleWithMatrix(_triangle, _matrix) {
         multiplyMatrixVector(_triangle.v1, _matrix),
         multiplyMatrixVector(_triangle.v2, _matrix),
         multiplyMatrixVector(_triangle.v3, _matrix)]);
-        triange.color = _triangle.color;
-        triange.normalFlipped = _triangle.normalFlipped;
+    triange.color = _triangle.color;
+    triange.normalFlipped = _triangle.normalFlipped;
     return triange;
 }
 
@@ -386,7 +396,7 @@ function isTriangleFacingCamera(_triangle) {
     return dotProduct < 0; //if dp less that zero, the tri normal and cam dir vectors are facing each other, so the tri is facing the camera
 }
 //returns how much to shade this tri. lighting and shading color is fixed for now
-function getTriangleColorFromLighting(_triangle,_color) {
+function getTriangleColorFromLighting(_triangle, _color) {
     //illumination (of course, only if you can see it)
     const light_direction = [0, 0, -1];
     const vU_light_direction = getUnitVector_3D(light_direction);
@@ -468,24 +478,24 @@ export function moveTrianglesToScreenSpace(_mesh, _color, _matWorld) {
 export function drawScene_3D() {
     var allMeshTriangles = [];
     for (var i = 0; i < INSTANCES.getSize(); i += 1) {
-      var current = INSTANCES.get(i);
-      if (current.isHidden()) continue; //if hidden, skip this instance
-      if (!current.is3D) continue; //if not 3D, skip this instance
-      if (current.meshID === null) continue; //if no mesh, skip this instance
-      updateWorldMatrixForInstance(current);//update the world matrix for this instance
-  
-      var mesh = getMesh(current.meshID);
-      allMeshTriangles = allMeshTriangles.concat(moveTrianglesToScreenSpace(mesh, current.color, current.matWorld));
+        var current = INSTANCES.get(i);
+        if (current.isHidden()) continue; //if hidden, skip this instance
+        if (!current.is3D) continue; //if not 3D, skip this instance
+        if (current.meshID === null) continue; //if no mesh, skip this instance
+        updateWorldMatrixForInstance(current);//update the world matrix for this instance
+
+        var mesh = getMesh(current.meshID);
+        allMeshTriangles = allMeshTriangles.concat(moveTrianglesToScreenSpace(mesh, current.color, current.matWorld));
     }
     allMeshTriangles = sortTrianglesByDepth(allMeshTriangles);
-  
+
     //loop through the list to draw each triangle
     var k = 0;
     for (k = 0; k < allMeshTriangles.length; k += 1) {
-      var tri = allMeshTriangles[k];
-      fillTriangle([tri.v1[0], tri.v1[1]],
-        [tri.v2[0], tri.v2[1]],
-        [tri.v3[0], tri.v3[1]], tri.color);
+        var tri = allMeshTriangles[k];
+        fillTriangle([tri.v1[0], tri.v1[1]],
+            [tri.v2[0], tri.v2[1]],
+            [tri.v3[0], tri.v3[1]], tri.color);
     }
-  
-  }
+
+}
