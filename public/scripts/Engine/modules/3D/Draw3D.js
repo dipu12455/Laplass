@@ -1,7 +1,7 @@
 import { crossProduct, dotProduct_3D, getUnitVector_3D, scalarXVector_3D, v1Plusv2_3D, v2Minusv1_3D, vDivScalar_3D } from "./Vector3D.js";
 import { draw_line, draw_polygon, printConsole, rgbToHex } from "../EngineCore.js";
 import { List, Queue } from "../List.js";
-import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./Matrix4x4.js";
+import { getMatrixQuickInverse, getPointAtMatrix, getProjectionMatrix, getRotationMatrixX, getRotationMatrixY, getRotationMatrixZ, getTranslationMatrix, makeIdentityMatrix, mat4x4, matrixMultiMatrix, multiplyMatrixVector } from "./Matrix4x4.js";
 import { Triangle, getMesh } from "./Models3D.js";
 import { INSTANCES, getFollowedInstance_3D, updateWorldMatrixForInstance } from "../Instances.js";
 
@@ -47,6 +47,8 @@ var cameraYaw = 0;
 var cameraPitch = 0; //pitching only works with TJS right now
 
 var cameraZoomDistance = 5; //how close is the camera to the object when following it
+var cameraOrbitAngleY = 0;
+var cameraOrbitAngleX = 0;
 
 /*define a camera class, create one instance of it, then export it.
 GameObjects will modify this camera instance, then either Draw3D or TJS will
@@ -61,7 +63,14 @@ export function updateCamera() {
         var x = getFollowedInstance_3D().x;
         var y = getFollowedInstance_3D().y;
         var z = getFollowedInstance_3D().z;
-        setCamera([x, y, z - cameraZoomDistance, 1]);
+
+        var camPoint = [0, 0, -cameraZoomDistance, 1];
+        var matOrbitY = getRotationMatrixY(cameraOrbitAngleY);
+        var matOrbitX = getRotationMatrixX(cameraOrbitAngleX);
+        camPoint = multiplyMatrixVector(camPoint, matOrbitY);
+        camPoint = multiplyMatrixVector(camPoint, matOrbitX);
+
+        setCamera([x + camPoint[0], y + camPoint[1], z + camPoint[2], 1]);
     }
     var vUp = [0, 1, 0, 1];
     var vTarget = [0, 0, 1, 1];
@@ -104,6 +113,20 @@ export function setCameraZoomDistance(_distance) {
 export function getCameraZoomDistance() {
     return cameraZoomDistance;
 }
+
+export function getCameraOrbitAngleY() {
+    return cameraOrbitAngleY;
+}
+export function setCameraOrbitAngleY(_angle) {
+    cameraOrbitAngleY = _angle;
+}
+export function getCameraOrbitAngleX() {
+    return cameraOrbitAngleX;
+}
+export function setCameraOrbitAngleX(_angle) {
+    cameraOrbitAngleX = _angle;
+}
+
 export function getLookDir() { //returns the look direction vector
     return vLookDir;
 }

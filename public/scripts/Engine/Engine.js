@@ -148,6 +148,10 @@ export { setCameraPitch } from './modules/3D/Draw3D.js';
 export { getCameraPitch } from './modules/3D/Draw3D.js';
 export { setCameraZoomDistance } from './modules/3D/Draw3D.js';
 export { getCameraZoomDistance } from './modules/3D/Draw3D.js';
+export { getCameraOrbitAngleY } from './modules/3D/Draw3D.js';
+export { getCameraOrbitAngleX } from './modules/3D/Draw3D.js';
+export { setCameraOrbitAngleY } from './modules/3D/Draw3D.js';
+export { setCameraOrbitAngleX } from './modules/3D/Draw3D.js';
 
 //Vector3D
 export { dotProduct_3D } from './modules/3D/Vector3D.js';

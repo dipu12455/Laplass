@@ -62,6 +62,18 @@ export class objCameraController extends EN.GameObject_3D {
             if (EN.isPEventFired(EN.evKeyX_p)) {
                 EN.setCameraZoomDistance(EN.getCameraZoomDistance() - 0.1);
             }
+            if (EN.isPEventFired(EN.evKeyQ_p)){
+                EN.setCameraOrbitAngleY(EN.getCameraOrbitAngleY() + 1);
+            }
+            if (EN.isPEventFired(EN.evKeyE_p)){
+                EN.setCameraOrbitAngleY(EN.getCameraOrbitAngleY() - 1);
+            }
+            if (EN.isPEventFired(EN.evKeyT_p)){
+                EN.setCameraOrbitAngleX(EN.getCameraOrbitAngleX() + 1);
+            }
+            if (EN.isPEventFired(EN.evKeyG_p)){
+                EN.setCameraOrbitAngleX(EN.getCameraOrbitAngleX() - 1);
+            }
         }
     }
 }
