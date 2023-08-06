@@ -71,13 +71,16 @@ export function updateCamera() {
         camPoint = multiplyMatrixVector(camPoint, matOrbitX);
 
         setCamera([x + camPoint[0], y + camPoint[1], z + camPoint[2], 1]);
+        vLookDir = v2Minusv1_3D(vCamera, [x, y, z, 1]);
     }
     var vUp = [0, 1, 0, 1];
     var vTarget = [0, 0, 1, 1];
     var matCameraRotX = getRotationMatrixX(cameraPitch);
     var matCameraRotY = getRotationMatrixY(cameraYaw);
-    vLookDir = multiplyMatrixVector(vTarget, matCameraRotX);
-    vLookDir = multiplyMatrixVector(vLookDir, matCameraRotY);
+    if (getFollowedInstance_3D() === null) { //if instances are not being followed, calculate vLookDir as normal
+        vLookDir = multiplyMatrixVector(vTarget, matCameraRotX);
+        vLookDir = multiplyMatrixVector(vLookDir, matCameraRotY);
+    }
 
 
     vTarget = v1Plusv2_3D(vCamera, vLookDir);
