@@ -21,6 +21,14 @@ class View {
     this.worldOriginY = this.height / 2;
     this.worldDelta = _worldDelta;
   }
+  getWorldDelta() {
+    return this.worldDelta;
+  }
+  setWorldDelta(_worldDelta) {
+    if (_worldDelta > 0) {
+      this.worldDelta = _worldDelta;
+    }
+  }
 }
 // these variables need to be referenced from all functions
 var app;
@@ -257,10 +265,10 @@ export function draw_line(_p1, _p2, color) {
 
 
 //TODO: the following function need to be changed into view centric
-export function getSelectedView(){
+export function getSelectedView() {
   return selectedView;
 }
-export function setSelectedView(_view){
+export function setSelectedView(_view) {
   selectedView = _view;
 }
 

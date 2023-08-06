@@ -66,6 +66,10 @@ class GridLine {
         }
     }
     drawGrid(_length) { //repurposing above's function to simply extend the lines to form a grid
+        // if worldDelta beyond a certain value, don't draw grid
+        if (getSelectedView().worldDelta < 4) {
+            return;
+        }
         var gridColor = 0xcccccc;
         //draw the gridLines along this axis
         for (var i = 0; i < this.gridLines.length; i++) {
