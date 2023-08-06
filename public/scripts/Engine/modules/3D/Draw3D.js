@@ -58,6 +58,13 @@ read this object every frame and move their camera accordingly*/
 /*this function needs to be called in every frame to update the view matrix according
 to continuously updated camera position (vCamera) and yaw/look directions (vLookDir)*/
 export function updateCamera() {
+    //set up initial conditions
+    var vUp = [0, 1, 0, 1];
+    var vTarget = [0, 0, 1, 1];
+    var matCameraRotX = getRotationMatrixX(cameraPitch);
+    var matCameraRotY = getRotationMatrixY(cameraYaw);
+
+    //camera operated differently based on whether it's following an instance or not
     if (getFollowedInstance_3D() != null) {
         setCameraYaw(0);
         var x = getFollowedInstance_3D().x;
@@ -65,24 +72,20 @@ export function updateCamera() {
         var z = getFollowedInstance_3D().z;
 
         var camPoint = [0, 0, -cameraZoomDistance, 1];
+        //rotation transform needs to be done in this exact order, X then Y then Z
         var matOrbitX = getRotationMatrixX(cameraOrbitAngleX);
         var matOrbitY = getRotationMatrixY(cameraOrbitAngleY);
         camPoint = multiplyMatrixVector(camPoint, matOrbitX);
         camPoint = multiplyMatrixVector(camPoint, matOrbitY);
 
-        setCamera([x + camPoint[0], y + camPoint[1], z + camPoint[2], 1]);
-        vLookDir = v2Minusv1_3D(vCamera, [x, y, z, 1]);
-    }
-    var vUp = [0, 1, 0, 1];
-    var vTarget = [0, 0, 1, 1];
-    var matCameraRotX = getRotationMatrixX(cameraPitch);
-    var matCameraRotY = getRotationMatrixY(cameraYaw);
-    if (getFollowedInstance_3D() === null) { //if instances are not being followed, calculate vLookDir as normal
+        setCamera([x + camPoint[0], y + camPoint[1], z + camPoint[2], 1]); //set the camera position at the orbit coord
+        vLookDir = v2Minusv1_3D(vCamera, [x, y, z, 1]); //adjust camera lookAt vector, TJS will read this then compute camera target point
+    }else{ //if not following an instance, compute look direction as normal
         vLookDir = multiplyMatrixVector(vTarget, matCameraRotX);
         vLookDir = multiplyMatrixVector(vLookDir, matCameraRotY);
     }
 
-
+    //find the target point based on camera position and vector of where it is pointing
     vTarget = v1Plusv2_3D(vCamera, vLookDir);
     var matCamera = getPointAtMatrix(vCamera, vTarget, vUp);
     //now make the view matrix from camera
