@@ -65,10 +65,10 @@ export function updateCamera() {
         var z = getFollowedInstance_3D().z;
 
         var camPoint = [0, 0, -cameraZoomDistance, 1];
-        var matOrbitY = getRotationMatrixY(cameraOrbitAngleY);
         var matOrbitX = getRotationMatrixX(cameraOrbitAngleX);
-        camPoint = multiplyMatrixVector(camPoint, matOrbitY);
+        var matOrbitY = getRotationMatrixY(cameraOrbitAngleY);
         camPoint = multiplyMatrixVector(camPoint, matOrbitX);
+        camPoint = multiplyMatrixVector(camPoint, matOrbitY);
 
         setCamera([x + camPoint[0], y + camPoint[1], z + camPoint[2], 1]);
         vLookDir = v2Minusv1_3D(vCamera, [x, y, z, 1]);
