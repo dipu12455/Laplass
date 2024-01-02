@@ -1,6 +1,6 @@
 import * as EN from '../../Engine/Engine.js';
 import { XYview } from '../../Engine/modules/EngineCore.js';
-import { getFollowedInstance_3D } from '../../Engine/modules/Instances.js';
+import { getFollowedInstance_3D, setZooming } from '../../Engine/modules/Instances.js';
 
 export class objCameraController extends EN.GameObject_3D {
     constructor(_mesh) {
@@ -60,10 +60,12 @@ export class objCameraController extends EN.GameObject_3D {
             if (EN.isPEventFired(EN.evKeyZ_p)) {
                 EN.setCameraZoomDistance(EN.getCameraZoomDistance() + 0.1);
                 XYview.setWorldDelta(XYview.getWorldDelta() - 1); //zooming out on other views as well
+                setZooming(true);
             }
             if (EN.isPEventFired(EN.evKeyX_p)) {
                 EN.setCameraZoomDistance(EN.getCameraZoomDistance() - 0.1);
                 XYview.setWorldDelta(XYview.getWorldDelta() + 1);
+                setZooming(false);
             }
             if (EN.isPEventFired(EN.evKeyQ_p)){
                 EN.setCameraOrbitAngleY(EN.getCameraOrbitAngleY() + 1);

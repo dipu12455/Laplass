@@ -10,7 +10,7 @@ export { rotateVector } from './modules/Vector.js';
 export { dotProduct } from './modules/Vector.js';
 export { scalarXvector } from './modules/Vector.js';
 export { v2Minusv1 } from './modules/Vector.js';
-export { findLeftPerpendicular } from './modules/Vector.js';
+export { findLeftPerpendicular } from './modules/Vector.js'; /* a test comment for programming in kotlin */
 export { getMag } from './modules/Vector.js';
 export { getTheta } from './modules/Vector.js';
 export { v1Plusv2 } from './modules/Vector.js';

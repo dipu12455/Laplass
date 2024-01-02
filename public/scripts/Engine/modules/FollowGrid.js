@@ -1,7 +1,7 @@
 import { XYview, XZview, draw_anchor, draw_line, draw_vector_origin, getScreenHeight, getScreenWidth, getSelectedView, mainView, printConsole, rgbToHex, setPrintConsole, setSelectedView } from "./EngineCore.js";
-import { INSTANCES, getFollowedInstance_3D } from "./Instances.js";
+import { INSTANCES, getFollowedInstance_3D, isZooming } from "./Instances.js";
 import { draw_text } from "./Texts.js";
-import { getUnitVector, scalarXvector, v1Plusv2} from "./Vector.js";
+import { getUnitVector, scalarXvector, v1Plusv2 } from "./Vector.js";
 
 //drawing the follow grid, animated scale for 3D objects being followed
 var gWidth = 0;
@@ -29,15 +29,47 @@ class GridLine {
         this.textOffset = _textOffset; //this var is an offset for correctly displaying the grid labels on various directions
     }
     update(_pos, _posPrev) {
+/* set gridline atteibute here, at the start of the frame. attribute such as LEFT or RIGHT 
+in order to identify whether the gridline is at left of origin or right of origin. 
+use that attribute to move and warp gridline when zooming. gridline left-right attribute will always update at the start of the frame. */
         for (var i = 0; i < this.gridLines.length; i++) {
-            this.gridLines[i] -= _pos - _posPrev; //it needs to decrement because the scale animtes opposite to the object motion. the scale is stuck with the 'world'. an object moves forwards, but its 'world' moves backwards
-            if (this.gridLines[i] > (this.length / 2) + this.increment) {
-                this.gridLines[i] -= this.length + (this.increment * 2);
-                this.gridTexts[i] -= this.length + (this.increment * 2);
+            if (!isZooming()) {
+                this.gridLines[i] -= _pos - _posPrev; //it needs to decrement because the scale animtes opposite to the object motion. the scale is stuck with the 'world'. an object moves forwards, but its 'world' moves backwards
+            } else {
+                if (this.gridLines[i] >= 0) { // '>=' is a special choice, if looks unnatural make needed changes
+                    this.gridLines[i] += _pos - _posPrev; //making it go right for gridline after origin
+                }
+                if (this.gridLines[i] < 0) {
+                    this.gridLines[i] -= _pos - _posPrev; //making it go left for gridline before origin
+                }
             }
-            if (this.gridLines[i] < -(this.length / 2) - this.increment) {
-                this.gridLines[i] += this.length + (this.increment * 2);
-                this.gridTexts[i] += this.length + (this.increment * 2);
+
+            //the following code wraps the gridlines to the other side in case the lines leave the screen
+            if (!isZooming()) {
+                if (this.gridLines[i] > (this.length / 2) + this.increment) {
+                    this.gridLines[i] -= this.length + (this.increment * 2);
+                    this.gridTexts[i] -= this.length + (this.increment * 2);
+                }
+                if (this.gridLines[i] < -(this.length / 2) - this.increment) {
+                    this.gridLines[i] += this.length + (this.increment * 2);
+                    this.gridTexts[i] += this.length + (this.increment * 2);
+                }
+            } else {
+                if (this.gridLines[i] > (this.length / 2)){
+                    /*don't need to check if this gridLine is on the left or right of origin,
+                    because the fact that this gridLine went out of bounds on the right side
+                    already proves that fact, same goes for the gridLine that goes out of bounds
+                    on the left side*/
+                    //warp this gridline by subtracting it to the center, then add the increment
+                    this.gridLines[i] -= this.length/2;
+                    this.gridTexts[i] -= this.length/2;
+                }
+                if (this.gridLines[i] < -(this.length /2)){
+                    //warp this gridline by adding to the center, then subtract the increment
+                    this.gridLines[i] += this.length/2;
+                    this.gridTexts[i] += this.length/2;
+                }
+
             }
         }
     }
@@ -162,7 +194,7 @@ export function draw_follow_grid() {
         //draw the velocity vector of follow object
         var velocity = getFollowedInstance_3D().getVelocity();
         var scale = 3;
-        draw_vector_origin([velocity[0]*scale, velocity[1]*scale], 0x00ff00, 0x2cb945);
+        draw_vector_origin([velocity[0] * scale, velocity[1] * scale], 0x00ff00, 0x2cb945);
         draw_anchor([0, 0], 0xff0000); //this the anchor to represent the object being followed
 
         //draw lines to represent origin
@@ -189,8 +221,8 @@ export function draw_follow_grid() {
         wD = getSelectedView().worldDelta;
         gridLineX.drawGrid(h / wD);
         gridLineZ.drawGrid(w / wD);
-        
-        draw_vector_origin([velocity[0]*scale,velocity[2]*scale], 0x00ff00, 0x2cb945);
+
+        draw_vector_origin([velocity[0] * scale, velocity[2] * scale], 0x00ff00, 0x2cb945);
         draw_anchor([0, 0], 0xff0000); //this the anchor to represent the object being followed
         //draw lines to represent origin
         var XZorigin = [-getFollowedInstance_3D().x, -getFollowedInstance_3D().z];
@@ -211,3 +243,5 @@ export function draw_follow_grid() {
         setSelectedView(mainView);
     }
 }
+
+/* test patteen */
