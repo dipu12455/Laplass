@@ -7,7 +7,7 @@
 
 ## Structure
 <p>This engine is built on top of PixiJS, a 2D graphics library. The 3D aspects of this engine is handled partly by its own custom graphics functions, and partly by ThreeJS. This engine consists of the following libraries:</p>
-- Collision
+-Collision
 - EngineCore
 - Events
 - Instances
