@@ -16,20 +16,14 @@
 - Primitives
 - Texts
 - Vector
-
-3D
+- 3D
   * Draw3D
   * Matrix4x4
   * Models3D
   * Vector3D
 
 ## Installation
-* TBD
-* wef
-* eswf
-- we
-- wef
-- 
+TBD
   
 ## Usage
 TBD
