@@ -22,7 +22,9 @@
   * Vector3D
 
 ## Installation
-TBD
+* TBD
+* wef
+* eswf
 
 ## Usage
 TBD
