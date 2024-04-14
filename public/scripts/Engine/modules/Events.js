@@ -133,7 +133,7 @@ export function LPEventsInit(_window) {
             if (isUnitTest()) console.log(`JS: Keydown KeyG`);
             fireEvent(evKeyG);
             firePEvent(evKeyG_p);
-            setPrintConsole(false);
+            //setPrintConsole(false);
             //timeResume();
         }
         if (keyCode == 'KeyS') {
@@ -145,7 +145,7 @@ export function LPEventsInit(_window) {
             if (isUnitTest()) console.log(`JS: Keydown KeyP`);
             fireEvent(evKeyP);
             firePEvent(evKeyP_p);
-            setPrintConsole(true);
+            //setPrintConsole(true);
             //timePause();
         }
         if (keyCode == 'KeyW') {

@@ -53,7 +53,8 @@ export class objCameraController extends EN.GameObject_3D {
                 EN.setCameraPitch(EN.getCameraPitch() - 1); //pitching up means negative rotation in x axis
             }
             if (EN.isPEventFired(EN.evKeyG_p)) {
-                EN.setCameraPitch(EN.getCameraPitch() + 1); //pitching down means positive rotation in x axis
+                //commenting the G function while debugging to use the printconsole mechanism
+                //EN.setCameraPitch(EN.getCameraPitch() + 1); //pitching down means positive rotation in x axis
             }
         }
         if (getFollowedInstance_3D() != null) {
@@ -77,7 +78,8 @@ export class objCameraController extends EN.GameObject_3D {
                 EN.setCameraOrbitAngleX(EN.getCameraOrbitAngleX() + 1);
             }
             if (EN.isPEventFired(EN.evKeyG_p)){
-                EN.setCameraOrbitAngleX(EN.getCameraOrbitAngleX() - 1);
+                //commenting the G function while debugging to use the printconsole mechanism
+                //EN.setCameraOrbitAngleX(EN.getCameraOrbitAngleX() - 1);
             }
         }
     }

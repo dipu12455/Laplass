@@ -1,5 +1,5 @@
 import { XYview, XZview, draw_anchor, draw_line, draw_vector_origin, getScreenHeight, getScreenWidth, getSelectedView, mainView, printConsole, rgbToHex, setPrintConsole, setSelectedView } from "./EngineCore.js";
-import { INSTANCES, getFollowedInstance_3D, isZooming } from "./Instances.js";
+import { INSTANCES, getFollowedInstance_3D, isZooming, setZooming } from "./Instances.js";
 import { draw_text } from "./Texts.js";
 import { getUnitVector, scalarXvector, v1Plusv2 } from "./Vector.js";
 
@@ -22,6 +22,15 @@ class GridLine {
         for (var i = -(this.length / 2) - this.increment; i < (this.length / 2) + this.increment; i += this.increment) {
             this.gridLines.push(i);
         }
+        //DEBUG: print all values of initialized gridLine Array
+        
+        printConsole("value of initialized gridLines:");
+        for (var j = 0; j < this.gridLines.length; j += 1) {
+            printConsole(this.gridLines[j]);
+        }
+        printConsole("End value of initialized gridLines.");
+
+
         this.gridTexts = [];
         for (var i = -(this.length / 2) - this.increment; i < (this.length / 2) + this.increment; i += this.increment) {
             this.gridTexts.push(_posPrev + i);
@@ -29,17 +38,39 @@ class GridLine {
         this.textOffset = _textOffset; //this var is an offset for correctly displaying the grid labels on various directions
     }
     update(_pos, _posPrev) {
-/* set gridline atteibute here, at the start of the frame. attribute such as LEFT or RIGHT 
-in order to identify whether the gridline is at left of origin or right of origin. 
-use that attribute to move and warp gridline when zooming. gridline left-right attribute will always update at the start of the frame. */
+        printConsole("Entering update:");
+        const LEFT = 0;
+			const RIGHT = 1;
+        printConsole("LEFT=" + LEFT + "RIGHT=" + RIGHT);
+        /* set gridline atteibute here, at the start of the frame. attribute such as LEFT or RIGHT 
+        in order to identify whether the gridline is at left of origin or right of origin. 
+        use that attribute to move and warp gridline when zooming. gridline left-right attribute will always update at the start of the frame. */
+        /* start of frame see if gridline is right or left. then move gridline accordingly. after that, see if warping is needed. i see this gridline is a right, so now ill move it here. okay i know its still a right gridline, did i just move it to left of origin? well then ill just warp it to the right end*/
         for (var i = 0; i < this.gridLines.length; i++) {
+            printConsole("Entered loop, this.gridLines[i] = " + this.gridLines[i]);
+            /* determine LEFT or RIGHT here*/
+            printConsole("Entered determine left or right.");
+            var position = -1;
+            printConsole("position = " + position);
+
+            if (this.gridLines[i] >= 0) {
+                position = RIGHT;
+                printConsole("gridLine[i] was >= 0");
+                printConsole("position=" + position);
+            } else {
+                position = LEFT;
+                printConsole("gridLine[i] was < 0");
+                printConsole("position=" + position);
+            }
+            printConsole("End determine right or left");
+
             if (!isZooming()) {
                 this.gridLines[i] -= _pos - _posPrev; //it needs to decrement because the scale animtes opposite to the object motion. the scale is stuck with the 'world'. an object moves forwards, but its 'world' moves backwards
             } else {
-                if (this.gridLines[i] >= 0) { // '>=' is a special choice, if looks unnatural make needed changes
+                if (position == RIGHT) { // '>=' is a special choice, if looks unnatural make needed changes
                     this.gridLines[i] += _pos - _posPrev; //making it go right for gridline after origin
                 }
-                if (this.gridLines[i] < 0) {
+                if (position == LEFT) {
                     this.gridLines[i] -= _pos - _posPrev; //making it go left for gridline before origin
                 }
             }
@@ -55,19 +86,31 @@ use that attribute to move and warp gridline when zooming. gridline left-right a
                     this.gridTexts[i] += this.length + (this.increment * 2);
                 }
             } else {
-                if (this.gridLines[i] > (this.length / 2)){
-                    /*don't need to check if this gridLine is on the left or right of origin,
-                    because the fact that this gridLine went out of bounds on the right side
-                    already proves that fact, same goes for the gridLine that goes out of bounds
-                    on the left side*/
-                    //warp this gridline by subtracting it to the center, then add the increment
-                    this.gridLines[i] -= this.length/2;
-                    this.gridTexts[i] -= this.length/2;
+                printConsole("Zooming active.");
+                /* zoom mode warp code here */
+                if (position == RIGHT) {
+                    if (this.gridLines[i] <= 0) {
+                        printConsole("Triggered condition i <= 0 for gridline in position " + position);
+                        this.gridLines[i] += (this.length / 2);
+                        printConsole("after warping this.gridLines[" + i + "] = " + this.gridLines[i]);
+                    }
+                    if (this.gridLines[i] > (this.length / 2)) {
+                        printConsole("Triggered condition (i > length/2) for gridLine in position " + position);
+                        this.gridLines[i] -= (this.length / 2);
+                        printConsole("after warping this.gridLines[" + i + "] = " + this.gridLines[i]);
+                    }
                 }
-                if (this.gridLines[i] < -(this.length /2)){
-                    //warp this gridline by adding to the center, then subtract the increment
-                    this.gridLines[i] += this.length/2;
-                    this.gridTexts[i] += this.length/2;
+                if (position == LEFT) {
+                    if (this.gridLines[i] > 0) {
+                        printConsole("Triggered condition > 0 for gridLine in position " + position);
+                        this.gridLines[i] -= (this.length / 2);
+                        printConsole ("after warping this.gridLines[" + i + "] = " + this.gridLines[i]);
+                    }
+                    if (this.gridLines[i] < -(this.length / 2)) {
+                        printConsole("Triggered condition < [-(this.length / 2)] for gridLine in position " + position);
+                        this.gridLines[i] += (this.length / 2);
+                        printConsole ("after warping this.gridLines[" + i + "] = " + this.gridLines[i]);
+                    }
                 }
 
             }
@@ -129,6 +172,8 @@ export function draw_follow_grid() {
     //the initialization part
     if (gridInitialized == false && getFollowedInstance_3D() != null) {
         gridInitialized = true;
+        setPrintConsole(true); //so that it doesnt get turned on in each frame, we only want one frame of data right now
+        setZooming(true); // start from zooming = true, so that console is logged correctly for first frame
         gWidth = getSelectedView().width / getSelectedView().worldDelta;
         gHeight = getSelectedView().height / getSelectedView().worldDelta;
         //draw grid lines, first position them on the number line where they need to be in their start state
@@ -242,6 +287,7 @@ export function draw_follow_grid() {
         //return view selection to mainView
         setSelectedView(mainView);
     }
+    setPrintConsole(false); //a single frame ends here, so stop printing to console since we are only trying to print on frame for now
 }
 
 /* test patteen */
