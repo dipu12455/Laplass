@@ -7,3 +7,11 @@ package.json
 bundle.js
 
 .DS_Store
+*.mp4
+*.gif
+*.prproj
+*.plist
+*.json
+*.json
+*.xcworkspacedata
+*.xcuserstate
